@@ -2,6 +2,14 @@
 
 A higher order component for loading components with promises.
 
+- Returns `null` until after a `delay` (default: 200ms)
+- Returns `<LoadingComponent/>` after `delay` and before `loader()` is successful
+- Caches `Component` returned by `loader()` on success
+- Shows optional `<ErrorComponent/>` any time the `loader()` fails until it succeeds.
+- Avoids flashing states when it doesn't need to.
+
+### Example
+
 ```js
 import React from 'react';
 import Loadable from 'react-loadable';
