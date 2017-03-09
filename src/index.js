@@ -1,4 +1,16 @@
 import React from "react";
+import curryRight from "lodash.curryright";
+import curry from "lodash.curry";
+import { Observable } from "rxjs/Observable";
+import { Subject } from "rxjs/Subject";
+import "rxjs/add/observable/bindCallback";
+import "rxjs/add/observable/fromPromise";
+import "rxjs/add/operator/take";
+import "rxjs/add/operator/map";
+import "rxjs/add/operator/mergeMap";
+import "rxjs/add/operator/timeout";
+import "rxjs/add/operator/takeUntil";
+import "rxjs/add/operator/catch";
 
 export default function Loadable(
   loader: () => Promise<React.Component>,
@@ -31,35 +43,33 @@ export default function Loadable(
     }
 
     loadComponent() {
-      this._timeoutId = setTimeout(
-        () => {
-          this._timeoutId = null;
-          this.setState({ isLoading: true });
-        },
-        this.props.delay
-      );
+      this._componentWillUnmount$ = new Subject().take(1);
+      const setState$ = Observable.bindCallback((err, Component, callback) => {
+        console.log(err, Component);
+        this.setState(
+          {
+            isLoading: false,
+            [err ? "err" : "Component"]: err || Component
+          },
+          callback
+        );
+      });
 
-      loader()
-        .then(Component => {
-          this.clearTimeout();
-          prevLoadedComponent = Component;
-          this.setState({
-            isLoading: false,
-            Component
-          });
-        })
-        .catch(error => {
-          this.clearTimeout();
-          this.setState({
-            isLoading: false,
-            error
-          });
-        });
+      Observable.fromPromise(loader())
+        .map(module => prevLoadedComponent = module.default || module)
+        .mergeMap(curry(setState$)(null))
+        .timeout(delay)
+        .takeUntil(this._componentWillUnmount$)
+        .catch(curryRight(setState$)(null))
+        .subscribe(
+          () => this._componentWillUnmount$.next(),
+          () => this._componentWillUnmount$.next()
+        );
     }
 
-    clearTimeout() {
-      if (this._timeoutId) {
-        clearTimeout(this._timeoutId);
+    componentWillUnmount() {
+      if (this._componentWillUnmount$ && !this._componentWillUnmount$.closed) {
+        this._componentWillUnmount$.next();
       }
     }
 

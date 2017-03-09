@@ -28,12 +28,17 @@
     "react-test-renderer": "^15.4.2"
   },
   "peerDependencies": {
-    "react": "*"
+    "react": "*",
+    "rxjs": "^5.2.0"
   },
   "lint-staged": {
     "*.js": [
       "prettier --write",
       "git add"
     ]
+  },
+  "dependencies": {
+    "lodash.curry": "^4.1.1",
+    "lodash.curryright": "^4.1.1"
   }
 }
