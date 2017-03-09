@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`loading error 1`] = `null`;
+
+exports[`loading error 2`] = `
+<div>
+  LoadingComponent
+   
+  {}
+</div>
+`;
+
+exports[`loading error 3`] = `
+<div>
+  ErrorComponent
+   
+  {"error":{}}
+</div>
+`;
+
+exports[`loading success 1`] = `null`;
+
+exports[`loading success 2`] = `
+<div>
+  LoadingComponent
+   
+  {}
+</div>
+`;
+
+exports[`loading success 3`] = `
+<div>
+  LoadingComponent
+   
+  {"prop":"foo"}
+</div>
+`;
+
+exports[`loading success 4`] = `
+<div>
+  LoadingComponent
+   
+  {"prop":"bar"}
+</div>
+`;

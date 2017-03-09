@@ -1,0 +1,39 @@
+{
+  "name": "react-loadable",
+  "version": "0.0.0",
+  "description": "A higher order component for loading components with promises",
+  "main": "index.js",
+  "author": "James Kyle <me@thejameskyle.com>",
+  "license": "MIT",
+  "scripts": {
+    "precommit": "lint-staged --verbose",
+    "format": "prettier --write '{src,__tests__}/**/*.js'",
+    "flow": "flow",
+    "test": "jest",
+    "build": "babel src/ -d lib/",
+    "prepublish": "yarn build"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-es2016": "^6.22.0",
+    "babel-preset-react": "^6.23.0",
+    "babel-preset-stage-2": "^6.22.0",
+    "flow-bin": "^0.41.0",
+    "husky": "^0.13.2",
+    "jest": "^19.0.2",
+    "lint-staged": "^3.3.1",
+    "prettier": "^0.22.0",
+    "react": "^15.4.2",
+    "react-test-renderer": "^15.4.2"
+  },
+  "peerDependencies": {
+    "react": "*"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
