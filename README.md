@@ -42,7 +42,8 @@ Loader(
   loader: () => Promise<React.Component>,
   LoadingComponent: React.Component,
   ErrorComponent?: React.Component | null,
-  delay?: number = 200
+  delay?: number = 200,
+  serverSideRequirePath?: string
 )
 ```
 
