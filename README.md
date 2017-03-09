@@ -7,6 +7,7 @@ A higher order component for loading components with promises.
 - Caches `Component` returned by `loader()` on success
 - Shows optional `<ErrorComponent/>` any time the `loader()` fails until it succeeds.
 - Avoids flashing states when it doesn't need to.
+- Designed around module bundlers like Webpack (async imports work statically)
 
 ### Example
 
