@@ -38,7 +38,6 @@
     ]
   },
   "dependencies": {
-    "lodash.curry": "^4.1.1",
-    "lodash.curryright": "^4.1.1"
+    "lodash.curry": "^4.1.1"
   }
 }

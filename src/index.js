@@ -1,5 +1,4 @@
 import React from "react";
-import curryRight from "lodash.curryright";
 import curry from "lodash.curry";
 import { Observable } from "rxjs/Observable";
 import { Subject } from "rxjs/Subject";
@@ -59,7 +58,7 @@ export default function Loadable(
         .mergeMap(curry(setState$)(null))
         .timeout(delay)
         .takeUntil(this._componentWillUnmount$)
-        .catch(curryRight(setState$)(null))
+        .catch(curry(setState$)(curry.placeholder, null))
         .subscribe(
           () => this._componentWillUnmount$.next(),
           () => this._componentWillUnmount$.next()
