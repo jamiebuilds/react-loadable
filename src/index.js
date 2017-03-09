@@ -4,9 +4,18 @@ export default function Loadable(
   loader: () => Promise<React.Component>,
   LoadingComponent: React.Component,
   ErrorComponent?: React.Component | null,
-  delay?: number = 200
+  delay?: number = 200,
+  serverSideRequirePath?: string
 ) {
   let prevLoadedComponent = null;
+
+  if (serverSideRequirePath) {
+    try {
+      let obj = require(serverSideRequirePath);
+      if (obj && obj.__esModule) obj = obj.default;
+      prevLoadedComponent = obj;
+    } catch (err) {}
+  }
 
   return class Loadable extends React.Component {
     state = {

@@ -43,3 +43,15 @@ exports[`loading success 4`] = `
   {"prop":"bar"}
 </div>
 `;
+
+exports[`server side rendering 1`] = `
+<div>
+  fixture1
+</div>
+`;
+
+exports[`server side rendering es6 1`] = `
+<div>
+  fixture2
+</div>
+`;

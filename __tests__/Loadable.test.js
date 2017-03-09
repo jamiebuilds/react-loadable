@@ -1,3 +1,4 @@
+import path from "path";
 import React from "react";
 import renderer from "react-test-renderer";
 import Loadable from "../src";
@@ -59,11 +60,39 @@ test("loading error", async () => {
     ErrorComponent
   );
 
-  let component1 = renderer.create(<LoadableMyComponent prop="baz" />);
+  let component = renderer.create(<LoadableMyComponent prop="baz" />);
 
-  expect(component1.toJSON()).toMatchSnapshot(); // initial
+  expect(component.toJSON()).toMatchSnapshot(); // initial
   await waitFor(200);
-  expect(component1.toJSON()).toMatchSnapshot(); // loading
+  expect(component.toJSON()).toMatchSnapshot(); // loading
   await waitFor(200);
-  expect(component1.toJSON()).toMatchSnapshot(); // errored
+  expect(component.toJSON()).toMatchSnapshot(); // errored
+});
+
+test("server side rendering", async () => {
+  let LoadableMyComponent = Loadable(
+    createLoader(400, null, new Error("test error")),
+    LoadingComponent,
+    null,
+    null,
+    path.join(__dirname, "../__fixtures__/component.js")
+  );
+
+  let component = renderer.create(<LoadableMyComponent prop="baz" />);
+
+  expect(component.toJSON()).toMatchSnapshot(); // serverside
+});
+
+test("server side rendering es6", async () => {
+  let LoadableMyComponent = Loadable(
+    createLoader(400, null, new Error("test error")),
+    LoadingComponent,
+    null,
+    null,
+    path.join(__dirname, "../__fixtures__/component.es6.js")
+  );
+
+  let component = renderer.create(<LoadableMyComponent prop="baz" />);
+
+  expect(component.toJSON()).toMatchSnapshot(); // serverside
 });
