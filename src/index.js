@@ -45,7 +45,6 @@ export default function Loadable(
     loadComponent() {
       this._componentWillUnmount$ = new Subject().take(1);
       const setState$ = Observable.bindCallback((err, Component, callback) => {
-        console.log(err, Component);
         this.setState(
           {
             isLoading: false,
