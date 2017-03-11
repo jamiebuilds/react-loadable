@@ -1,46 +1,72 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`loading error 1`] = `null`;
+exports[`loading error 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"error":null}
+</div>
+`;
 
 exports[`loading error 2`] = `
 <div>
-  LoadingComponent
-   
-  {}
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"error":null}
 </div>
 `;
 
 exports[`loading error 3`] = `
 <div>
-  ErrorComponent
-   
-  {"error":{}}
+  MyLoadingComponent 
+  {"isLoading":false,"pastDelay":false,"error":{}}
 </div>
 `;
 
-exports[`loading success 1`] = `null`;
+exports[`loading success 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"error":null}
+</div>
+`;
 
 exports[`loading success 2`] = `
 <div>
-  LoadingComponent
-   
-  {}
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"error":null}
 </div>
 `;
 
 exports[`loading success 3`] = `
 <div>
-  LoadingComponent
-   
+  MyComponent 
   {"prop":"foo"}
 </div>
 `;
 
 exports[`loading success 4`] = `
 <div>
-  LoadingComponent
-   
+  MyComponent 
   {"prop":"bar"}
+</div>
+`;
+
+exports[`preload success 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"error":null}
+</div>
+`;
+
+exports[`preload success 2`] = `
+<div>
+  MyComponent 
+  {"prop":"baz"}
+</div>
+`;
+
+exports[`preload success 3`] = `
+<div>
+  MyComponent 
+  {"prop":"baz"}
 </div>
 `;
 

@@ -13,17 +13,30 @@ A higher order component for loading components with promises.
 ### Example
 
 ```js
+// @flow
 import path from 'path';
 import React from 'react';
 import Loadable from 'react-loadable';
 
-import MyLoadingComponent from './MyLoadingComponent';
-import MyErrorComponent from './MyErrorComponent';
+type Props = {
+  isLoading: boolean,
+  error: Error | null,
+  pastDelay: null,
+};
 
-const LoadableMyComponent = Loadable(
+let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
+  if (isLoading) {
+    return pastDelay ? <div>Loading...</div> : null; // Don't flash "Loading..." when we don't need to.
+  } else if (error) {
+    return <div>Error! Component failed to load</div>;
+  } else {
+    return null;
+  }
+};
+
+let LoadableMyComponent = Loadable(
   () => import('./MyComponent'),
   MyLoadingComponent,
-  MyErrorComponent,
   200,
   path.join(__dirname, './MyComponent')
 );
@@ -41,7 +54,6 @@ export default class Application extends React.Component {
 Loader(
   loader: () => Promise<React.Component>,
   LoadingComponent: React.Component,
-  ErrorComponent?: React.Component | null,
   delay?: number = 200,
   serverSideRequirePath?: string
 )
@@ -56,13 +68,26 @@ component.
 
 #### `LoadingComponent`
 
-React component displayed after `delay` until `loader()` succeeds or errors.
+React component displayed after `delay` until `loader()` succeeds. Also
+responsible for displaying errors.
 
-#### `MyErrorComponent` (optional, defaults to `null`)
+```js
+type Props = {
+  isLoading: boolean,
+  error: Error | null,
+  pastDelay: null,
+};  
 
-React component displayed after `delay` until `loader()` errors.
-
-Receives `error` prop with the promise rejection error.
+let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
+  if (isLoading) {
+    return pastDelay ? <div>Loading...</div> : null; // Don't flash "Loading..." when we don't need to.
+  } else if (error) {
+    return <div>Error! Component failed to load</div>;
+  } else {
+    return null;
+  }
+};
+```
 
 #### `delay` (optional, defaults to `200`, in milliseconds)
 
