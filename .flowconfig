@@ -5,3 +5,4 @@
 [libs]
 
 [options]
+suppress_comment= \\(.\\|\n\\)*\\$FlowIgnore

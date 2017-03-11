@@ -1,75 +1,91 @@
+// @flow
 import React from "react";
 
-export default function Loadable(
-  loader: () => Promise<React.Component>,
-  LoadingComponent: React.Component,
-  ErrorComponent?: React.Component | null,
+type GenericComponent<Props> = Class<React.Component<{}, Props, mixed>>;
+type LoadedComponent<Props> = GenericComponent<Props>;
+type LoadingComponent = GenericComponent<{}>;
+
+export default function Loadable<Props: {}, Err: Error>(
+  loader: () => Promise<LoadedComponent<Props>>,
+  LoadingComponent: LoadingComponent,
   delay?: number = 200,
   serverSideRequirePath?: string
 ) {
-  let prevLoadedComponent = null;
+  let isLoading = false;
+
+  let outsideComponent = null;
+  let outsidePromise = null;
+  let outsideError = null;
 
   if (serverSideRequirePath) {
     try {
+      // $FlowIgnore
       let obj = require(serverSideRequirePath);
       if (obj && obj.__esModule) obj = obj.default;
-      prevLoadedComponent = obj;
+      outsideComponent = obj;
     } catch (err) {}
   }
 
-  return class Loadable extends React.Component {
+  let load = () => {
+    if (!outsidePromise) {
+      isLoading = true;
+      outsidePromise = loader()
+        .then(Component => {
+          isLoading = false;
+          outsideComponent = Component;
+        })
+        .catch(error => {
+          isLoading = false;
+          outsideError = error;
+        });
+    }
+    return outsidePromise;
+  };
+
+  return class Loadable extends React.Component<void, Props, *> {
+    static preload() {
+      load();
+    }
+
     state = {
-      isLoading: false,
-      error: null,
-      Component: prevLoadedComponent
+      error: outsideError,
+      pastDelay: false,
+      Component: outsideComponent
     };
 
     componentWillMount() {
-      if (!this.state.Component) {
-        this.loadComponent();
+      if (this.state.Component) {
+        return;
       }
-    }
 
-    loadComponent() {
-      this._timeoutId = setTimeout(
+      let timeout = setTimeout(
         () => {
-          this._timeoutId = null;
-          this.setState({ isLoading: true });
+          this.setState({ pastDelay: true });
         },
-        this.props.delay
+        delay
       );
 
-      loader()
-        .then(Component => {
-          this.clearTimeout();
-          prevLoadedComponent = Component;
-          this.setState({
-            isLoading: false,
-            Component
-          });
-        })
-        .catch(error => {
-          this.clearTimeout();
-          this.setState({
-            isLoading: false,
-            error
-          });
+      load().then(() => {
+        clearTimeout(timeout);
+        this.setState({
+          error: outsideError,
+          pastDelay: false,
+          Component: outsideComponent
         });
-    }
-
-    clearTimeout() {
-      if (this._timeoutId) {
-        clearTimeout(this._timeoutId);
-      }
+      });
     }
 
     render() {
-      let { error, isLoading, Component } = this.state;
+      let { pastDelay, error, Component } = this.state;
 
-      if (error && ErrorComponent) {
-        return <ErrorComponent error={error} />;
-      } else if (isLoading) {
-        return <LoadingComponent />;
+      if (isLoading || error) {
+        return (
+          <LoadingComponent
+            isLoading={isLoading}
+            pastDelay={pastDelay}
+            error={error}
+          />
+        );
       } else if (Component) {
         return <Component {...this.props} />;
       } else {

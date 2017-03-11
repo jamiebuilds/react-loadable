@@ -1,13 +1,9 @@
+// @noflow
+declare var test: any;
 import path from "path";
 import React from "react";
 import renderer from "react-test-renderer";
 import Loadable from "../src";
-
-let createComponent = (name: string) => {
-  return (props: mixed) => {
-    return <div>{name} {JSON.stringify(props)}</div>;
-  };
-};
 
 let waitFor = (delay: number) => {
   return new Promise(resolve => {
@@ -15,11 +11,7 @@ let waitFor = (delay: number) => {
   });
 };
 
-let createLoader = (
-  delay: number,
-  Component: React.Component | false,
-  error?: error
-) => {
+let createLoader = (delay, Component, error?) => {
   return async () => {
     await waitFor(delay);
     if (Component) {
@@ -30,14 +22,15 @@ let createLoader = (
   };
 };
 
-let LoadingComponent = createComponent("LoadingComponent");
-let ErrorComponent = createComponent("ErrorComponent");
-let MyComponent = createComponent("MyComponent");
+let MyLoadingComponent = props => (
+  <div>MyLoadingComponent {JSON.stringify(props)}</div>
+);
+let MyComponent = props => <div>MyComponent {JSON.stringify(props)}</div>;
 
 test("loading success", async () => {
   let LoadableMyComponent = Loadable(
-    createLoader(400, LoadingComponent),
-    LoadingComponent
+    createLoader(400, MyComponent),
+    MyLoadingComponent
   );
 
   let component1 = renderer.create(<LoadableMyComponent prop="foo" />);
@@ -56,8 +49,7 @@ test("loading success", async () => {
 test("loading error", async () => {
   let LoadableMyComponent = Loadable(
     createLoader(400, null, new Error("test error")),
-    LoadingComponent,
-    ErrorComponent
+    MyLoadingComponent
   );
 
   let component = renderer.create(<LoadableMyComponent prop="baz" />);
@@ -72,8 +64,7 @@ test("loading error", async () => {
 test("server side rendering", async () => {
   let LoadableMyComponent = Loadable(
     createLoader(400, null, new Error("test error")),
-    LoadingComponent,
-    null,
+    MyLoadingComponent,
     null,
     path.join(__dirname, "../__fixtures__/component.js")
   );
@@ -86,8 +77,7 @@ test("server side rendering", async () => {
 test("server side rendering es6", async () => {
   let LoadableMyComponent = Loadable(
     createLoader(400, null, new Error("test error")),
-    LoadingComponent,
-    null,
+    MyLoadingComponent,
     null,
     path.join(__dirname, "../__fixtures__/component.es6.js")
   );
@@ -95,4 +85,24 @@ test("server side rendering es6", async () => {
   let component = renderer.create(<LoadableMyComponent prop="baz" />);
 
   expect(component.toJSON()).toMatchSnapshot(); // serverside
+});
+
+test("preload", async () => {
+  let LoadableMyComponent = Loadable(
+    createLoader(400, MyComponent),
+    MyLoadingComponent,
+    null
+  );
+
+  LoadableMyComponent.preload();
+  await waitFor(200);
+
+  let component1 = renderer.create(<LoadableMyComponent prop="baz" />);
+
+  expect(component1.toJSON()).toMatchSnapshot(); // still loading...
+  await waitFor(200);
+  expect(component1.toJSON()).toMatchSnapshot(); // success
+
+  let component2 = renderer.create(<LoadableMyComponent prop="baz" />);
+  expect(component2.toJSON()).toMatchSnapshot(); // success
 });
