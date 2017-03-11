@@ -14,7 +14,9 @@ export default function Loadable(
       let obj = require(serverSideRequirePath);
       if (obj && obj.__esModule) obj = obj.default;
       prevLoadedComponent = obj;
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   return class Loadable extends React.Component {
