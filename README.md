@@ -9,6 +9,7 @@ A higher order component for loading components with promises.
 - Avoids flashing states when it doesn't need to.
 - Designed around module bundlers like Webpack (async imports work statically)
 - Supports server-side rendering via a dynamic `require()`
+- Eagerly preload components when needed
 
 ### Example
 
