@@ -51,7 +51,7 @@ export default class Application extends React.Component {
 ### API
 
 ```js
-Loader(
+Loadable(
   loader: () => Promise<React.Component>,
   LoadingComponent: React.Component,
   delay?: number = 200,
@@ -98,3 +98,41 @@ succeed or error.
 
 When rendering server-side, `require()` this path to load the component
 instead, this way it happens synchronously.
+
+#### `Loadable.preload()`
+
+The generated component has a static method `preload()` for calling the loader
+function ahead of time. This is useful for scenarios where you think the user
+might do something next and want to load the next component eagerly.
+
+**Example:**
+
+```js
+let LoadableMyComponent = Loadable(
+  () => import('./MyComponent'),
+  MyLoadingComponent,
+);
+
+class Application extends React.Component {
+  state = { showComponent: false };
+
+  onClick = () => {
+    this.setState({ showComponent: true });
+  };
+
+  onMouseOver = () => {
+    LoadableMyComponent.preload();
+  };
+
+  render() {
+    return (
+      <div>
+        <button onClick={this.onClick} onMouseOver={this.onMouseOver}>
+          Show loadable component
+        </button>
+        {this.state.showComponent && <LoadableMyComponent/>}
+      </div>
+    )
+  }
+}
+```
