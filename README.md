@@ -76,7 +76,7 @@ responsible for displaying errors.
 type Props = {
   isLoading: boolean,
   error: Error | null,
-  pastDelay: null,
+  pastDelay: boolean,
 };  
 
 let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
