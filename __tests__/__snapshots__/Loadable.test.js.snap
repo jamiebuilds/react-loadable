@@ -70,27 +70,6 @@ exports[`preload 3`] = `
 </div>
 `;
 
-exports[`preload success 1`] = `
-<div>
-  MyLoadingComponent 
-  {"isLoading":true,"pastDelay":false,"error":null}
-</div>
-`;
-
-exports[`preload success 2`] = `
-<div>
-  MyComponent 
-  {"prop":"baz"}
-</div>
-`;
-
-exports[`preload success 3`] = `
-<div>
-  MyComponent 
-  {"prop":"baz"}
-</div>
-`;
-
 exports[`server side rendering 1`] = `
 <div>
   fixture1
