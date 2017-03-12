@@ -11,6 +11,8 @@ A higher order component for loading components with promises.
 - Supports server-side rendering via a dynamic `require()`
 - Eagerly preload components when needed
 
+Example Project: https://github.com/thejameskyle/react-loadable-example
+
 ### Example
 
 ```js
