@@ -5,6 +5,11 @@ type GenericComponent<Props> = Class<React.Component<{}, Props, mixed>>;
 type LoadedComponent<Props> = GenericComponent<Props>;
 type LoadingComponent = GenericComponent<{}>;
 
+let babelInterop = obj => {
+  // $FlowIgnore
+  return obj && obj.__esModule ? obj.default : obj;
+};
+
 export default function Loadable<Props: {}, Err: Error>(
   loader: () => Promise<LoadedComponent<Props>>,
   LoadingComponent: LoadingComponent,
@@ -20,9 +25,7 @@ export default function Loadable<Props: {}, Err: Error>(
   if (serverSideRequirePath) {
     try {
       // $FlowIgnore
-      let obj = require(serverSideRequirePath);
-      if (obj && obj.__esModule) obj = obj.default;
-      outsideComponent = obj;
+      outsideComponent = babelInterop(require(serverSideRequirePath));
     } catch (err) {}
   }
 
@@ -32,7 +35,7 @@ export default function Loadable<Props: {}, Err: Error>(
       outsidePromise = loader()
         .then(Component => {
           isLoading = false;
-          outsideComponent = Component;
+          outsideComponent = babelInterop(Component);
         })
         .catch(error => {
           isLoading = false;
