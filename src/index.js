@@ -43,6 +43,9 @@ export default function Loadable<Props: {}, Err: Error>(
   };
 
   return class Loadable extends React.Component<void, Props, *> {
+    _timeout: number;
+    _mounted: boolean;
+
     static preload() {
       load();
     }
@@ -54,11 +57,13 @@ export default function Loadable<Props: {}, Err: Error>(
     };
 
     componentWillMount() {
+      this._mounted = true;
+
       if (this.state.Component) {
         return;
       }
 
-      let timeout = setTimeout(
+      this._timeout = setTimeout(
         () => {
           this.setState({ pastDelay: true });
         },
@@ -66,13 +71,19 @@ export default function Loadable<Props: {}, Err: Error>(
       );
 
       load().then(() => {
-        clearTimeout(timeout);
+        if (!this._mounted) return;
+        clearTimeout(this._timeout);
         this.setState({
           error: outsideError,
           pastDelay: false,
           Component: outsideComponent
         });
       });
+    }
+
+    componentWillUnmount() {
+      this._mounted = false;
+      clearTimeout(this._timeout);
     }
 
     render() {

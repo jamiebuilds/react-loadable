@@ -49,6 +49,27 @@ exports[`loading success 4`] = `
 </div>
 `;
 
+exports[`preload 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"error":null}
+</div>
+`;
+
+exports[`preload 2`] = `
+<div>
+  MyComponent 
+  {"prop":"baz"}
+</div>
+`;
+
+exports[`preload 3`] = `
+<div>
+  MyComponent 
+  {"prop":"baz"}
+</div>
+`;
+
 exports[`preload success 1`] = `
 <div>
   MyLoadingComponent 
