@@ -10,6 +10,7 @@ A higher order component for loading components with promises.
 - Designed around module bundlers like Webpack (async imports work statically)
 - Supports server-side rendering via a dynamic `require()`
 - Eagerly preload components when needed
+- Support for requiring synchronously from webpack when available
 
 Example Project: https://github.com/thejameskyle/react-loadable-example
 
@@ -39,12 +40,13 @@ let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
   }
 };
 
-let LoadableMyComponent = Loadable(
-  () => import('./MyComponent'),
-  MyLoadingComponent,
-  200,
-  path.join(__dirname, './MyComponent')
-);
+let LoadableMyComponent = Loadable({
+  loader: () => import('./MyComponent'),
+  LoadingComponent: MyLoadingComponent,
+  delay: 200,
+  serverSideRequirePath: path.join(__dirname, './MyComponent'),
+  webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
+});
 
 export default class Application extends React.Component {
   render() {
@@ -56,22 +58,23 @@ export default class Application extends React.Component {
 ### API
 
 ```js
-Loadable(
+Loadable({
   loader: () => Promise<React.Component>,
   LoadingComponent: React.Component,
   delay?: number = 200,
-  serverSideRequirePath?: string
-)
+  serverSideRequirePath?: string,
+  webpackRequireWeakId?: () => number,
+})
 ```
 
-#### `loader`
+#### `opts.loader`
 
 Function returning promise returning a React component displayed on success.
 
 Resulting React component receives all the props passed to the generated
 component.
 
-#### `LoadingComponent`
+#### `opts.LoadingComponent`
 
 React component displayed after `delay` until `loader()` succeeds. Also
 responsible for displaying errors.
@@ -81,7 +84,7 @@ type Props = {
   isLoading: boolean,
   error: Error | null,
   pastDelay: boolean,
-};  
+};
 
 let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
   if (isLoading) {
@@ -94,15 +97,29 @@ let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
 };
 ```
 
-#### `delay` (optional, defaults to `200`, in milliseconds)
+#### `opts.delay` (optional, defaults to `200`, in milliseconds)
 
 Only show the `LoadingComponent` if the `loader()` has taken this long to
 succeed or error.
 
-#### `serverSideRequirePath` (optional)
+#### `opts.serverSideRequirePath` (optional)
 
 When rendering server-side, `require()` this path to load the component
-instead, this way it happens synchronously.
+instead, this way it happens synchronously. If you are rendering server-side
+you should use this option.
+
+#### `opts.webpackRequireWeakId` (optional)
+
+In order for Loadable to `require()` a component synchronously (when possible)
+instead of waiting for the promise returned by `import()` to resolve. If you
+are using Webpack you should use this option.
+
+```js
+Loadable({
+  // ...
+  webpackRequireWeakId: () => require.resolveWeak('./MyComponent')
+});
+```
 
 #### `Loadable.preload()`
 
@@ -113,10 +130,10 @@ might do something next and want to load the next component eagerly.
 **Example:**
 
 ```js
-let LoadableMyComponent = Loadable(
-  () => import('./MyComponent'),
-  MyLoadingComponent,
-);
+let LoadableMyComponent = Loadable({
+  loader: () => import('./MyComponent'),
+  LoadingComponent: MyLoadingComponent,
+});
 
 class Application extends React.Component {
   state = { showComponent: false };

@@ -28,10 +28,10 @@ let MyLoadingComponent = props => (
 let MyComponent = props => <div>MyComponent {JSON.stringify(props)}</div>;
 
 test("loading success", async () => {
-  let LoadableMyComponent = Loadable(
-    createLoader(400, MyComponent),
-    MyLoadingComponent
-  );
+  let LoadableMyComponent = Loadable({
+    loader: createLoader(400, MyComponent),
+    LoadingComponent: MyLoadingComponent
+  });
 
   let component1 = renderer.create(<LoadableMyComponent prop="foo" />);
 
@@ -47,10 +47,10 @@ test("loading success", async () => {
 });
 
 test("loading error", async () => {
-  let LoadableMyComponent = Loadable(
-    createLoader(400, null, new Error("test error")),
-    MyLoadingComponent
-  );
+  let LoadableMyComponent = Loadable({
+    loader: createLoader(400, null, new Error("test error")),
+    LoadingComponent: MyLoadingComponent
+  });
 
   let component = renderer.create(<LoadableMyComponent prop="baz" />);
 
@@ -62,12 +62,11 @@ test("loading error", async () => {
 });
 
 test("server side rendering", async () => {
-  let LoadableMyComponent = Loadable(
-    createLoader(400, null, new Error("test error")),
-    MyLoadingComponent,
-    null,
-    path.join(__dirname, "../__fixtures__/component.js")
-  );
+  let LoadableMyComponent = Loadable({
+    loader: createLoader(400, null, new Error("test error")),
+    LoadingComponent: MyLoadingComponent,
+    serverSideRequirePath: path.join(__dirname, "../__fixtures__/component.js")
+  });
 
   let component = renderer.create(<LoadableMyComponent prop="baz" />);
 
@@ -75,12 +74,14 @@ test("server side rendering", async () => {
 });
 
 test("server side rendering es6", async () => {
-  let LoadableMyComponent = Loadable(
-    createLoader(400, null, new Error("test error")),
-    MyLoadingComponent,
-    null,
-    path.join(__dirname, "../__fixtures__/component.es6.js")
-  );
+  let LoadableMyComponent = Loadable({
+    loader: createLoader(400, null, new Error("test error")),
+    LoadingComponent: MyLoadingComponent,
+    serverSideRequirePath: path.join(
+      __dirname,
+      "../__fixtures__/component.es6.js"
+    )
+  });
 
   let component = renderer.create(<LoadableMyComponent prop="baz" />);
 
@@ -88,11 +89,10 @@ test("server side rendering es6", async () => {
 });
 
 test("preload", async () => {
-  let LoadableMyComponent = Loadable(
-    createLoader(400, MyComponent),
-    MyLoadingComponent,
-    null
-  );
+  let LoadableMyComponent = Loadable({
+    loader: createLoader(400, MyComponent),
+    LoadingComponent: MyLoadingComponent
+  });
 
   LoadableMyComponent.preload();
   await waitFor(200);

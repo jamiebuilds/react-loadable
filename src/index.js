@@ -10,12 +10,32 @@ let babelInterop = obj => {
   return obj && obj.__esModule ? obj.default : obj;
 };
 
-export default function Loadable<Props: {}, Err: Error>(
+let tryRequire = (pathOrId: string | number) => {
+  try {
+    // $FlowIgnore
+    return babelInterop(require(pathOrId));
+  } catch (err) {}
+  return null;
+};
+
+// $FlowIgnore
+let isWebpack = typeof __webpack_modules__ !== "undefined";
+
+type Options = {
   loader: () => Promise<LoadedComponent<Props>>,
   LoadingComponent: LoadingComponent,
-  delay?: number = 200,
-  serverSideRequirePath?: string
-) {
+  delay?: number,
+  serverSideRequirePath?: string,
+  webpackRequireWeakId?: () => number
+};
+
+export default function Loadable<Props: {}, Err: Error>(opts: Options) {
+  let loader = opts.loader;
+  let LoadingComponent = opts.LoadingComponent;
+  let delay = opts.delay || 200;
+  let serverSideRequirePath = opts.serverSideRequirePath;
+  let webpackRequireWeakId = opts.webpackRequireWeakId;
+
   let isLoading = false;
 
   let outsideComponent = null;
@@ -23,10 +43,11 @@ export default function Loadable<Props: {}, Err: Error>(
   let outsideError = null;
 
   if (serverSideRequirePath) {
-    try {
-      // $FlowIgnore
-      outsideComponent = babelInterop(require(serverSideRequirePath));
-    } catch (err) {}
+    outsideComponent = tryRequire(serverSideRequirePath);
+  }
+
+  if (isWebpack && webpackRequireWeakId) {
+    outsideComponent = tryRequire(webpackRequireWeakId());
   }
 
   let load = () => {
