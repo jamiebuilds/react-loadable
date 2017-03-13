@@ -43,6 +43,7 @@ let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
 let LoadableMyComponent = Loadable({
   loader: () => import('./MyComponent'),
   LoadingComponent: MyLoadingComponent,
+  // optional options...
   delay: 200,
   serverSideRequirePath: path.join(__dirname, './MyComponent'),
   webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
@@ -61,6 +62,7 @@ export default class Application extends React.Component {
 Loadable({
   loader: () => Promise<React.Component>,
   LoadingComponent: React.Component,
+  // optional options...
   delay?: number = 200,
   serverSideRequirePath?: string,
   webpackRequireWeakId?: () => number,
