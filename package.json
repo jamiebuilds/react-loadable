@@ -31,8 +31,15 @@
     "react": "*"
   },
   "lint-staged": {
-    "*.js": [
+    "src/*.js": [
       "prettier --write",
+      "git add"
+    ],
+    "__tests__/*.js": [
+      "prettier --write",
+      "git add"
+    ],
+    "__fixtures__/*.js": [
       "git add"
     ]
   }
