@@ -5,6 +5,9 @@ type GenericComponent<Props> = Class<React.Component<{}, Props, mixed>>;
 type LoadedComponent<Props> = GenericComponent<Props>;
 type LoadingComponent = GenericComponent<{}>;
 
+let isWebpack = typeof __webpack_require__ !== "undefined";
+let requireFn = isWebpack ? __webpack_require__ : module.require.bind(module);
+
 let babelInterop = obj => {
   // $FlowIgnore
   return obj && obj.__esModule ? obj.default : obj;
@@ -13,13 +16,10 @@ let babelInterop = obj => {
 let tryRequire = (pathOrId: string | number) => {
   try {
     // $FlowIgnore
-    return babelInterop(require(pathOrId));
+    return babelInterop(requireFn(pathOrId));
   } catch (err) {}
   return null;
 };
-
-// $FlowIgnore
-let isWebpack = typeof __webpack_modules__ !== "undefined";
 
 type Options = {
   loader: () => Promise<LoadedComponent<Props>>,
@@ -42,12 +42,19 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
   let outsidePromise = null;
   let outsideError = null;
 
-  if (serverSideRequirePath) {
+  if (!isWebpack && serverSideRequirePath) {
     outsideComponent = tryRequire(serverSideRequirePath);
   }
 
   if (isWebpack && webpackRequireWeakId) {
-    outsideComponent = tryRequire(webpackRequireWeakId());
+    let weakId = webpackRequireWeakId();
+    if (__webpack_modules__[weakId]) {
+      // if it's not in webpack modules, we wont be able
+      // to load it. If we attempt to, we mess up webpack's
+      // internal state, so only tryRequire if it's already
+      // in webpack modules.
+      outsideComponent = tryRequire(weakId);
+    }
   }
 
   let load = () => {
