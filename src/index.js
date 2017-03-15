@@ -14,7 +14,11 @@ let tryRequire = (pathOrId: string | number) => {
   try {
     // $FlowIgnore
     return babelInterop(require(pathOrId));
-  } catch (err) {}
+  } catch (error) {
+    if (error.name === "SyntaxError") {
+      throw error;
+    }
+  }
   return null;
 };
 
@@ -43,11 +47,21 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
   let outsideError = null;
 
   if (serverSideRequirePath) {
-    outsideComponent = tryRequire(serverSideRequirePath);
+    try {
+      outsideComponent = tryRequire(serverSideRequirePath);
+    } catch (error) {
+      isLoading = false;
+      outsideError = error;
+    }
   }
 
   if (isWebpack && webpackRequireWeakId) {
-    outsideComponent = tryRequire(webpackRequireWeakId());
+    try {
+      outsideComponent = tryRequire(webpackRequireWeakId());
+    } catch (error) {
+      isLoading = false;
+      outsideError = error;
+    }
   }
 
   let load = () => {

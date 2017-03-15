@@ -106,3 +106,20 @@ test("preload", async () => {
   let component2 = renderer.create(<LoadableMyComponent prop="baz" />);
   expect(component2.toJSON()).toMatchSnapshot(); // success
 });
+
+test("syntax error serverside", async () => {
+  let LoadableMyComponent = Loadable({
+    loader: async () => createLoader(400, null, new Error("test error")),
+    LoadingComponent: MyLoadingComponent,
+    serverSideRequirePath: path.join(
+      __dirname,
+      "../__fixtures__/component-with-syntax-error.js"
+    )
+  });
+
+  let component = renderer.create(<LoadableMyComponent />);
+
+  await waitFor(200);
+
+  expect(component.toJSON()).toMatchSnapshot();
+});
