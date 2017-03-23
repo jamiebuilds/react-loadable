@@ -78,7 +78,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
     _mounted: boolean;
 
     static preload() {
-      load();
+      return load();
     }
 
     state = {
