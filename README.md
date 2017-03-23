@@ -99,6 +99,16 @@ let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
 };
 ```
 
+If you don't want to render anything you can pass a function that returns
+`null` (this is considered a valid React component).
+
+```js
+Loading({
+  loader: () => import('./MyComponent'),
+  LoadingComponent: () => null,
+});
+```
+
 #### `opts.delay` (optional, defaults to `200`, in milliseconds)
 
 Only show the `LoadingComponent` if the `loader()` has taken this long to
