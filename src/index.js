@@ -121,7 +121,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
       let { pastDelay, error, Component } = this.state;
 
       if (isLoading || error) {
-        return (
+        return (!LoadingComponent ? null :
           <LoadingComponent
             isLoading={isLoading}
             pastDelay={pastDelay}
