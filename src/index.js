@@ -13,14 +13,6 @@ let babelInterop = obj => {
   return obj && obj.__esModule ? obj.default : obj;
 };
 
-let tryRequire = (pathOrId: string | number) => {
-  try {
-    // $FlowIgnore
-    return babelInterop(requireFn(pathOrId));
-  } catch (err) {}
-  return null;
-};
-
 type Options = {
   loader: () => Promise<LoadedComponent<Props>>,
   LoadingComponent: LoadingComponent,
@@ -35,12 +27,21 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
   let delay = opts.delay || 200;
   let serverSideRequirePath = opts.serverSideRequirePath;
   let webpackRequireWeakId = opts.webpackRequireWeakId;
+  let resolveModuleFn = opts.resolveModule ? opts.resolveModule : babelInterop;
 
   let isLoading = false;
 
   let outsideComponent = null;
   let outsidePromise = null;
   let outsideError = null;
+
+  let tryRequire = (pathOrId: string | number) => {
+    try {
+      // $FlowIgnore
+      return resolveModuleFn(requireFn(pathOrId));
+    } catch (err) {}
+    return null;
+  };
 
   if (!isWebpack && serverSideRequirePath) {
     outsideComponent = tryRequire(serverSideRequirePath);
@@ -63,7 +64,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
       outsidePromise = loader()
         .then(Component => {
           isLoading = false;
-          outsideComponent = babelInterop(Component);
+          outsideComponent = resolveModuleFn(Component);
         })
         .catch(error => {
           isLoading = false;

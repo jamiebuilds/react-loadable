@@ -106,3 +106,17 @@ test("preload", async () => {
   let component2 = renderer.create(<LoadableMyComponent prop="baz" />);
   expect(component2.toJSON()).toMatchSnapshot(); // success
 });
+
+test("resolveModule", async () => {
+  let LoadableMyComponent = Loadable({
+    loader: createLoader(200, { MyComponent }),
+    LoadingComponent: MyLoadingComponent,
+    resolveModule: module => module.MyComponent
+  });
+  let component = renderer.create(<LoadableMyComponent prop="baz" />);
+  expect(component.toJSON()).toMatchSnapshot(); // initial
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // loading
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // errored
+});
