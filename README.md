@@ -186,3 +186,79 @@ class Application extends React.Component {
   }
 }
 ```
+
+### FAQ
+
+#### Why are their multiple options for specifying a component?
+
+The standard `loader` option is the only required option for specifying a
+component. However, to enable server-side rendering you need
+`serverSideRequirePath` and to optimize Webpack loading you need to specify
+`webpackRequireWeakId`.
+
+```js
+let LoadableMyComponent = Loadable({
+  loader: () => import('./MyComponent'),
+  serverSideRequirePath: path.join(__dirname, './MyComponent'),
+  webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
+  // ...
+});
+```
+
+But why couldn't it just be a string?
+
+```js
+let LoadableMyComponent = Loadable({
+  Component: './MyComponent',
+  // ...
+});
+```
+
+The reason is that tools like Webpack and Browserify rely on static analysis to
+determine how to bundle your code. When it sees code like `import('module')` it
+adds it to the module graph.
+
+When you just have a string like `"./MyComponent"`, these tools don't know the
+difference between that and any other string.
+
+For server-side rendering we need to have an exact file path so that we can
+`require()` it synchronously. We don't specify `require('./MyComponent')`
+directly because that would add it to the bundle in Webpack or Browserify.
+
+For `webpackRequireWeakId` it needs to be a function because
+`require.resolveWeak` does not exist in any tool other than Webpack.
+
+#### How do I avoid repetition?
+
+Specifying the same `LoadingComponent` or `delay` every time you use
+`Loadable()` gets repetitive fast. Instead you can wrap `Loadable` with your
+own Higher-Order Component (HOC) to set default options.
+
+```js
+import Loadable from 'react-loadable';
+import MyLoadingComponent from './MyLoadingComponent';
+
+export default function MyLoadable(opts) {
+  return Loadable({
+    LoadingComponent: MyLoadingComponent,
+    delay: 200,
+    ...opts
+  });
+}
+```
+
+Then you can just specify a `loader` when you go to use it.
+
+```js
+import MyLoadable from './MyLoadable';
+
+let LoadableMyComponent = MyLoadable({
+  loader: () => import('./MyComponent'),
+});
+
+export default class Application extends React.Component {
+  render() {
+    return <LoadableMyComponent/>;
+  }
+}
+```
