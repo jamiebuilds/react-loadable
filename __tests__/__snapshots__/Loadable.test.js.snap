@@ -70,6 +70,27 @@ exports[`preload 3`] = `
 </div>
 `;
 
+exports[`resolveModule 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"error":null}
+</div>
+`;
+
+exports[`resolveModule 2`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"error":null}
+</div>
+`;
+
+exports[`resolveModule 3`] = `
+<div>
+  MyComponent 
+  {"prop":"baz"}
+</div>
+`;
+
 exports[`server side rendering 1`] = `
 <div>
   fixture1
