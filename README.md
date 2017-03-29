@@ -16,7 +16,7 @@ Example Project: https://github.com/thejameskyle/react-loadable-example
 
 Introductory blog post: https://medium.com/@thejameskyle/react-loadable-2674c59de178#.6h46yjgwr
 
-### Example
+## Example
 
 ```js
 // @flow
@@ -56,7 +56,7 @@ export default class Application extends React.Component {
 }
 ```
 
-### API
+## API
 
 ```js
 Loadable({
@@ -187,7 +187,7 @@ class Application extends React.Component {
 }
 ```
 
-### FAQ
+## FAQ
 
 #### Why are their multiple options for specifying a component?
 
