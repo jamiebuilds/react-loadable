@@ -124,7 +124,7 @@ you should use this option.
 
 In order for Loadable to `require()` a component synchronously (when possible)
 instead of waiting for the promise returned by `import()` to resolve. If you
-are using Webpack you should use this option.
+are using Webpack you should use this option. ([Why a function?][webpack-fn])
 
 ```js
 Loadable({
@@ -186,3 +186,5 @@ class Application extends React.Component {
   }
 }
 ```
+
+[webpack-fn]: https://github.com/thejameskyle/react-loadable/issues/8
