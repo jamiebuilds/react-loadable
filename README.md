@@ -133,6 +133,18 @@ Loadable({
 });
 ```
 
+#### `opts.resolveModule` (optional)
+
+If the component that you want to load is not the default exported from a module
+you can use this to function to resolve it.
+
+```js
+Loadable({
+  // ...
+  resolveModule: module => module.MyComponent
+});
+```
+
 #### `Loadable.preload()`
 
 The generated component has a static method `preload()` for calling the loader
