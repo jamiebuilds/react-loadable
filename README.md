@@ -195,7 +195,7 @@ class Application extends React.Component {
 
 ## FAQ
 
-#### Why are their multiple options for specifying a component?
+#### Why are there multiple options for specifying a component?
 
 The standard `loader` option is the only required option for specifying a
 component. However, to enable server-side rendering you need
