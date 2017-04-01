@@ -48,17 +48,6 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
     outsideComponent = tryRequire(serverSideRequirePath);
   }
 
-  if (isWebpack && webpackRequireWeakId) {
-    let weakId = webpackRequireWeakId();
-    if (__webpack_modules__[weakId]) {
-      // if it's not in webpack modules, we wont be able
-      // to load it. If we attempt to, we mess up webpack's
-      // internal state, so only tryRequire if it's already
-      // in webpack modules.
-      outsideComponent = tryRequire(weakId);
-    }
-  }
-
   let load = () => {
     if (!outsidePromise) {
       isLoading = true;
@@ -83,11 +72,26 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
       load();
     }
 
-    state = {
-      error: outsideError,
-      pastDelay: false,
-      Component: outsideComponent
-    };
+    constructor(props) {
+      super(props);
+
+      if (isWebpack && webpackRequireWeakId) {
+        let weakId = webpackRequireWeakId();
+        if (__webpack_modules__[weakId]) {
+          // if it's not in webpack modules, we wont be able
+          // to load it. If we attempt to, we mess up webpack's
+          // internal state, so only tryRequire if it's already
+          // in webpack modules.
+          outsideComponent = tryRequire(weakId);
+        }
+      }
+
+      this.state = {
+        error: outsideError,
+        pastDelay: false,
+        Component: outsideComponent
+      };
+    }
 
     componentWillMount() {
       this._mounted = true;
