@@ -234,6 +234,8 @@ directly because that would add it to the bundle in Webpack or Browserify.
 For `webpackRequireWeakId` it needs to be a function because
 `require.resolveWeak` does not exist in any tool other than Webpack.
 
+If you use Babel, check out [babel-plugin-transform-react-loadable](https://github.com/motiz88/babel-plugin-transform-react-loadable) for a more automated way of setting these properties wherever you use `Loadable()`.
+
 #### How do I avoid repetition?
 
 Specifying the same `LoadingComponent` or `delay` every time you use
