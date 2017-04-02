@@ -75,7 +75,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
     constructor(props) {
       super(props);
 
-      if (isWebpack && webpackRequireWeakId) {
+      if (!outsideComponent && isWebpack && webpackRequireWeakId) {
         let weakId = webpackRequireWeakId();
         if (__webpack_modules__[weakId]) {
           // if it's not in webpack modules, we wont be able
