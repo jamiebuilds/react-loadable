@@ -229,14 +229,26 @@ Loadable({
 });
 ```
 
+#### Plugin Setup
+
 If you have `react-loadable` installed already, all you need to do is add this
 plugin to your Babel config:
 
 ```js
 {
-  plugins: ["react-loadable/babel"]
+  plugins: [
+    ["react-loadable/babel", {
+      server: true,
+      webpack: true
+    }]
+  ]
 }
 ```
+
+**Options:**
+
+- `server` (default: `true`) - When `true` adds `serversideRequirePath` config.
+- `webpack` (default: `false`) - When `true` adds `serversideRequirePath` config.
 
 ## FAQ
 
