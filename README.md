@@ -224,7 +224,7 @@ import Loadable from 'react-loadable';
 Loadable({
   loader: () => import('./MyComponent'),
   LoadingComponent: () => null,
-  serversideRequirePath: _path.join(__dirname, './MyComponent'),
+  serverSideRequirePath: _path.join(__dirname, './MyComponent'),
   webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
 });
 ```
@@ -247,8 +247,8 @@ plugin to your Babel config:
 
 **Options:**
 
-- `server` (default: `true`) - When `true` adds `serversideRequirePath` config.
-- `webpack` (default: `false`) - When `true` adds `serversideRequirePath` config.
+- `server` (default: `true`) - When `true` adds `serverSideRequirePath` config.
+- `webpack` (default: `false`) - When `true` adds `webpackRequireWeakId` config.
 
 ## FAQ
 
