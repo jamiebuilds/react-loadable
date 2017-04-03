@@ -49,7 +49,7 @@ let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
 let LoadableMyComponent = Loadable({
   loader: () => import('./MyComponent'),
   LoadingComponent: MyLoadingComponent,
-  // optional options...
+  // optional config...
   delay: 200,
   serverSideRequirePath: path.join(__dirname, './MyComponent'),
   webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
@@ -109,7 +109,7 @@ If you don't want to render anything you can pass a function that returns
 `null` (this is considered a valid React component).
 
 ```js
-Loading({
+Loadable({
   loader: () => import('./MyComponent'),
   LoadingComponent: () => null,
 });
@@ -126,6 +126,9 @@ When rendering server-side, `require()` this path to load the component
 instead, this way it happens synchronously. If you are rendering server-side
 you should use this option.
 
+If you are using Babel, you might want to use the [Babel plugin](#babel-plugin)
+to add this option automatically.
+
 #### `opts.webpackRequireWeakId` (optional)
 
 In order for Loadable to `require()` a component synchronously (when possible)
@@ -138,6 +141,9 @@ Loadable({
   webpackRequireWeakId: () => require.resolveWeak('./MyComponent')
 });
 ```
+
+If you are using Babel, you might want to use the [Babel plugin](#babel-plugin)
+to add this option automatically.
 
 #### `opts.resolveModule` (optional)
 
@@ -193,6 +199,45 @@ class Application extends React.Component {
 }
 ```
 
+## Babel Plugin
+
+Included in the `react-loadable` package is a Babel plugin that can add
+`serverSideRequirePath` and `webpackRequireWeakId` for you.
+
+**Input:**
+
+```js
+import Loadable from 'react-loadable';
+
+Loadable({
+  loader: () => import('./MyComponent'),
+  LoadingComponent: () => null,
+});
+```
+
+**Output:**
+
+```js
+import _path from 'path';
+import Loadable from 'react-loadable';
+
+Loadable({
+  loader: () => import('./MyComponent'),
+  LoadingComponent: () => null,
+  serversideRequirePath: _path.join(__dirname, './MyComponent'),
+  webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
+});
+```
+
+If you have `react-loadable` installed already, all you need to do is add this
+plugin to your Babel config:
+
+```js
+{
+  plugins: ["react-loadable/babel"]
+}
+```
+
 ## FAQ
 
 #### Why are there multiple options for specifying a component?
@@ -233,6 +278,9 @@ directly because that would add it to the bundle in Webpack or Browserify.
 
 For `webpackRequireWeakId` it needs to be a function because
 `require.resolveWeak` does not exist in any tool other than Webpack.
+
+If you are using Babel, you might want to use the [Babel plugin](#babel-plugin)
+to add these options automatically.
 
 #### How do I avoid repetition?
 

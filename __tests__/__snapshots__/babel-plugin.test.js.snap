@@ -1,0 +1,62 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`accept-default-options 1`] = `
+"import _path from \\"path\\";
+import Loadable from \\"react-loadable\\";
+let LoadableMyComponent = Loadable({
+  loader: () => import(\\"./MyComponent\\"),
+  serverSideRequirePath: _path.join(__dirname, \\"./MyComponent\\"),
+  LoadingComponent: MyLoadingComponent
+});"
+`;
+
+exports[`accept-server-false-webpack-false 1`] = `
+"import Loadable from \\"react-loadable\\";
+let LoadableMyComponent = Loadable({
+  loader: () => import(\\"./MyComponent\\"),
+  LoadingComponent: MyLoadingComponent
+});"
+`;
+
+exports[`accept-server-false-webpack-true 1`] = `
+"import Loadable from \\"react-loadable\\";
+let LoadableMyComponent = Loadable({
+  loader: () => import(\\"./MyComponent\\"),
+  webpackRequireWeakId: () => require.resolveWeak(\\"./MyComponent\\"),
+  LoadingComponent: MyLoadingComponent
+});"
+`;
+
+exports[`accept-server-true-webpack-false 1`] = `
+"import _path from \\"path\\";
+import Loadable from \\"react-loadable\\";
+let LoadableMyComponent = Loadable({
+  loader: () => import(\\"./MyComponent\\"),
+  serverSideRequirePath: _path.join(__dirname, \\"./MyComponent\\"),
+  LoadingComponent: MyLoadingComponent
+});"
+`;
+
+exports[`not-overwrite-existing-properties 1`] = `
+"import Loadable from \\"react-loadable\\";
+let LoadableMyComponent = Loadable({
+  loader: () => import(\\"./MyComponent\\"),
+  LoadingComponent: MyLoadingComponent,
+  serverSideRequirePath: null,
+  webpackRequireWeakId: null
+});"
+`;
+
+exports[`track-imports-correctly 1`] = `
+"import _path from 'path';
+import L from 'react-loadable';
+import Loadable from 'not-react-loadable';
+let C1 = L({
+  loader: () => import('./MyComponent'),
+  serverSideRequirePath: _path.join(__dirname, './MyComponent'),
+  webpackRequireWeakId: () => require.resolveWeak('./MyComponent')
+});
+let C2 = Loadable({
+  loader: () => import('./MyComponent')
+});"
+`;

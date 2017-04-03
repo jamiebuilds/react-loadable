@@ -18,7 +18,8 @@ type Options = {
   LoadingComponent: LoadingComponent,
   delay?: number,
   serverSideRequirePath?: string,
-  webpackRequireWeakId?: () => number
+  webpackRequireWeakId?: () => number,
+  resolveModule?: (obj: Object) => LoadedComponent<Props>
 };
 
 export default function Loadable<Props: {}, Err: Error>(opts: Options) {
