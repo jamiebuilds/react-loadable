@@ -5,6 +5,8 @@ type GenericComponent<Props> = Class<React.Component<{}, Props, mixed>>;
 type LoadedComponent<Props> = GenericComponent<Props>;
 type LoadingComponent = GenericComponent<{}>;
 
+let SERVER_SIDE_REQUIRE_PATHS = new Set();
+
 let isWebpack = typeof __webpack_require__ !== "undefined";
 let requireFn = isWebpack ? __webpack_require__ : module.require.bind(module);
 
@@ -13,7 +15,15 @@ let babelInterop = obj => {
   return obj && obj.__esModule ? obj.default : obj;
 };
 
-type Options = {
+let tryRequire = (resolveModuleFn: Function, pathOrId: string | number) => {
+  try {
+    // $FlowIgnore
+    return resolveModuleFn(requireFn(pathOrId));
+  } catch (err) {}
+  return null;
+};
+
+type Options<Props> = {
   loader: () => Promise<LoadedComponent<Props>>,
   LoadingComponent: LoadingComponent,
   delay?: number,
@@ -22,7 +32,7 @@ type Options = {
   resolveModule?: (obj: Object) => LoadedComponent<Props>
 };
 
-export default function Loadable<Props: {}, Err: Error>(opts: Options) {
+export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
   let loader = opts.loader;
   let LoadingComponent = opts.LoadingComponent;
   let delay = opts.delay || 200;
@@ -36,16 +46,8 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
   let outsidePromise = null;
   let outsideError = null;
 
-  let tryRequire = (pathOrId: string | number) => {
-    try {
-      // $FlowIgnore
-      return resolveModuleFn(requireFn(pathOrId));
-    } catch (err) {}
-    return null;
-  };
-
   if (!isWebpack && serverSideRequirePath) {
-    outsideComponent = tryRequire(serverSideRequirePath);
+    outsideComponent = tryRequire(resolveModuleFn, serverSideRequirePath);
   }
 
   let load = () => {
@@ -72,7 +74,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
       load();
     }
 
-    constructor(props) {
+    constructor(props: Props) {
       super(props);
 
       if (!outsideComponent && isWebpack && webpackRequireWeakId) {
@@ -82,7 +84,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
           // to load it. If we attempt to, we mess up webpack's
           // internal state, so only tryRequire if it's already
           // in webpack modules.
-          outsideComponent = tryRequire(weakId);
+          outsideComponent = tryRequire(resolveModuleFn, weakId);
         }
       }
 
@@ -126,6 +128,10 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
     render() {
       let { pastDelay, error, Component } = this.state;
 
+      if (!isWebpack && serverSideRequirePath) {
+        SERVER_SIDE_REQUIRE_PATHS.add(serverSideRequirePath);
+      }
+
       if (isLoading || error) {
         return (
           <LoadingComponent
@@ -141,4 +147,10 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
       }
     }
   };
+}
+
+export function flushServerSideRequirePaths() {
+  let arr = Array.from(SERVER_SIDE_REQUIRE_PATHS);
+  SERVER_SIDE_REQUIRE_PATHS.clear();
+  return arr;
 }

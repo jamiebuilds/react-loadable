@@ -199,6 +199,21 @@ class Application extends React.Component {
 }
 ```
 
+#### `flushServerSideRequirePaths`
+
+In case you are rendering server-side and want to find out after a render cycle
+which `serverSideRequirePath`'s were actually rendered, you can use
+`flushServerSideRequirePaths` and get an array of them.
+
+```js
+import ReactDOMServer from 'react-dom/server';
+import {flushServerSideRequirePaths} from 'react-loadable';
+
+let app = ReactDOMServer.renderToString(<App/>);
+let requires = flushServerSideRequirePaths();
+// ["/path/to/component.js", "/path/to/other/component.js"]
+```
+
 ## Babel Plugin
 
 Included in the `react-loadable` package is a Babel plugin that can add

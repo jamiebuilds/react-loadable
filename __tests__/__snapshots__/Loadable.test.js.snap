@@ -102,3 +102,17 @@ exports[`server side rendering es6 1`] = `
   fixture2
 </div>
 `;
+
+exports[`server side rendering flushing 1`] = `
+Array [
+  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component.js",
+  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component2.js",
+]
+`;
+
+exports[`server side rendering flushing 2`] = `
+Array [
+  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component.js",
+  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component3.js",
+]
+`;
