@@ -3,7 +3,7 @@ declare var test: any;
 import path from "path";
 import React from "react";
 import renderer from "react-test-renderer";
-import Loadable from "../src";
+import Loadable, { flushServerSideRequirePaths } from "../src";
 
 let waitFor = (delay: number) => {
   return new Promise(resolve => {
@@ -119,4 +119,32 @@ test("resolveModule", async () => {
   expect(component.toJSON()).toMatchSnapshot(); // loading
   await waitFor(200);
   expect(component.toJSON()).toMatchSnapshot(); // errored
+});
+
+test("server side rendering flushing", async () => {
+  let createLoadable = name => {
+    return Loadable({
+      loader: createLoader(400, null, new Error("test error")),
+      LoadingComponent: MyLoadingComponent,
+      serverSideRequirePath: path.join(__dirname, "..", "__fixtures__", name)
+    });
+  };
+
+  let Loadable1 = createLoadable("component.js");
+  let Loadable2 = createLoadable("component2.js");
+  let Loadable3 = createLoadable("component3.js");
+
+  let App = props => (
+    <div>
+      {props.one ? <Loadable1 /> : null}
+      {props.two ? <Loadable2 /> : null}
+      {props.three ? <Loadable3 /> : null}
+    </div>
+  );
+
+  flushServerSideRequirePaths(); // clear first
+  renderer.create(<App one={true} two={true} three={false} />);
+  expect(flushServerSideRequirePaths()).toMatchSnapshot(); // serverside
+  renderer.create(<App one={true} two={false} three={true} />);
+  expect(flushServerSideRequirePaths()).toMatchSnapshot(); // serverside
 });
