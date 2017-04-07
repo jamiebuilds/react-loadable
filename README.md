@@ -176,14 +176,18 @@ let LoadableMyComponent = Loadable({
 });
 
 class Application extends React.Component {
-  state = { showComponent: false };
+  state = { showComponent: false, isLoadedComponent: false };
 
   onClick = () => {
     this.setState({ showComponent: true });
   };
 
   onMouseOver = () => {
-    LoadableMyComponent.preload();
+    const { isLoadedComponent } = this.state;
+    if (!isLoadedComponent) {
+      LoadableMyComponent.preload();
+      this.setState({ isLoadedComponent: true });
+    }
   };
 
   render() {
