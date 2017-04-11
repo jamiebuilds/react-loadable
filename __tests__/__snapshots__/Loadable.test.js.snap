@@ -21,6 +21,19 @@ exports[`loading error 3`] = `
 </div>
 `;
 
+exports[`loader props 1`] = `
+<div>
+  MyErrorComponent
+</div>
+`;
+
+exports[`loader props 2`] = `
+<div>
+  MyErrorComponent
+  dolphin
+</div>
+`;
+
 exports[`loading success 1`] = `
 <div>
   MyLoadingComponent 

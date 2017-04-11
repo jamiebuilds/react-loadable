@@ -48,10 +48,10 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
     outsideComponent = tryRequire(serverSideRequirePath);
   }
 
-  let load = () => {
+  let load = props => {
     if (!outsidePromise) {
       isLoading = true;
-      outsidePromise = loader()
+      outsidePromise = loader(props)
         .then(Component => {
           isLoading = false;
           outsideComponent = resolveModuleFn(Component);
@@ -69,7 +69,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
     _mounted: boolean;
 
     static preload() {
-      load();
+      load(this.props);
     }
 
     constructor(props) {
@@ -107,7 +107,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
         delay
       );
 
-      load().then(() => {
+      load(this.props).then(() => {
         if (!this._mounted) return;
         clearTimeout(this._timeout);
         this.setState({
