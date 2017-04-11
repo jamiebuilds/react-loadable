@@ -120,3 +120,39 @@ test("resolveModule", async () => {
   await waitFor(200);
   expect(component.toJSON()).toMatchSnapshot(); // errored
 });
+
+let createPropsErrorLoader = delay => {
+  return async props => {
+    await waitFor(delay);
+    //console.log(props);
+    throw new Error(props.customerror);
+  };
+};
+
+let MyErrorComponent = ({ error }) => {
+  if (error) {
+    //console.error(error.message);
+    return (
+      <div>
+        MyErrorComponent
+        {error.message}
+      </div>
+    );
+  } else {
+    return <div>MyErrorComponent</div>;
+  }
+};
+
+test("loader props", async () => {
+  let LoadableMyComponent = Loadable({
+    loader: createPropsErrorLoader(300),
+    LoadingComponent: MyErrorComponent
+  });
+
+  let component = renderer.create(
+    <LoadableMyComponent customerror="dolphin" />
+  );
+  expect(component.toJSON()).toMatchSnapshot();
+  await waitFor(400);
+  expect(component.toJSON()).toMatchSnapshot();
+});
