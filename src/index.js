@@ -19,7 +19,8 @@ type Options = {
   delay?: number,
   serverSideRequirePath?: string,
   webpackRequireWeakId?: () => number,
-  resolveModule?: (obj: Object) => LoadedComponent<Props>
+  resolveModule?: (obj: Object) => LoadedComponent<Props>,
+  postLoad: (obj: Object) => void
 };
 
 export default function Loadable<Props: {}, Err: Error>(opts: Options) {
@@ -29,6 +30,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
   let serverSideRequirePath = opts.serverSideRequirePath;
   let webpackRequireWeakId = opts.webpackRequireWeakId;
   let resolveModuleFn = opts.resolveModule ? opts.resolveModule : babelInterop;
+  let postLoadFn = opts.postLoad ? opts.postLoad : (obj: Object) => {};
 
   let isLoading = false;
 
@@ -39,7 +41,9 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
   let tryRequire = (pathOrId: string | number) => {
     try {
       // $FlowIgnore
-      return resolveModuleFn(requireFn(pathOrId));
+      let requiredmodule = requireFn(pathOrId);
+      postLoadFn(requiredmodule);
+      return resolveModuleFn(requiredmodule);
     } catch (err) {}
     return null;
   };
@@ -55,6 +59,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options) {
         .then(Component => {
           isLoading = false;
           outsideComponent = resolveModuleFn(Component);
+          postLoadFn(Component);
         })
         .catch(error => {
           isLoading = false;
