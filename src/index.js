@@ -6,6 +6,7 @@ type LoadedComponent<Props> = GenericComponent<Props>;
 type LoadingComponent = GenericComponent<{}>;
 
 let SERVER_SIDE_REQUIRE_PATHS = new Set();
+let WEBPACK_REQUIRE_WEAK_IDS = new Set();
 
 let isWebpack = typeof __webpack_require__ !== "undefined";
 let requireFn = isWebpack ? __webpack_require__ : module.require.bind(module);
@@ -132,6 +133,10 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
         SERVER_SIDE_REQUIRE_PATHS.add(serverSideRequirePath);
       }
 
+      if (webpackRequireWeakId) {
+        WEBPACK_REQUIRE_WEAK_IDS.add(webpackRequireWeakId());
+      }
+
       if (isLoading || error) {
         return (
           <LoadingComponent
@@ -152,5 +157,11 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
 export function flushServerSideRequirePaths() {
   let arr = Array.from(SERVER_SIDE_REQUIRE_PATHS);
   SERVER_SIDE_REQUIRE_PATHS.clear();
+  return arr;
+}
+
+export function flushWebpackRequireWeakIds() {
+  let arr = Array.from(WEBPACK_REQUIRE_WEAK_IDS);
+  WEBPACK_REQUIRE_WEAK_IDS.clear();
   return arr;
 }

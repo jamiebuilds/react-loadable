@@ -199,20 +199,28 @@ class Application extends React.Component {
 }
 ```
 
-#### `flushServerSideRequirePaths`
+#### `flushServerSideRequirePaths` / `flushwebpackRequireWeakIds`
 
 In case you are rendering server-side and want to find out after a render cycle
-which `serverSideRequirePath`'s were actually rendered, you can use
-`flushServerSideRequirePaths` and get an array of them.
+which `serverSideRequirePath`'s and `webpackRequireWeakId`'s were actually
+rendered, you can use `flushServerSideRequirePaths` or
+`flushWebpackRequireWeakIds` to get an array of them.
 
 ```js
 import ReactDOMServer from 'react-dom/server';
-import {flushServerSideRequirePaths} from 'react-loadable';
+import {
+  flushServerSideRequirePaths,
+  flushWebpackRequireWeakIds
+} from 'react-loadable';
 
 let app = ReactDOMServer.renderToString(<App/>);
-let requires = flushServerSideRequirePaths();
+let serverSideRequirePaths = flushServerSideRequirePaths();
 // ["/path/to/component.js", "/path/to/other/component.js"]
+let webpackRequireWeakIds = flushWebpackRequireWeakIds();
+// [1, 2]
 ```
+
+> **Note:** These are flushed individually, one does not affect the other.
 
 ## Babel Plugin
 
