@@ -133,7 +133,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
         SERVER_SIDE_REQUIRE_PATHS.add(serverSideRequirePath);
       }
 
-      if (webpackRequireWeakId) {
+      if (isWebpack && webpackRequireWeakId) {
         WEBPACK_REQUIRE_WEAK_IDS.add(webpackRequireWeakId());
       }
 
