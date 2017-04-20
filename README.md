@@ -275,7 +275,7 @@ plugin to your Babel config:
 
 **Note:**
 
-If you're using babel + webpack with [syntax-dynamic-import](https://babeljs.io/docs/plugins/syntax-dynamic-import/) plugin and it causes your server-side-rendering dont render on the first request. Consider using [babel-plugin-dynamic-import-node](https://github.com/airbnb/babel-plugin-dynamic-import-node) plugin for your server build. It'll convert **import()** to **require()** and ensure synchronous rendering.  
+If you're using babel plugin + webpack with [syntax-dynamic-import](https://babeljs.io/docs/plugins/syntax-dynamic-import/) plugin and async loading causes your server-side-rendering dont render on the first request. Consider using babel plugin with [babel-plugin-dynamic-import-node](https://github.com/airbnb/babel-plugin-dynamic-import-node) plugin for your server build. It'll additionaly convert **import()** to **require()** and ensure synchronous rendering.  
 
 ## FAQ
 
