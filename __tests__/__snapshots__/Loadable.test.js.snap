@@ -1,5 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`babel: server side rendering flushing 1`] = `
+Array [
+  "/component.js",
+  "/component2.js",
+]
+`;
+
+exports[`babel: server side rendering flushing 2`] = `
+Array [
+  "/component.js",
+  "/component3.js",
+]
+`;
+
 exports[`loading error 1`] = `
 <div>
   MyLoadingComponent 
@@ -103,16 +117,16 @@ exports[`server side rendering es6 1`] = `
 </div>
 `;
 
-exports[`server side rendering flushing 1`] = `
+exports[`webpack: server side rendering flushing 1`] = `
 Array [
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component.js",
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component2.js",
+  "/component.js",
+  "/component2.js",
 ]
 `;
 
-exports[`server side rendering flushing 2`] = `
+exports[`webpack: server side rendering flushing 2`] = `
 Array [
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component.js",
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component3.js",
+  "/component.js",
+  "/component3.js",
 ]
 `;

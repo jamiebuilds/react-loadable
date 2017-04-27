@@ -11,8 +11,11 @@ A higher order component for loading components with promises.
 - Supports server-side rendering via a dynamic `require()`
 - Eagerly preload components when needed
 - Support for requiring synchronously from webpack when available
+- Supports chunk flushing via `webpack-flush-chunks` for complete server-side rendering
 
 Example Project: https://github.com/thejameskyle/react-loadable-example
+
+Example Chunk Flushing Project: https://github.com/faceyspacey/flush-chunks-boilerplate
 
 Introductory blog post: https://medium.com/@thejameskyle/react-loadable-2674c59de178#.6h46yjgwr
 
@@ -199,18 +202,20 @@ class Application extends React.Component {
 }
 ```
 
-#### `flushServerSideRequirePaths` / `flushwebpackRequireWeakIds`
+#### `flushServerSideRequirePaths` / `flushwebpackRequireWeakIds` / `flushRequires`
 
 In case you are rendering server-side and want to find out after a render cycle
 which `serverSideRequirePath`'s and `webpackRequireWeakId`'s were actually
 rendered, you can use `flushServerSideRequirePaths` or
-`flushWebpackRequireWeakIds` to get an array of them.
+`flushWebpackRequireWeakIds` to get an array of them. Or use `flushRequires` and *React Loadable*
+will decide for you what should be flushed.
 
 ```js
 import ReactDOMServer from 'react-dom/server';
 import {
   flushServerSideRequirePaths,
-  flushWebpackRequireWeakIds
+  flushWebpackRequireWeakIds,
+  flushRequires
 } from 'react-loadable';
 
 let app = ReactDOMServer.renderToString(<App/>);
@@ -218,9 +223,56 @@ let serverSideRequirePaths = flushServerSideRequirePaths();
 // ["/path/to/component.js", "/path/to/other/component.js"]
 let webpackRequireWeakIds = flushWebpackRequireWeakIds();
 // [1, 2]
+let weakIdsOrRequirePaths = flushRequires();
+// ["/path/to/component.js", "/path/to/other/component.js"]
+// or
+// [1, 2]
+// depending on the environment (Webpack vs. Babel)
 ```
 
 > **Note:** These are flushed individually, one does not affect the other.
+
+## Complete SSR Handling /w `webpack-flush-chunks`
+
+If you want to bypass having to determine which chunks are needed to synchronously render 
+your modules/components on the client, we highly recommend using our companion package: 
+`webpack-flush-chunks`.
+
+```js
+import path from 'path';
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import ReactLoadable from 'react-loadable';
+import flushChunks from 'webpack-flush-chunks';
+import App from '../src/components/App';
+
+export default function serverRender(webpackStats) {
+  return (req, res, next) => {
+    const app = ReactDOMServer.renderToString(<App />);
+    const moduleIds = ReactLoadable.flushRequires();
+
+    const { Js, Styles } = flushChunks(moduleIds, webpackStats, {
+      before: ['bootstrap', 'vendor'],
+      after: ['main'],
+      rootDir: path.resolve(__dirname, '..')
+    });
+
+    const html = ReactDOM.renderToStaticMarkup(
+      <html>
+        <body>
+          <Styles />
+          <div id="root" dangerouslySetInnerHTML={{ __html: app }} />
+          <Js />
+        </body>
+      </html>
+    );
+
+    res.send(`<!DOCTYPE html>${html}`);
+  }
+}
+```
+
+Checkout [faceyspacey/webpack-flush-chunks](https://github.com/faceyspacey/webpack-flush-chunks) to learn more.
 
 ## Babel Plugin
 
