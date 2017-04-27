@@ -227,7 +227,7 @@ let weakIdsOrRequirePaths = flushRequires();
 // ["/path/to/component.js", "/path/to/other/component.js"]
 // or
 // [1, 2]
-// depending on the environment (Webpack vs. Babel)
+// depending on the environment (Babel vs. Webpack)
 ```
 
 > **Note:** These are flushed individually, one does not affect the other.
