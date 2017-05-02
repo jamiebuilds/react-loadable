@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createFilesByModuleId() 1`] = `
+Object {
+  "asdf": Array [
+    "1.js",
+    "1.no_css.js",
+    "1.css",
+  ],
+  "qwer": Array [
+    "0.js",
+    "0.no_css.js",
+    "0.css",
+  ],
+  "zxcv": Array [],
+}
+`;
+
+exports[`createFilesByPath() 1`] = `
+Object {
+  "./src/Components/Bar.js": Array [],
+  "./src/Components/Example.js": Array [
+    "0.js",
+    "0.no_css.js",
+    "0.css",
+  ],
+  "./src/Components/Foo.js": Array [
+    "1.js",
+    "1.no_css.js",
+    "1.css",
+  ],
+}
+`;
+
+exports[`flush() called as pure function babel: uses default entries when no named chunks provided via opts.before/after 1`] = `
+Array [
+  "0.js",
+  "0.no_css.js",
+  "0.css",
+  "1.js",
+  "1.no_css.js",
+  "1.css",
+]
+`;
+
+exports[`flush() called as pure function webpack: uses default entries when no named chunks provided via opts.before/after 1`] = `
+Array [
+  "0.js",
+  "0.no_css.js",
+  "0.css",
+  "1.js",
+  "1.no_css.js",
+  "1.css",
+]
+`;
