@@ -122,3 +122,37 @@ test("track-imports-correctly", () => {
     )
   ).toMatchSnapshot();
 });
+
+test("add-webpack-chunk-name-property", () => {
+  expect(
+    fn(
+      `
+    import Loadable from "react-loadable";
+    let LoadableMyComponent = Loadable({
+      loader: () => import("./MyComponent" /* webpackChunkName: "my-component" */ ),
+      LoadingComponent: MyLoadingComponent,
+    });
+  `,
+      {
+        server: false,
+        webpack: true
+      }
+    )
+  ).toMatchSnapshot();
+
+  expect(
+    fn(
+      `
+    import Loadable from "react-loadable";
+    let LoadableMyComponent = Loadable({
+      loader: () => import(/*webpackChunkName: "my-component"*/ "./MyComponent"),
+      LoadingComponent: MyLoadingComponent,
+    });
+  `,
+      {
+        server: false,
+        webpack: true
+      }
+    )
+  ).toMatchSnapshot();
+});

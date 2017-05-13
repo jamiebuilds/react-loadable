@@ -2,11 +2,25 @@
 export default function(
   { types: t, template }: { types: Object, template: Function }
 ) {
-  const WEBPACK_PROP = "webpackRequireWeakId";
+  const WEBPACK_REQUIRE_PROP = "webpackRequireWeakId";
+  const WEBPACK_CHUNK_NAME_PROP = "webpackChunkName";
+  const WEBPACK_CHUNK_NAME_PATTERN = /webpackChunkName:\s*"([^"]+)"/;
   const SERVER_PROP = "serverSideRequirePath";
 
-  const webpackTemplate = template(`() => require.resolveWeak(MODULE)`);
+  const webpackRequireTemplate = template(`() => require.resolveWeak(MODULE)`);
   const serverTemplate = template(`PATH.join(__dirname, MODULE)`);
+
+  const getWebpackChunkName = comments => {
+    if (comments) {
+      for (const comment of comments) {
+        const matches = WEBPACK_CHUNK_NAME_PATTERN.exec(comment.value);
+
+        if (matches) {
+          return matches[1];
+        }
+      }
+    }
+  };
 
   return {
     visitor: {
@@ -50,7 +64,7 @@ export default function(
           });
 
           if (
-            (!opts.webpack || properties[WEBPACK_PROP]) &&
+            (!opts.webpack || properties[WEBPACK_REQUIRE_PROP]) &&
             (!opts.server || properties[SERVER_PROP])
           ) {
             return;
@@ -70,14 +84,34 @@ export default function(
 
           let importedModule = dynamicImport.get("arguments")[0];
 
-          if (opts.webpack && !propertiesMap[WEBPACK_PROP]) {
-            let webpack = webpackTemplate({
-              MODULE: importedModule.node
-            }).expression;
+          if (opts.webpack) {
+            if (!propertiesMap[WEBPACK_REQUIRE_PROP]) {
+              let webpackRequire = webpackRequireTemplate({
+                MODULE: importedModule.node
+              }).expression;
 
-            propertiesMap.loader.insertAfter(
-              t.objectProperty(t.identifier(WEBPACK_PROP), webpack)
-            );
+              propertiesMap.loader.insertAfter(
+                t.objectProperty(
+                  t.identifier(WEBPACK_REQUIRE_PROP),
+                  webpackRequire
+                )
+              );
+            }
+
+            if (!propertiesMap[WEBPACK_CHUNK_NAME_PROP]) {
+              let webpackChunkName = getWebpackChunkName(
+                importedModule.node.leadingComments
+              ) || getWebpackChunkName(importedModule.node.trailingComments);
+
+              if (webpackChunkName) {
+                propertiesMap.loader.insertAfter(
+                  t.objectProperty(
+                    t.identifier(WEBPACK_CHUNK_NAME_PROP),
+                    t.stringLiteral(webpackChunkName)
+                  )
+                );
+              }
+            }
           }
 
           if (opts.server && !propertiesMap[SERVER_PROP]) {
