@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "author": "James Kyle <me@thejameskyle.com>",
   "license": "MIT",
+  "repository": "thejameskyle/react-loadable",
   "scripts": {
     "precommit": "lint-staged --verbose",
     "format": "prettier --write '{src,__tests__}/**/*.js'",
