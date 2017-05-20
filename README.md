@@ -1,3 +1,10 @@
+## FORK of react-loadable
+
+Key differences:
+- Supports running webpack on server code.
+- Adds a flush for webpack chunk names.
+- Default loading component.
+
 # `react-loadable`
 
 A higher order component for loading components with promises.
