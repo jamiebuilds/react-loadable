@@ -7,7 +7,9 @@ type LoadingComponent = GenericComponent<{}>;
 
 let SERVER_SIDE_REQUIRE_PATHS = new Set();
 let WEBPACK_REQUIRE_WEAK_IDS = new Set();
+let WEBPACK_CHUNK_NAMES = new Set();
 
+let isServer = typeof window === "undefined";
 let isWebpack = typeof __webpack_require__ !== "undefined";
 let requireFn = isWebpack ? __webpack_require__ : module.require.bind(module);
 
@@ -29,16 +31,18 @@ type Options<Props> = {
   LoadingComponent: LoadingComponent,
   delay?: number,
   serverSideRequirePath?: string,
+  chunkName?: string,
   webpackRequireWeakId?: () => number,
   resolveModule?: (obj: Object) => LoadedComponent<Props>
 };
 
 export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
   let loader = opts.loader;
-  let LoadingComponent = opts.LoadingComponent;
+  let LoadingComponent = opts.LoadingComponent || (() => null);
   let delay = opts.delay || 200;
   let serverSideRequirePath = opts.serverSideRequirePath;
   let webpackRequireWeakId = opts.webpackRequireWeakId;
+  let chunkName = opts.chunkName;
   let resolveModuleFn = opts.resolveModule ? opts.resolveModule : babelInterop;
 
   let isLoading = false;
@@ -66,6 +70,10 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
     }
     return outsidePromise;
   };
+
+  if (isServer) {
+    load();
+  }
 
   return class Loadable extends React.Component<void, Props, *> {
     _timeout: number;
@@ -98,8 +106,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
 
     componentWillMount() {
       this._mounted = true;
-
-      if (this.state.Component) {
+      if (isServer || this.state.Component) {
         return;
       }
 
@@ -129,6 +136,10 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
     render() {
       let { pastDelay, error, Component } = this.state;
 
+      if (isServer) {
+        WEBPACK_CHUNK_NAMES.add(chunkName);
+      }
+
       if (!isWebpack && serverSideRequirePath) {
         SERVER_SIDE_REQUIRE_PATHS.add(serverSideRequirePath);
       }
@@ -157,6 +168,12 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
 export function flushServerSideRequirePaths() {
   let arr = Array.from(SERVER_SIDE_REQUIRE_PATHS);
   SERVER_SIDE_REQUIRE_PATHS.clear();
+  return arr;
+}
+
+export function flushWebpackChunkNames() {
+  let arr = Array.from(WEBPACK_CHUNK_NAMES);
+  WEBPACK_CHUNK_NAMES.clear();
   return arr;
 }
 
