@@ -30,7 +30,9 @@ type Options<Props> = {
   delay?: number,
   serverSideRequirePath?: string,
   webpackRequireWeakId?: () => number,
-  resolveModule?: (obj: Object) => LoadedComponent<Props>
+  resolveModule?: (obj: Object) => LoadedComponent<Props>,
+  parallels: Array<() => Promise>,
+  onLoaded: (Array<mixed>) => void
 };
 
 export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
@@ -40,6 +42,10 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
   let serverSideRequirePath = opts.serverSideRequirePath;
   let webpackRequireWeakId = opts.webpackRequireWeakId;
   let resolveModuleFn = opts.resolveModule ? opts.resolveModule : babelInterop;
+  let parallels = opts.parallels ? opts.parallels : [];
+  let onLoaded = opts.onLoaded
+    ? opts.onLoaded
+    : ([Component]) => Promise.resolve(Component);
 
   let isLoading = false;
 
@@ -54,7 +60,11 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
   let load = () => {
     if (!outsidePromise) {
       isLoading = true;
-      outsidePromise = loader()
+      outsidePromise = Promise.all([
+        loader(),
+        ...parallels.map(promise => promise())
+      ])
+        .then(onLoaded)
         .then(Component => {
           isLoading = false;
           outsideComponent = resolveModuleFn(Component);
