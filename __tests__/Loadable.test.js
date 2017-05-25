@@ -126,7 +126,12 @@ test("server side rendering flushing", async () => {
     return Loadable({
       loader: createLoader(400, null, new Error("test error")),
       LoadingComponent: MyLoadingComponent,
-      serverSideRequirePath: path.join(__dirname, "..", "__fixtures__", name)
+      serverSideRequirePath: path.join(
+        path.basename(__dirname),
+        "..",
+        "__fixtures__",
+        name
+      )
     });
   };
 

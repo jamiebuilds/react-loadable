@@ -140,6 +140,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
       if (isLoading || error) {
         return (
           <LoadingComponent
+            {...this.props}
             isLoading={isLoading}
             pastDelay={pastDelay}
             error={error}
