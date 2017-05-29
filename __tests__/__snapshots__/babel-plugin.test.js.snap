@@ -60,3 +60,21 @@ let C2 = Loadable({
   loader: () => import('./MyComponent')
 });"
 `;
+
+exports[`add-options-to-user-defined-HOC 1`] = `
+"import Loadable from 'react-loadable';
+
+function MyLoadable(opts) {
+  const LoadableComponent = Loadable({
+    LoadingComponent,
+    ...opts,
+  });
+  return props => <LoadableComponent {...props} />;
+}
+
+let C1 = MyLoadable({
+  loader: () => import('./MyComponent'),
+  serverSideRequirePath: _path.join(__dirname, './MyComponent'),
+  webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
+});"
+`;
