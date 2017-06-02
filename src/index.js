@@ -3,7 +3,7 @@ import React from "react";
 
 type GenericComponent<Props> = Class<React.Component<{}, Props, mixed>>;
 type LoadedComponent<Props> = GenericComponent<Props>;
-type LoadingComponent = GenericComponent<{}>;
+type LoadingComponent<Props> = GenericComponent<Props>;
 
 let SERVER_SIDE_REQUIRE_PATHS = new Set();
 let WEBPACK_REQUIRE_WEAK_IDS = new Set();
@@ -26,7 +26,11 @@ let tryRequire = (resolveModuleFn: Function, pathOrId: string | number) => {
 
 type Options<Props> = {
   loader: () => Promise<LoadedComponent<Props>>,
-  LoadingComponent: LoadingComponent,
+  LoadingComponent: LoadingComponent<Props & {
+    isLoading: boolean,
+    error: ?Error,
+    postDelay: boolean
+  }>,
   delay?: number,
   serverSideRequirePath?: string,
   webpackRequireWeakId?: () => number,
@@ -140,6 +144,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
       if (isLoading || error) {
         return (
           <LoadingComponent
+            {...this.props}
             isLoading={isLoading}
             pastDelay={pastDelay}
             error={error}
