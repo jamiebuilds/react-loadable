@@ -8,8 +8,17 @@ type LoadingComponent = GenericComponent<{}>;
 let SERVER_SIDE_REQUIRE_PATHS = new Set();
 let WEBPACK_REQUIRE_WEAK_IDS = new Set();
 
-let isWebpack = typeof __webpack_require__ !== "undefined";
-let requireFn = isWebpack ? __webpack_require__ : module.require.bind(module);
+let isServer = typeof window === "undefined" || process.env.NODE_ENV === "test";
+
+// making the following functions allows us to set webpack globals during tests
+let isWebpack = () => typeof __webpack_require__ !== "undefined";
+let requireFn = (pathOrId: string | number) => {
+  if (!isWebpack() && typeof pathOrId === "string") {
+    return module.require(pathOrId);
+  }
+
+  return __webpack_require__(pathOrId);
+};
 
 let babelInterop = obj => {
   // $FlowIgnore
@@ -18,7 +27,6 @@ let babelInterop = obj => {
 
 let tryRequire = (resolveModuleFn: Function, pathOrId: string | number) => {
   try {
-    // $FlowIgnore
     return resolveModuleFn(requireFn(pathOrId));
   } catch (err) {}
   return null;
@@ -29,7 +37,7 @@ type Options<Props> = {
   LoadingComponent: LoadingComponent,
   delay?: number,
   serverSideRequirePath?: string,
-  webpackRequireWeakId?: () => number,
+  webpackRequireWeakId?: () => number | string,
   resolveModule?: (obj: Object) => LoadedComponent<Props>
 };
 
@@ -43,13 +51,38 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
 
   let isLoading = false;
 
-  let outsideComponent = null;
+  let outsideWeakId = null;
+  let OutsideComponent = null;
   let outsidePromise = null;
   let outsideError = null;
 
-  if (!isWebpack && serverSideRequirePath) {
-    outsideComponent = tryRequire(resolveModuleFn, serverSideRequirePath);
-  }
+  // requires have the possibility to work in HoC closure once again
+  // in order to make HMR work. The reason is because  neither `constructor`
+  // nor `componentWillMount` will be called again in the HMR lifecyle.
+  // We still provide a second a chance to perform the require in the
+  // constructor though, in case the user--instead of using react-flush-chunks--
+  // has decided on the manual strategy of calling `window.render()` after all
+  // scripts have loaded, as per:
+  // https://github.com/thejameskyle/react-loadable/pull/26
+  let synchronousLoad = () => {
+    if (!isWebpack() && serverSideRequirePath) {
+      OutsideComponent = tryRequire(resolveModuleFn, serverSideRequirePath);
+    }
+
+    if (!OutsideComponent && isWebpack() && webpackRequireWeakId) {
+      outsideWeakId = webpackRequireWeakId();
+
+      if (__webpack_modules__[outsideWeakId]) {
+        // if it's not in webpack modules, we wont be able
+        // to load it. If we attempt to, we mess up webpack's
+        // internal state, so only tryRequire if it's already
+        // in webpack modules.
+        OutsideComponent = tryRequire(resolveModuleFn, outsideWeakId);
+      }
+    }
+  };
+
+  synchronousLoad();
 
   let load = () => {
     if (!outsidePromise) {
@@ -57,7 +90,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
       outsidePromise = loader()
         .then(Component => {
           isLoading = false;
-          outsideComponent = resolveModuleFn(Component);
+          OutsideComponent = resolveModuleFn(Component);
         })
         .catch(error => {
           isLoading = false;
@@ -75,31 +108,45 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
       load();
     }
 
+    addModuleIds() {
+      if (isServer) {
+        if (isWebpack() && outsideWeakId) {
+          WEBPACK_REQUIRE_WEAK_IDS.add(outsideWeakId);
+        }
+
+        if (!isWebpack() && serverSideRequirePath) {
+          SERVER_SIDE_REQUIRE_PATHS.add(serverSideRequirePath);
+        }
+      }
+    }
+
     constructor(props: Props) {
       super(props);
-
-      if (!outsideComponent && isWebpack && webpackRequireWeakId) {
-        let weakId = webpackRequireWeakId();
-        if (__webpack_modules__[weakId]) {
-          // if it's not in webpack modules, we wont be able
-          // to load it. If we attempt to, we mess up webpack's
-          // internal state, so only tryRequire if it's already
-          // in webpack modules.
-          outsideComponent = tryRequire(resolveModuleFn, weakId);
-        }
+      // one more attempt to syncronously load module, as per:
+      // https://github.com/thejameskyle/react-loadable/pull/26
+      if (!OutsideComponent) {
+        synchronousLoad();
       }
 
       this.state = {
         error: outsideError,
         pastDelay: false,
-        Component: outsideComponent
+        // `hasComponent` is used instead in order to make HMR work. The reason is
+        // because on file change, if the `Component` was locked in instance state
+        // at `state.Component` then the old `Component` will still be rendered.
+        // In short, `OutsideComponent` is correctly updated in the outer scope,
+        // so during the natural re-render that occurs as part of HMR it will
+        // be used :)
+        hasComponent: !!OutsideComponent
       };
     }
 
     componentWillMount() {
+      this.addModuleIds();
+
       this._mounted = true;
 
-      if (this.state.Component) {
+      if (this.state.hasComponent) {
         return;
       }
 
@@ -116,7 +163,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
         this.setState({
           error: outsideError,
           pastDelay: false,
-          Component: outsideComponent
+          hasComponent: !!OutsideComponent
         });
       });
     }
@@ -127,15 +174,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
     }
 
     render() {
-      let { pastDelay, error, Component } = this.state;
-
-      if (!isWebpack && serverSideRequirePath) {
-        SERVER_SIDE_REQUIRE_PATHS.add(serverSideRequirePath);
-      }
-
-      if (isWebpack && webpackRequireWeakId) {
-        WEBPACK_REQUIRE_WEAK_IDS.add(webpackRequireWeakId());
-      }
+      let { pastDelay, error, hasComponent } = this.state;
 
       if (isLoading || error) {
         return (
@@ -145,8 +184,8 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
             error={error}
           />
         );
-      } else if (Component) {
-        return <Component {...this.props} />;
+      } else if (hasComponent && OutsideComponent) {
+        return <OutsideComponent {...this.props} />;
       } else {
         return null;
       }
@@ -164,4 +203,10 @@ export function flushWebpackRequireWeakIds() {
   let arr = Array.from(WEBPACK_REQUIRE_WEAK_IDS);
   WEBPACK_REQUIRE_WEAK_IDS.clear();
   return arr;
+}
+
+export function flushRequires() {
+  return isWebpack()
+    ? flushWebpackRequireWeakIds()
+    : flushServerSideRequirePaths();
 }

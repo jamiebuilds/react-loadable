@@ -3,7 +3,14 @@ declare var test: any;
 import path from "path";
 import React from "react";
 import renderer from "react-test-renderer";
-import Loadable, { flushServerSideRequirePaths } from "../src";
+import Loadable, {
+  flushServerSideRequirePaths,
+  flushWebpackRequireWeakIds,
+  flushRequires
+} from "../src";
+
+// normalize the required path so tests pass in all environments
+let normalizePath = path => path.split("__fixtures__")[1];
 
 let waitFor = (delay: number) => {
   return new Promise(resolve => {
@@ -121,7 +128,7 @@ test("resolveModule", async () => {
   expect(component.toJSON()).toMatchSnapshot(); // errored
 });
 
-test("server side rendering flushing", async () => {
+test("babel: server side rendering flushing", async () => {
   let createLoadable = name => {
     return Loadable({
       loader: createLoader(400, null, new Error("test error")),
@@ -143,8 +150,57 @@ test("server side rendering flushing", async () => {
   );
 
   flushServerSideRequirePaths(); // clear first
+
   renderer.create(<App one={true} two={true} three={false} />);
-  expect(flushServerSideRequirePaths()).toMatchSnapshot(); // serverside
+  let paths = flushServerSideRequirePaths().map(normalizePath);
+  expect(paths).toMatchSnapshot(); // serverside
+
   renderer.create(<App one={true} two={false} three={true} />);
-  expect(flushServerSideRequirePaths()).toMatchSnapshot(); // serverside
+  paths = flushRequires().map(normalizePath);
+  expect(paths).toMatchSnapshot(); // serverside
+});
+
+test("webpack: server side rendering flushing", async () => {
+  const createPath = name => path.join(__dirname, "..", "__fixtures__", name);
+
+  global.__webpack_require__ = path => __webpack_modules__[path];
+
+  global.__webpack_modules__ = {
+    [createPath("component.js")]: require(createPath("component.js")),
+    [createPath("component2.js")]: require(createPath("component2.js")),
+    [createPath("component3.js")]: require(createPath("component3.js"))
+  };
+
+  let createLoadable = name => {
+    return Loadable({
+      loader: createLoader(400, null, new Error("test error")),
+      LoadingComponent: MyLoadingComponent,
+      webpackRequireWeakId: () => createPath(name)
+    });
+  };
+
+  let Loadable1 = createLoadable("component.js");
+  let Loadable2 = createLoadable("component2.js");
+  let Loadable3 = createLoadable("component3.js");
+
+  let App = props => (
+    <div>
+      {props.one ? <Loadable1 /> : null}
+      {props.two ? <Loadable2 /> : null}
+      {props.three ? <Loadable3 /> : null}
+    </div>
+  );
+
+  flushWebpackRequireWeakIds(); // clear first
+
+  renderer.create(<App one={true} two={true} three={false} />);
+  let paths = flushWebpackRequireWeakIds().map(normalizePath);
+  expect(paths).toMatchSnapshot(); // serverside
+
+  renderer.create(<App one={true} two={false} three={true} />);
+  paths = flushRequires().map(normalizePath);
+  expect(paths).toMatchSnapshot(); // serverside
+
+  delete global.__webpack_require__;
+  delete global.__webpack_modules__;
 });
