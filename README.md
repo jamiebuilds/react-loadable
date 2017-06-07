@@ -274,6 +274,10 @@ plugin to your Babel config:
 - `server` (default: `true`) - When `true` adds `serverSideRequirePath` config.
 - `webpack` (default: `false`) - When `true` adds `webpackRequireWeakId` config.
 
+**Note:**
+
+If you're using babel plugin + webpack with [syntax-dynamic-import](https://babeljs.io/docs/plugins/syntax-dynamic-import/) plugin and async loading causes your server-side-rendering dont render on the first request. Consider using babel plugin with [babel-plugin-dynamic-import-node](https://github.com/airbnb/babel-plugin-dynamic-import-node) plugin for your server build. It'll additionaly convert **import()** to **require()** and ensure synchronous rendering.  
+
 ## FAQ
 
 #### Why are there multiple options for specifying a component?
