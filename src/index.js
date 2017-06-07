@@ -72,7 +72,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
     _mounted: boolean;
 
     static preload() {
-      load();
+      return load();
     }
 
     constructor(props: Props) {
