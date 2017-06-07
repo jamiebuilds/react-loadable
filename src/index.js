@@ -138,7 +138,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
       }
 
       if (isLoading || error) {
-        return (
+        return (!LoadingComponent ? null :
           <LoadingComponent
             isLoading={isLoading}
             pastDelay={pastDelay}
