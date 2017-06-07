@@ -3,35 +3,35 @@
 exports[`loading error 1`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":false,"error":null}
+  {"prop":"baz","isLoading":true,"pastDelay":false,"error":null}
 </div>
 `;
 
 exports[`loading error 2`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":true,"error":null}
+  {"prop":"baz","isLoading":true,"pastDelay":true,"error":null}
 </div>
 `;
 
 exports[`loading error 3`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":false,"pastDelay":false,"error":{}}
+  {"prop":"baz","isLoading":false,"pastDelay":false,"error":{}}
 </div>
 `;
 
 exports[`loading success 1`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":false,"error":null}
+  {"prop":"foo","isLoading":true,"pastDelay":false,"error":null}
 </div>
 `;
 
 exports[`loading success 2`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":true,"error":null}
+  {"prop":"foo","isLoading":true,"pastDelay":true,"error":null}
 </div>
 `;
 
@@ -52,7 +52,7 @@ exports[`loading success 4`] = `
 exports[`preload 1`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":false,"error":null}
+  {"prop":"baz","isLoading":true,"pastDelay":false,"error":null}
 </div>
 `;
 
@@ -73,14 +73,14 @@ exports[`preload 3`] = `
 exports[`resolveModule 1`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":false,"error":null}
+  {"prop":"baz","isLoading":true,"pastDelay":false,"error":null}
 </div>
 `;
 
 exports[`resolveModule 2`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":true,"error":null}
+  {"prop":"baz","isLoading":true,"pastDelay":true,"error":null}
 </div>
 `;
 
@@ -105,14 +105,14 @@ exports[`server side rendering es6 1`] = `
 
 exports[`server side rendering flushing 1`] = `
 Array [
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component.js",
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component2.js",
+  "__fixtures__/component.js",
+  "__fixtures__/component2.js",
 ]
 `;
 
 exports[`server side rendering flushing 2`] = `
 Array [
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component.js",
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component3.js",
+  "__fixtures__/component.js",
+  "__fixtures__/component3.js",
 ]
 `;
