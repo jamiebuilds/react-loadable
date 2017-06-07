@@ -37,6 +37,26 @@ let LoadableMyComponent = Loadable({
 });"
 `;
 
+exports[`add-webpack-chunk-name-property 1`] = `
+"import Loadable from \\"react-loadable\\";
+let LoadableMyComponent = Loadable({
+  loader: () => import(\\"./MyComponent\\" /* webpackChunkName: \\"my-component\\" */),
+  webpackChunkName: \\"my-component\\",
+  webpackRequireWeakId: () => require.resolveWeak(\\"./MyComponent\\"),
+  LoadingComponent: MyLoadingComponent
+});"
+`;
+
+exports[`add-webpack-chunk-name-property 2`] = `
+"import Loadable from \\"react-loadable\\";
+let LoadableMyComponent = Loadable({
+  loader: () => import( /*webpackChunkName: \\"my-component\\"*/\\"./MyComponent\\"),
+  webpackChunkName: \\"my-component\\",
+  webpackRequireWeakId: () => require.resolveWeak(\\"./MyComponent\\"),
+  LoadingComponent: MyLoadingComponent
+});"
+`;
+
 exports[`not-overwrite-existing-properties 1`] = `
 "import Loadable from \\"react-loadable\\";
 let LoadableMyComponent = Loadable({

@@ -3,7 +3,10 @@ declare var test: any;
 import path from "path";
 import React from "react";
 import renderer from "react-test-renderer";
-import Loadable, { flushServerSideRequirePaths } from "../src";
+import Loadable, {
+  flushServerSideRequirePaths,
+  flushWebpackChunkNames
+} from "../src";
 
 let waitFor = (delay: number) => {
   return new Promise(resolve => {

@@ -6,6 +6,7 @@ type LoadedComponent<Props> = GenericComponent<Props>;
 type LoadingComponent = GenericComponent<{}>;
 
 let SERVER_SIDE_REQUIRE_PATHS = new Set();
+let WEBPACK_CHUNK_NAMES = new Set();
 let WEBPACK_REQUIRE_WEAK_IDS = new Set();
 
 let isWebpack = typeof __webpack_require__ !== "undefined";
@@ -29,6 +30,7 @@ type Options<Props> = {
   LoadingComponent: LoadingComponent,
   delay?: number,
   serverSideRequirePath?: string,
+  webpackChunkName?: string,
   webpackRequireWeakId?: () => number,
   resolveModule?: (obj: Object) => LoadedComponent<Props>
 };
@@ -38,6 +40,7 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
   let LoadingComponent = opts.LoadingComponent;
   let delay = opts.delay || 200;
   let serverSideRequirePath = opts.serverSideRequirePath;
+  let webpackChunkName = opts.webpackChunkName;
   let webpackRequireWeakId = opts.webpackRequireWeakId;
   let resolveModuleFn = opts.resolveModule ? opts.resolveModule : babelInterop;
 
@@ -129,8 +132,14 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
     render() {
       let { pastDelay, error, Component } = this.state;
 
-      if (!isWebpack && serverSideRequirePath) {
-        SERVER_SIDE_REQUIRE_PATHS.add(serverSideRequirePath);
+      if (!isWebpack) {
+        if (serverSideRequirePath) {
+          SERVER_SIDE_REQUIRE_PATHS.add(serverSideRequirePath);
+        }
+
+        if (webpackChunkName) {
+          WEBPACK_CHUNK_NAMES.add(webpackChunkName);
+        }
       }
 
       if (isWebpack && webpackRequireWeakId) {
@@ -157,6 +166,12 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
 export function flushServerSideRequirePaths() {
   let arr = Array.from(SERVER_SIDE_REQUIRE_PATHS);
   SERVER_SIDE_REQUIRE_PATHS.clear();
+  return arr;
+}
+
+export function flushWebpackChunkNames() {
+  let arr = Array.from(WEBPACK_CHUNK_NAMES);
+  WEBPACK_CHUNK_NAMES.clear();
   return arr;
 }
 
