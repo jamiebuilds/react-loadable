@@ -8,84 +8,78 @@ let trim = str => {
   return str.replace(/\r\n?/g, "\n").trim();
 };
 
-let fn = (code, opts = {}) => {
+let expectCode = (code, opts = {}) => {
   let input = trim(code);
-  let options = { plugins: [[plugin, opts], "syntax-dynamic-import"] };
-  return transform(input, options).code;
+  let options = {
+    presets: ["stage-2", "react"],
+    plugins: [[plugin, opts], "syntax-dynamic-import"]
+  };
+  return expect(transform(input, options).code);
 };
 
 test("accept-default-options", () => {
-  expect(
-    fn(
-      `
+  expectCode(
+    `
     import Loadable from "react-loadable";
     let LoadableMyComponent = Loadable({
       loader: () => import("./MyComponent"),
       LoadingComponent: MyLoadingComponent,
     });
   `
-    )
   ).toMatchSnapshot();
 });
 
 test("accept-server-false-webpack-false", () => {
-  expect(
-    fn(
-      `
+  expectCode(
+    `
     import Loadable from "react-loadable";
     let LoadableMyComponent = Loadable({
       loader: () => import("./MyComponent"),
       LoadingComponent: MyLoadingComponent,
     });
   `,
-      {
-        server: false,
-        webpack: false
-      }
-    )
+    {
+      server: false,
+      webpack: false
+    }
   ).toMatchSnapshot();
 });
 
 test("accept-server-false-webpack-true", () => {
-  expect(
-    fn(
-      `
+  expectCode(
+    `
     import Loadable from "react-loadable";
     let LoadableMyComponent = Loadable({
       loader: () => import("./MyComponent"),
       LoadingComponent: MyLoadingComponent,
     });
   `,
-      {
-        server: false,
-        webpack: true
-      }
-    )
+    {
+      server: false,
+      webpack: true
+    }
   ).toMatchSnapshot();
 });
 
 test("accept-server-true-webpack-false", () => {
-  expect(
-    fn(
-      `
+  expectCode(
+    `
     import Loadable from "react-loadable";
     let LoadableMyComponent = Loadable({
       loader: () => import("./MyComponent"),
       LoadingComponent: MyLoadingComponent,
     });
   `,
-      {
-        server: true,
-        webpack: false
-      }
-    )
+    {
+      server: true,
+      webpack: false
+    }
   ).toMatchSnapshot();
 });
 
 test("not-overwrite-existing-properties", () => {
-  expect(
-    fn(
-      `
+  expectCode(
+    `
     import Loadable from "react-loadable";
     let LoadableMyComponent = Loadable({
       loader: () => import("./MyComponent"),
@@ -94,18 +88,16 @@ test("not-overwrite-existing-properties", () => {
       webpackRequireWeakId: null
     });
   `,
-      {
-        server: true,
-        webpack: true
-      }
-    )
+    {
+      server: true,
+      webpack: true
+    }
   ).toMatchSnapshot();
 });
 
 test("track-imports-correctly", () => {
-  expect(
-    fn(
-      `
+  expectCode(
+    `
     import L from 'react-loadable';
     import Loadable from 'not-react-loadable';
     let C1 = L({
@@ -115,10 +107,33 @@ test("track-imports-correctly", () => {
       loader: () => import('./MyComponent')
     });
   `,
-      {
-        server: true,
-        webpack: true
-      }
-    )
+    {
+      server: true,
+      webpack: true
+    }
+  ).toMatchSnapshot();
+});
+
+test("add-options-to-user-defined-HOC", () => {
+  expectCode(
+    `
+    import Loadable from 'react-loadable';
+
+    function MyLoadable(opts) {
+      const LoadableComponent = Loadable({
+        LoadingComponent,
+        ...opts,
+      });
+      return props => <LoadableComponent {...props} />;
+    }
+
+    let C1 = MyLoadable({
+      loader: () => import('./MyComponent')
+    });
+  `,
+    {
+      server: true,
+      webpack: true
+    }
   ).toMatchSnapshot();
 });
