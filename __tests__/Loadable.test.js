@@ -148,3 +148,18 @@ test("server side rendering flushing", async () => {
   renderer.create(<App one={true} two={false} three={true} />);
   expect(flushServerSideRequirePaths()).toMatchSnapshot(); // serverside
 });
+
+test("parallels", async () => {
+  let LoadableMyComponent = Loadable({
+    loader: createLoader(200, MyComponent),
+    LoadingComponent: MyLoadingComponent,
+    parallels: [() => new Promise(resolve => resolve("foo"))],
+    onLoaded: ([Component, value1]) => {
+      expect(value1).toBe("foo");
+      return Promise.resolve(Component);
+    }
+  });
+
+  let component = renderer.create(<LoadableMyComponent />);
+  expect(component.toJSON()).toMatchSnapshot();
+});

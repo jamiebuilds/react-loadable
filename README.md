@@ -54,6 +54,11 @@ let LoadableMyComponent = Loadable({
   delay: 200,
   serverSideRequirePath: path.join(__dirname, './MyComponent'),
   webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
+  parallels: [fetch(), fetchNumber2()],
+  onLoaded: ([Component, result1, result2]) => {
+    // ... do what you want
+    return Promise.resolve(Component)
+  }
 });
 
 export default class Application extends React.Component {
@@ -73,6 +78,8 @@ Loadable({
   delay?: number = 200,
   serverSideRequirePath?: string,
   webpackRequireWeakId?: () => number,
+  parallels: Array<() => Promise>,
+  onLoaded: (Array<mixed>) => void,
 })
 ```
 
@@ -155,6 +162,34 @@ you can use this to function to resolve it.
 Loadable({
   // ...
   resolveModule: module => module.MyComponent
+});
+```
+
+#### `opts.parallels` (optional)
+
+If you need to make additional requests (assets, data, etc...) alongside your
+component, you can send them as an array of promise functions.
+
+```js
+Loadable({
+  // ...
+  parallels: [
+    () => new Promise((resolve, reject) => {
+      // ... do whatever you need
+    }),
+  ],
+});
+```
+
+#### `opts.onLoaded` (optional)
+
+This callback is called when the component (and its optional parallel requests)
+have finished loading. You need to return a resolved promised with the component.
+
+```js
+Loadable({
+  // ...
+  onLoaded: ([Component, ...optionalResults]) => Promise.resolve(Component),
 });
 ```
 
