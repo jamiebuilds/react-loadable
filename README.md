@@ -146,6 +146,20 @@ Loadable({
 If you are using Babel, you might want to use the [Babel plugin](#babel-plugin)
 to add this option automatically.
 
+**NOTE**:
+In case you are using code-splitting with webpack it's not possible sometimes to handle
+`require()` synchronously. For example:
+1. you have several async chunks on server and during the first `require()` call that
+chunk still wasn't registred in webpack modules. solution: get rid of async chunks for
+server bundle with merging into the main bundle. for example:
+```
+new webpack.optimize.LimitChunkCountPlugin({
+    maxChunks: 1
+})
+```
+2. you pre-fetched/pre-loaded async chunk in browser, but it doesn't mean that it was registred
+in webpack modules. solution: use `delay` param to prevent flashing of component content.
+
 #### `opts.resolveModule` (optional)
 
 If the component that you want to load is not the default exported from a module
