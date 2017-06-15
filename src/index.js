@@ -1,152 +1,155 @@
-// @flow
-import React from "react";
+'use strict';
 
-type GenericComponent<Props> = Class<React.Component<{}, Props, mixed>>;
-type LoadedComponent<Props> = GenericComponent<Props>;
-type LoadingComponent = GenericComponent<{}>;
+const React = require('react');
+const isWebpackBundle = require('is-webpack-bundle');
+const webpackRequireWeak = require('webpack-require-weak');
+const {inspect} = require('import-inspector');
 
-let SERVER_SIDE_REQUIRE_PATHS = new Set();
-let WEBPACK_REQUIRE_WEAK_IDS = new Set();
+function capture(fn) {
+  let reported = [];
+  let stopInspecting = inspect(metadata => reported.push(metadata));
+  let promise = fn();
+  stopInspecting();
+  return {promise, reported};
+}
 
-let isWebpack = typeof __webpack_require__ !== "undefined";
-let requireFn = isWebpack ? __webpack_require__ : module.require.bind(module);
+function load(loader) {
+  let {promise, reported} = capture(() => {
+    return loader();
+  });
 
-let babelInterop = obj => {
-  // $FlowIgnore
-  return obj && obj.__esModule ? obj.default : obj;
-};
-
-let tryRequire = (resolveModuleFn: Function, pathOrId: string | number) => {
-  try {
-    // $FlowIgnore
-    return resolveModuleFn(requireFn(pathOrId));
-  } catch (err) {}
-  return null;
-};
-
-type Options<Props> = {
-  loader: () => Promise<LoadedComponent<Props>>,
-  LoadingComponent: LoadingComponent,
-  delay?: number,
-  serverSideRequirePath?: string,
-  webpackRequireWeakId?: () => number,
-  resolveModule?: (obj: Object) => LoadedComponent<Props>
-};
-
-export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
-  let loader = opts.loader;
-  let LoadingComponent = opts.LoadingComponent;
-  let delay = opts.delay || 200;
-  let serverSideRequirePath = opts.serverSideRequirePath;
-  let webpackRequireWeakId = opts.webpackRequireWeakId;
-  let resolveModuleFn = opts.resolveModule ? opts.resolveModule : babelInterop;
-
-  let isLoading = false;
-
-  let outsideComponent = null;
-  let outsidePromise = null;
-  let outsideError = null;
-
-  if (!isWebpack && serverSideRequirePath) {
-    outsideComponent = tryRequire(resolveModuleFn, serverSideRequirePath);
+  if (reported.length > 1) {
+    throw new Error('react-loadable cannot handle more than one import() in each loader');
   }
 
-  let load = () => {
-    if (!outsidePromise) {
-      isLoading = true;
-      outsidePromise = loader()
-        .then(Component => {
-          isLoading = false;
-          outsideComponent = resolveModuleFn(Component);
-        })
-        .catch(error => {
-          isLoading = false;
-          outsideError = error;
-        });
+  let state = {};
+  let metadata = reported[0] || {};
+  let loaded = null;
+  let error = null;
+
+  try {
+    if (isWebpackBundle) {
+      if (typeof metadata.webpackRequireWeakId === 'function') {
+        loaded = webpackRequireWeak(metadata.webpackRequireWeakId());
+      }
+    } else {
+      if (typeof metadata.serverSideRequirePath === 'string') {
+        loaded = module.require(metadata.serverSideRequirePath);
+      }
     }
-    return outsidePromise;
-  };
+  } catch (err) {
+    error = err;
+  }
 
-  return class Loadable extends React.Component<void, Props, *> {
-    _timeout: number;
-    _mounted: boolean;
+  state.promise = promise;
+  state.loaded = loaded;
+  state.error = error;
 
-    static preload() {
-      load();
-    }
+  promise.then(loaded => {
+    state.loaded = loaded;
+  }).catch(err => {
+    state.error = err;
+  });
 
-    constructor(props: Props) {
+  return state;
+}
+
+function resolve(obj) {
+  return obj && obj.__esModule ? obj.default : obj;
+}
+
+function render(loaded, props) {
+  return React.createElement(resolve(loaded), props);
+}
+
+function Loadable(options) {
+  let opts = Object.assign({
+    loader: null,
+    loading: null,
+    delay: 200,
+    timeout: null,
+    render: render
+  }, options);
+
+  let res = null;
+
+  return class LoadableComponent extends React.Component {
+    constructor(props) {
       super(props);
 
-      if (!outsideComponent && isWebpack && webpackRequireWeakId) {
-        let weakId = webpackRequireWeakId();
-        if (__webpack_modules__[weakId]) {
-          // if it's not in webpack modules, we wont be able
-          // to load it. If we attempt to, we mess up webpack's
-          // internal state, so only tryRequire if it's already
-          // in webpack modules.
-          outsideComponent = tryRequire(resolveModuleFn, weakId);
-        }
+      if (!res) {
+        res = load(opts.loader);
       }
 
       this.state = {
-        error: outsideError,
+        error: res.error,
         pastDelay: false,
-        Component: outsideComponent
+        timedOut: false,
+        loaded: res.loaded
       };
+    }
+
+    static preload() {
+      if (!res) {
+        res = load(opts.loader);
+      }
     }
 
     componentWillMount() {
       this._mounted = true;
 
-      if (this.state.Component) {
+      if (res.resolved) {
         return;
       }
 
-      this._timeout = setTimeout(
-        () => {
+      if (typeof opts.delay === 'number') {
+        this._delay = setTimeout(() => {
           this.setState({ pastDelay: true });
-        },
-        delay
-      );
+        }, opts.delay);
+      }
 
-      load().then(() => {
-        if (!this._mounted) return;
-        clearTimeout(this._timeout);
+      if (typeof opts.timeout === 'number') {
+        this._timeout = setTimeout(() => {
+          this.setState({ timedOut: true });
+        }, opts.timeout);
+      }
+
+      let cb = () => {
+        if (!this._mounted) {
+          return;
+        }
+
         this.setState({
-          error: outsideError,
-          pastDelay: false,
-          Component: outsideComponent
+          error: res.error,
+          loaded: res.loaded,
         });
-      });
+
+        this._clearTimeouts();
+      };
+
+      res.promise.then(cb, cb);
     }
 
     componentWillUnmount() {
       this._mounted = false;
+      this._clearTimeouts();
+    }
+
+    _clearTimeouts() {
+      clearTimeout(this._delay);
       clearTimeout(this._timeout);
     }
 
     render() {
-      let { pastDelay, error, Component } = this.state;
-
-      if (!isWebpack && serverSideRequirePath) {
-        SERVER_SIDE_REQUIRE_PATHS.add(serverSideRequirePath);
-      }
-
-      if (isWebpack && webpackRequireWeakId) {
-        WEBPACK_REQUIRE_WEAK_IDS.add(webpackRequireWeakId());
-      }
-
-      if (isLoading || error) {
-        return (
-          <LoadingComponent
-            isLoading={isLoading}
-            pastDelay={pastDelay}
-            error={error}
-          />
-        );
-      } else if (Component) {
-        return <Component {...this.props} />;
+      if (!this.state.loaded || this.state.error) {
+        return React.createElement(opts.loading, {
+          isLoading: this.state.isLoading,
+          pastDelay: this.state.pastDelay,
+          timedOut: this.state.timedOut,
+          error: this.state.error
+        });
+      } else if (this.state.loaded) {
+        return opts.render(this.state.loaded, this.props);
       } else {
         return null;
       }
@@ -154,14 +157,4 @@ export default function Loadable<Props: {}, Err: Error>(opts: Options<Props>) {
   };
 }
 
-export function flushServerSideRequirePaths() {
-  let arr = Array.from(SERVER_SIDE_REQUIRE_PATHS);
-  SERVER_SIDE_REQUIRE_PATHS.clear();
-  return arr;
-}
-
-export function flushWebpackRequireWeakIds() {
-  let arr = Array.from(WEBPACK_REQUIRE_WEAK_IDS);
-  WEBPACK_REQUIRE_WEAK_IDS.clear();
-  return arr;
-}
+module.exports = Loadable;
