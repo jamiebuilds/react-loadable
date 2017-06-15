@@ -1,5 +1,3 @@
-'use strict';
-
 const React = require('react');
 const isWebpackBundle = require('is-webpack-bundle');
 const webpackRequireWeak = require('webpack-require-weak');
@@ -22,33 +20,81 @@ function load(loader) {
     throw new Error('react-loadable cannot handle more than one import() in each loader');
   }
 
-  let state = {};
+  let state = {
+    loading: true,
+    loaded: null,
+    error: null
+  };
+
   let metadata = reported[0] || {};
-  let loaded = null;
-  let error = null;
 
   try {
     if (isWebpackBundle) {
       if (typeof metadata.webpackRequireWeakId === 'function') {
-        loaded = webpackRequireWeak(metadata.webpackRequireWeakId());
+        state.loading = false;
+        state.loaded = webpackRequireWeak(metadata.webpackRequireWeakId());
       }
     } else {
       if (typeof metadata.serverSideRequirePath === 'string') {
-        loaded = module.require(metadata.serverSideRequirePath);
+        state.loading = false;
+        state.loaded = module.require(metadata.serverSideRequirePath);
       }
     }
+  } catch (err) {
+    state.error = err;
+  }
+
+  state.promise = promise.then(loaded => {
+    state.loading = false;
+    state.loaded = loaded;
+    return loaded;
+  }).catch(err => {
+    state.loading = false;
+    state.error = err;
+    throw err;
+  });
+
+  return state;
+}
+
+function loadMap(obj) {
+  let state = {
+    loading: false,
+    loaded: {},
+    error: null
+  };
+
+  let promises = [];
+
+  try {
+    Object.keys(obj).forEach(key => {
+      let result = load(obj[key]);
+
+      if (!result.loading) {
+        state.loaded[key] = result.loaded;
+        state.error = result.error;
+      } else {
+        state.loading = true;
+      }
+
+      promises.push(result.promise);
+
+      result.promise.then(res => {
+        state.loaded[key] = res;
+      }).catch(err => {
+        state.error = err;
+      });
+    });
   } catch (err) {
     error = err;
   }
 
-  state.promise = promise;
-  state.loaded = loaded;
-  state.error = error;
-
-  promise.then(loaded => {
-    state.loaded = loaded;
+  state.promise = Promise.all(promises).then(res => {
+    state.loading = false;
+    return res;
   }).catch(err => {
-    state.error = err;
+    state.loading = false;
+    throw err;
   });
 
   return state;
@@ -62,7 +108,7 @@ function render(loaded, props) {
   return React.createElement(resolve(loaded), props);
 }
 
-function Loadable(options) {
+function createLoadableComponent(loadFn, options) {
   let opts = Object.assign({
     loader: null,
     loading: null,
@@ -78,20 +124,21 @@ function Loadable(options) {
       super(props);
 
       if (!res) {
-        res = load(opts.loader);
+        res = loadFn(opts.loader);
       }
 
       this.state = {
         error: res.error,
         pastDelay: false,
         timedOut: false,
+        loading: res.loading,
         loaded: res.loaded
       };
     }
 
     static preload() {
       if (!res) {
-        res = load(opts.loader);
+        res = loadFn(opts.loader);
       }
     }
 
@@ -114,7 +161,7 @@ function Loadable(options) {
         }, opts.timeout);
       }
 
-      let cb = () => {
+      let update = () => {
         if (!this._mounted) {
           return;
         }
@@ -122,12 +169,18 @@ function Loadable(options) {
         this.setState({
           error: res.error,
           loaded: res.loaded,
+          loading: res.loading
         });
 
         this._clearTimeouts();
       };
 
-      res.promise.then(cb, cb);
+      res.promise.then(() => {
+        update();
+      }).catch(err => {
+        update();
+        throw err;
+      });
     }
 
     componentWillUnmount() {
@@ -141,7 +194,7 @@ function Loadable(options) {
     }
 
     render() {
-      if (!this.state.loaded || this.state.error) {
+      if (this.state.loading || this.state.error) {
         return React.createElement(opts.loading, {
           isLoading: this.state.isLoading,
           pastDelay: this.state.pastDelay,
@@ -156,5 +209,19 @@ function Loadable(options) {
     }
   };
 }
+
+function Loadable(opts) {
+  return createLoadableComponent(load, opts);
+}
+
+function LoadableMap(opts) {
+  if (typeof opts.render !== 'function') {
+    throw new Error('LoadableMap requires a `render(loaded, props)` function');
+  }
+
+  return createLoadableComponent(loadMap, opts);
+}
+
+Loadable.Map = LoadableMap;
 
 module.exports = Loadable;
