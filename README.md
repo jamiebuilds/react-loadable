@@ -1,20 +1,24 @@
 # `react-loadable`
 
-A higher order component for loading components with promises.
+> A higher order component for loading components with dynamic imports.
 
-- Returns `null` until after a `delay` (default: 200ms)
-- Returns `<LoadingComponent/>` after `delay` and before `loader()` is successful
-- Caches `Component` returned by `loader()` on success
-- Shows optional `<ErrorComponent/>` any time the `loader()` fails until it succeeds.
-- Avoids flashing states when it doesn't need to.
-- Designed around module bundlers like Webpack (async imports work statically)
-- Supports server-side rendering via a dynamic `require()`
-- Eagerly preload components when needed
-- Support for requiring synchronously from webpack when available
+## Example
 
-Example Project: https://github.com/thejameskyle/react-loadable-example
+```js
+import Loadable from 'react-loadable';
+import Loading from './my-loading-component';
 
-Introductory blog post: https://medium.com/@thejameskyle/react-loadable-2674c59de178#.6h46yjgwr
+const LoadableComponent = Loadable({
+  loader: () => import('./my-component'),
+  loading: Loading,
+});
+
+export default class App extends React.Component {
+  render() {
+    return <LoadableComponent/>;
+  }
+}
+```
 
 ## Happy Customers:
 
@@ -23,160 +27,164 @@ Introductory blog post: https://medium.com/@thejameskyle/react-loadable-2674c59d
 - ["Oh hey - using loadable component I knocked 13K off my initial load. Easy win!"](https://twitter.com/AdamRackis/status/846593080992153600)
 - ["Had a look and its awesome. shaved like 50kb off our main bundle."](https://github.com/quran/quran.com-frontend/pull/701#issuecomment-287908551)
 
-## Example
+## Guide
+
+### `opts.loader`
 
 ```js
-// @flow
-import path from 'path';
-import React from 'react';
-import Loadable from 'react-loadable';
+Loadable({
+  loader: () => import('./my-component'),
+});
+```
 
-type Props = {
-  isLoading: boolean,
-  error: Error | null,
-  pastDelay: null,
-};
+If you want to customize what gets rendered from your loader you can also pass
+`render`.
 
-let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
-  if (isLoading) {
-    return pastDelay ? <div>Loading...</div> : null; // Don't flash "Loading..." when we don't need to.
-  } else if (error) {
+```js
+Loadable({
+  loader: () => import('./my-component'),
+  render(loaded, props) {
+    let Component = loaded.namedExport;
+    return <Component {...props}/>;
+  }
+});
+```
+
+<!--
+If you want to load multiple resources, you can also pass an object as a
+`loader`. You will then be required to pass a `render` method.
+
+```js
+Loadable({
+  loader: {
+    Component: () => import('./my-component'),
+    translations: fetch('./foo-translations.json').then(res => res.json()),
+  },
+  render(loaded, props) {
+    let Component = loaded.Component.default;
+    let translations = loaded.translations;
+    return <Component {...props} translations={translations}/>;
+  }
+});
+```
+-->
+
+Your loader will only ever called once. The results are cached.
+
+### `opts.loading`
+
+This is a component that will render as your other component is loading.
+
+```js
+Loadable({
+  loading: LoadingComponent,
+});
+```
+
+You must always pass a `loading` component even if you only return `null`.
+
+```js
+Loadable({
+  loading: () => null,
+});
+```
+
+The loading component itself should look something like this:
+
+```js
+function MyLoadingComponent(props) {
+  if (props.isLoading) {
+    // While our other component is loading...
+    if (props.timedOut) {
+      // In case we've timed out loading our other component.
+      return <div>Loader timed out!</div>;
+    } else if (props.pastDelay) {
+      // Display a loading screen after a set delay.
+      return <div>Loading...</div>;
+    } else {
+      // Don't flash "Loading..." when we don't need to.
+      return null;
+    }
+  } else if (props.error) {
+    // If we aren't loading, maybe
     return <div>Error! Component failed to load</div>;
   } else {
+    // This case shouldn't happen... but we'll return null anyways.
     return null;
-  }
-};
-
-let LoadableMyComponent = Loadable({
-  loader: () => import('./MyComponent'),
-  LoadingComponent: MyLoadingComponent,
-  // optional config...
-  delay: 200,
-  serverSideRequirePath: path.join(__dirname, './MyComponent'),
-  webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
-});
-
-export default class Application extends React.Component {
-  render() {
-    return <LoadableMyComponent/>;
   }
 }
 ```
 
-## API
+### `opts.delay`
 
 ```js
 Loadable({
-  loader: () => Promise<React.Component>,
-  LoadingComponent: React.Component,
-  // optional options...
-  delay?: number = 200,
-  serverSideRequirePath?: string,
-  webpackRequireWeakId?: () => number,
-})
+  delay: 200
+});
 ```
 
-#### `opts.loader`
+Flashing a loading screen immediately can actually cause users to perceive
+something taking longer than it did in reality. It's often better to not show
+the user anything for a few hundred milliseconds in case something loads right
+away.
 
-Function returning promise returning a React component displayed on success.
+To enable this, we have a `delay` option which will default to 200ms.
 
-Resulting React component receives all the props passed to the generated
-component.
+After the set `delay`, the `loading` component will receive a prop named
+`pastDelay` which will be `true` which you can handle however you want.
 
-#### `opts.LoadingComponent`
-
-React component displayed after `delay` until `loader()` succeeds. Also
-responsible for displaying errors.
+### `opts.timeout`
 
 ```js
-type Props = {
-  isLoading: boolean,
-  error: Error | null,
-  pastDelay: boolean,
-};
+Loadable({
+  timeout: 10000
+});
+```
 
-let MyLoadingComponent = ({isLoading, error, pastDelay}: Props) => {
-  if (isLoading) {
-    return pastDelay ? <div>Loading...</div> : null; // Don't flash "Loading..." when we don't need to.
-  } else if (error) {
-    return <div>Error! Component failed to load</div>;
-  } else {
-    return null;
+Showing the user a loading screen for too long can cause frustration. It's
+often better just to tell the user that something took longer than normal and
+maybe that they should refresh.
+
+To enable this, we have a `timeout` option which is disabled by default.
+
+After the set `timeout`, the `loading` component will receive a prop named
+`timedOut` which will be `true` which you can handle however you want.
+
+### `opts.render`
+
+```js
+Loadable({
+  render(loaded, props) {
+    let Component = loaded.default;
+    return <Component {...props}/>;
   }
-};
-```
-
-If you don't want to render anything you can pass a function that returns
-`null` (this is considered a valid React component).
-
-```js
-Loadable({
-  loader: () => import('./MyComponent'),
-  LoadingComponent: () => null,
 });
 ```
 
-#### `opts.delay` (optional, defaults to `200`, in milliseconds)
+See `opts.loader` above.
 
-Only show the `LoadingComponent` if the `loader()` has taken this long to
-succeed or error.
-
-#### `opts.serverSideRequirePath` (optional)
-
-When rendering server-side, `require()` this path to load the component
-instead, this way it happens synchronously. If you are rendering server-side
-you should use this option.
-
-If you are using Babel, you might want to use the [Babel plugin](#babel-plugin)
-to add this option automatically.
-
-#### `opts.webpackRequireWeakId` (optional)
-
-In order for Loadable to `require()` a component synchronously (when possible)
-instead of waiting for the promise returned by `import()` to resolve. If you
-are using Webpack you should use this option.
+### `LoadableComponent.preload()`
 
 ```js
-Loadable({
-  // ...
-  webpackRequireWeakId: () => require.resolveWeak('./MyComponent')
-});
+const LoadableComponent = Loadable({...});
+
+LoadableComponent.preload();
 ```
 
-If you are using Babel, you might want to use the [Babel plugin](#babel-plugin)
-to add this option automatically.
-
-#### `opts.resolveModule` (optional)
-
-If the component that you want to load is not the default exported from a module
-you can use this to function to resolve it.
-
-```js
-Loadable({
-  // ...
-  resolveModule: module => module.MyComponent
-});
-```
-
-#### `Loadable.preload()`
-
-The generated component has a static method `preload()` for calling the loader
-function ahead of time. This is useful for scenarios where you think the user
-might do something next and want to load the next component eagerly.
-
-> **Note:** `preload()` intentionally does not return a promise. You should not
-> be depending on the timing of `preload()`. It's meant as a performance
-> optimization, not for creating UI logic.
+The generated component from `Loadable` has a static method named `preload()`
+for calling the loader ahead of time. This is useful for scenarios where you
+think the user might do something next and want to load the next component
+eagerly.
 
 **Example:**
 
 ```js
-let LoadableMyComponent = Loadable({
+const LoadableMyComponent = Loadable({
   loader: () => import('./MyComponent'),
   LoadingComponent: MyLoadingComponent,
 });
 
-class Application extends React.Component {
+class App extends React.Component {
   state = { showComponent: false };
 
   onClick = () => {
@@ -200,141 +208,27 @@ class Application extends React.Component {
 }
 ```
 
-#### `flushServerSideRequirePaths` / `flushwebpackRequireWeakIds`
+> **Note:** `preload()` intentionally does not return a promise. You should not
+> be depending on the timing of `preload()`. It's meant as a performance
+> optimization, not for creating UI logic.
 
-In case you are rendering server-side and want to find out after a render cycle
-which `serverSideRequirePath`'s and `webpackRequireWeakId`'s were actually
-rendered, you can use `flushServerSideRequirePaths` or
-`flushWebpackRequireWeakIds` to get an array of them.
+### How do I avoid repetition?
 
-```js
-import ReactDOMServer from 'react-dom/server';
-import {
-  flushServerSideRequirePaths,
-  flushWebpackRequireWeakIds
-} from 'react-loadable';
-
-let app = ReactDOMServer.renderToString(<App/>);
-let serverSideRequirePaths = flushServerSideRequirePaths();
-// ["/path/to/component.js", "/path/to/other/component.js"]
-let webpackRequireWeakIds = flushWebpackRequireWeakIds();
-// [1, 2]
-```
-
-> **Note:** These are flushed individually, one does not affect the other.
-
-## Babel Plugin
-
-Included in the `react-loadable` package is a Babel plugin that can add
-`serverSideRequirePath` and `webpackRequireWeakId` for you.
-
-**Input:**
-
-```js
-import Loadable from 'react-loadable';
-
-Loadable({
-  loader: () => import('./MyComponent'),
-  LoadingComponent: () => null,
-});
-```
-
-**Output:**
-
-```js
-import _path from 'path';
-import Loadable from 'react-loadable';
-
-Loadable({
-  loader: () => import('./MyComponent'),
-  LoadingComponent: () => null,
-  serverSideRequirePath: _path.join(__dirname, './MyComponent'),
-  webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
-});
-```
-
-#### Plugin Setup
-
-If you have `react-loadable` installed already, all you need to do is add this
-plugin to your Babel config:
-
-```js
-{
-  plugins: [
-    ["react-loadable/babel", {
-      server: true,
-      webpack: true
-    }]
-  ]
-}
-```
-
-**Options:**
-
-- `server` (default: `true`) - When `true` adds `serverSideRequirePath` config.
-- `webpack` (default: `false`) - When `true` adds `webpackRequireWeakId` config.
-
-## FAQ
-
-#### Why are there multiple options for specifying a component?
-
-The standard `loader` option is the only required option for specifying a
-component. However, to enable server-side rendering you need
-`serverSideRequirePath` and to optimize Webpack loading you need to specify
-`webpackRequireWeakId`.
-
-```js
-let LoadableMyComponent = Loadable({
-  loader: () => import('./MyComponent'),
-  serverSideRequirePath: path.join(__dirname, './MyComponent'),
-  webpackRequireWeakId: () => require.resolveWeak('./MyComponent'),
-  // ...
-});
-```
-
-But why couldn't it just be a string?
-
-```js
-let LoadableMyComponent = Loadable({
-  Component: './MyComponent',
-  // ...
-});
-```
-
-The reason is that tools like Webpack and Browserify rely on static analysis to
-determine how to bundle your code. When it sees code like `import('module')` it
-adds it to the module graph.
-
-When you just have a string like `"./MyComponent"`, these tools don't know the
-difference between that and any other string.
-
-For server-side rendering we need to have an exact file path so that we can
-`require()` it synchronously. We don't specify `require('./MyComponent')`
-directly because that would add it to the bundle in Webpack or Browserify.
-
-For `webpackRequireWeakId` it needs to be a function because
-`require.resolveWeak` does not exist in any tool other than Webpack.
-
-If you are using Babel, you might want to use the [Babel plugin](#babel-plugin)
-to add these options automatically.
-
-#### How do I avoid repetition?
-
-Specifying the same `LoadingComponent` or `delay` every time you use
+Specifying the same `loading` component or `delay` every time you use
 `Loadable()` gets repetitive fast. Instead you can wrap `Loadable` with your
 own Higher-Order Component (HOC) to set default options.
 
 ```js
 import Loadable from 'react-loadable';
-import MyLoadingComponent from './MyLoadingComponent';
+import Loading from './my-loading-component';
 
 export default function MyLoadable(opts) {
-  return Loadable({
-    LoadingComponent: MyLoadingComponent,
+  return Loadable(Object.assign({
+    loading: Loading,
     delay: 200,
-    ...opts
-  });
-}
+    timeout: 10,
+  }, opts));
+};
 ```
 
 Then you can just specify a `loader` when you go to use it.
@@ -342,13 +236,107 @@ Then you can just specify a `loader` when you go to use it.
 ```js
 import MyLoadable from './MyLoadable';
 
-let LoadableMyComponent = MyLoadable({
+const LoadableMyComponent = MyLoadable({
   loader: () => import('./MyComponent'),
 });
 
-export default class Application extends React.Component {
+export default class App extends React.Component {
   render() {
     return <LoadableMyComponent/>;
   }
 }
 ```
+
+### `babel-plugin-import-inspector`
+
+To allow for some more complicated features like server-side rendering and
+synchronous rendering in webpack, you'll need to use the
+[`import-inspector`](https://github.com/thejameskyle/babel-plugin-import-inspector)
+[Babel](https://babeljs.io) plugin.
+
+```js
+yarn add --dev babel-plugin-import-inspector
+```
+
+```js
+{
+  "plugins": [
+    ["import-inspector", {
+      "serverSideRequirePath": true,
+      "webpackRequireWeakId": true,
+    }]
+  ]
+}
+```
+
+### Server-side rendering
+
+See [`babel-plugin-import-inspector`](#babel-plugin-import-inspector) and make
+sure to set `serverSideRequirePath` to `true`.
+
+```js
+{
+  "plugins": [
+    ["import-inspector", {
+      "serverSideRequirePath": true,
+    }]
+  ]
+}
+```
+
+Rendering server-side should then just work.
+
+### Sync rendering preloaded imports in Webpack
+
+See [`babel-plugin-import-inspector`](#babel-plugin-import-inspector) and make
+sure to set `serverSideRequirePath` to `true`.
+
+```js
+{
+  "plugins": [
+    ["import-inspector", {
+      "serverSideRequirePath": true,
+    }]
+  ]
+}
+```
+
+Synchronously rendering preloaded imports in Webpack should then just work.
+
+
+### Server-side rendering
+
+This requires using a special [Babel](https://babeljs.io) plugin,
+[`babel-plugin-import-inspector`](https://github.com/thejameskyle/babel-plugin-import-inspector),
+which will wrap every dynamic `import()` in your app with metadata which will
+allow React Loadable to render your component server-side.
+
+To install:
+
+```js
+yarn add --dev babel-plugin-import-inspector
+```
+
+Then add this to your `.babelrc`:
+
+```js
+{
+  "plugins": [
+    ["import-inspector", {
+      "serverSideRequirePath": true,
+    }]
+  ]
+}
+```
+
+Your imports will then look like this:
+
+```js
+report(import("./module"), {
+  // ...
+  serverSideRequirePath: path.join(__dirname, "./module"),
+  webpackRequireWeakId: () => require.resolveWeak("./module"),
+});
+```
+
+Rendering server-side should then just work.

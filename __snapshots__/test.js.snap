@@ -1,37 +1,65 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`delay and timeout 1`] = `
+<div>
+  MyLoadingComponent 
+  {"pastDelay":false,"timedOut":false,"error":null}
+</div>
+`;
+
+exports[`delay and timeout 2`] = `
+<div>
+  MyLoadingComponent 
+  {"pastDelay":true,"timedOut":false,"error":null}
+</div>
+`;
+
+exports[`delay and timeout 3`] = `
+<div>
+  MyLoadingComponent 
+  {"pastDelay":true,"timedOut":true,"error":null}
+</div>
+`;
+
+exports[`delay and timeout 4`] = `
+<div>
+  MyComponent 
+  {"prop":"foo"}
+</div>
+`;
+
 exports[`loading error 1`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":false,"error":null}
+  {"pastDelay":false,"timedOut":false,"error":null}
 </div>
 `;
 
 exports[`loading error 2`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":true,"error":null}
+  {"pastDelay":true,"timedOut":false,"error":null}
 </div>
 `;
 
 exports[`loading error 3`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":false,"pastDelay":false,"error":{}}
+  {"pastDelay":true,"timedOut":false,"error":null}
 </div>
 `;
 
 exports[`loading success 1`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":false,"error":null}
+  {"pastDelay":false,"timedOut":false,"error":null}
 </div>
 `;
 
 exports[`loading success 2`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":true,"error":null}
+  {"pastDelay":true,"timedOut":false,"error":null}
 </div>
 `;
 
@@ -52,7 +80,7 @@ exports[`loading success 4`] = `
 exports[`preload 1`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":false,"error":null}
+  {"pastDelay":false,"timedOut":false,"error":null}
 </div>
 `;
 
@@ -70,21 +98,21 @@ exports[`preload 3`] = `
 </div>
 `;
 
-exports[`resolveModule 1`] = `
+exports[`render 1`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":false,"error":null}
+  {"pastDelay":false,"timedOut":false,"error":null}
 </div>
 `;
 
-exports[`resolveModule 2`] = `
+exports[`render 2`] = `
 <div>
   MyLoadingComponent 
-  {"isLoading":true,"pastDelay":true,"error":null}
+  {"pastDelay":true,"timedOut":false,"error":null}
 </div>
 `;
 
-exports[`resolveModule 3`] = `
+exports[`render 3`] = `
 <div>
   MyComponent 
   {"prop":"baz"}
@@ -101,18 +129,4 @@ exports[`server side rendering es6 1`] = `
 <div>
   fixture2
 </div>
-`;
-
-exports[`server side rendering flushing 1`] = `
-Array [
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component.js",
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component2.js",
-]
-`;
-
-exports[`server side rendering flushing 2`] = `
-Array [
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component.js",
-  "/Users/thejameskyle/Projects/react-loadable/__fixtures__/component3.js",
-]
 `;
