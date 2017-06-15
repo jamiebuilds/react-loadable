@@ -50,24 +50,8 @@ Loadable({
 });
 ```
 
-<!--
-If you want to load multiple resources, you can also pass an object as a
-`loader`. You will then be required to pass a `render` method.
-
-```js
-Loadable({
-  loader: {
-    Component: () => import('./my-component'),
-    translations: fetch('./foo-translations.json').then(res => res.json()),
-  },
-  render(loaded, props) {
-    let Component = loaded.Component.default;
-    let translations = loaded.translations;
-    return <Component {...props} translations={translations}/>;
-  }
-});
-```
--->
+> **Note:**  If you want to load multiple resources at once, you can also use
+> [`Loadable.Map`](#Loadable-Map).
 
 Your loader will only ever called once. The results are cached.
 
@@ -211,6 +195,28 @@ class App extends React.Component {
 > **Note:** `preload()` intentionally does not return a promise. You should not
 > be depending on the timing of `preload()`. It's meant as a performance
 > optimization, not for creating UI logic.
+
+### `Loadable.Map`
+
+If you want to load multiple resources, you can use `Loadable.Map` and pass an
+object as a `loader` and specify a `render` method that stitches them together.
+
+```js
+Loadable.Map({
+  loader: {
+    Component: () => import('./my-component'),
+    translations: () => fetch('./foo-translations.json').then(res => res.json()),
+  },
+  render(loaded, props) {
+    let Component = loaded.Component.default;
+    let translations = loaded.translations;
+    return <Component {...props} translations={translations}/>;
+  }
+});
+```
+
+When using `Loadable.Map` the `render()` method's `loaded` param will be an
+object with the same shape as your `loader`.
 
 ### How do I avoid repetition?
 

@@ -145,3 +145,53 @@ test('render', async () => {
   await waitFor(200);
   expect(component.toJSON()).toMatchSnapshot(); // success
 });
+
+test('loadable map success', async () => {
+  let LoadableMyComponent = Loadable.Map({
+    loader: {
+      a: createLoader(200, { MyComponent }),
+      b: createLoader(400, { MyComponent }),
+    },
+    loading: MyLoadingComponent,
+    render(loaded, props) {
+      return (
+        <div>
+          <loaded.a.MyComponent {...props}/>
+          <loaded.b.MyComponent {...props}/>
+        </div>
+      );
+    }
+  });
+
+  let component = renderer.create(<LoadableMyComponent prop="baz" />);
+  expect(component.toJSON()).toMatchSnapshot(); // initial
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // loading
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // success
+});
+
+test('loadable map error', async () => {
+  let LoadableMyComponent = Loadable.Map({
+    loader: {
+      a: createLoader(200, { MyComponent }),
+      b: createLoader(400, null, new Error('test error')),
+    },
+    loading: MyLoadingComponent,
+    render(loaded, props) {
+      return (
+        <div>
+          <loaded.a.MyComponent {...props}/>
+          <loaded.b.MyComponent {...props}/>
+        </div>
+      );
+    }
+  });
+
+  let component = renderer.create(<LoadableMyComponent prop="baz" />);
+  expect(component.toJSON()).toMatchSnapshot(); // initial
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // loading
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // success
+});
