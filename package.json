@@ -6,7 +6,9 @@
   "author": "James Kyle <me@thejameskyle.com>",
   "license": "MIT",
   "repository": "thejameskyle/react-loadable",
-  "files": [],
+  "files": [
+    "lib/**"
+  ],
   "scripts": {
     "test": "jest",
     "build": "babel src -d lib",
