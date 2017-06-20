@@ -51,7 +51,7 @@ Loadable({
 ```
 
 > **Note:**  If you want to load multiple resources at once, you can also use
-> [`Loadable.Map`](#Loadable-Map).
+> [`Loadable.Map`](#loadablemap).
 
 Your loader will only ever called once. The results are cached.
 
