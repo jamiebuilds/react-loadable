@@ -165,7 +165,7 @@ eagerly.
 ```js
 const LoadableMyComponent = Loadable({
   loader: () => import('./MyComponent'),
-  LoadingComponent: MyLoadingComponent,
+  loading: MyLoadingComponent,
 });
 
 class App extends React.Component {
