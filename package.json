@@ -3,6 +3,7 @@
   "version": "4.0.3",
   "description": "A higher order component for loading components with promises",
   "main": "lib/index.js",
+  "typings": "index.d.ts",
   "author": "James Kyle <me@thejameskyle.com>",
   "license": "MIT",
   "repository": "thejameskyle/react-loadable",
