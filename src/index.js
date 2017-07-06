@@ -228,4 +228,6 @@ function LoadableMap(opts) {
 
 Loadable.Map = LoadableMap;
 
+Loadable.default = Loadable;
+
 module.exports = Loadable;
