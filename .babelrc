@@ -4,5 +4,8 @@
       "loose": true
     }],
     "react"
+  ],
+  "plugins": [
+    "transform-object-assign"
   ]
 }
