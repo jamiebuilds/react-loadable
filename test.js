@@ -3,7 +3,8 @@
 const path = require('path');
 const React = require('react');
 const renderer = require('react-test-renderer');
-const Loadable = require('./src');
+const Loadable = require('./src').default;
+const LoadableMap = require('./src').LoadableMap;
 const {report} = require('import-inspector');
 
 function waitFor(delay) {
@@ -147,7 +148,7 @@ test('render', async () => {
 });
 
 test('loadable map success', async () => {
-  let LoadableMyComponent = Loadable.Map({
+  let LoadableMyComponent = LoadableMap({
     loader: {
       a: createLoader(200, { MyComponent }),
       b: createLoader(400, { MyComponent }),
@@ -172,7 +173,7 @@ test('loadable map success', async () => {
 });
 
 test('loadable map error', async () => {
-  let LoadableMyComponent = Loadable.Map({
+  let LoadableMyComponent = LoadableMap({
     loader: {
       a: createLoader(200, { MyComponent }),
       b: createLoader(400, null, new Error('test error')),

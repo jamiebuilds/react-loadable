@@ -1,8 +1,21 @@
 {
-  "presets": [
-    ["es2015", {
-      "loose": true
-    }],
-    "react"
-  ]
+  "env": {
+    "cjs": {
+      "presets": [
+        ["es2015", {
+          "loose": true
+        }],
+        "react"
+      ]
+    },
+    "es": {
+      "presets": [
+        ["es2015", {
+          "loose": true,
+          "modules": false
+        }],
+        "react"
+      ]
+    }
+  }
 }

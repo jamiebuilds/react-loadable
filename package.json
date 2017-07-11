@@ -3,15 +3,19 @@
   "version": "4.0.3",
   "description": "A higher order component for loading components with promises",
   "main": "lib/index.js",
+  "module": "es/index.js",
   "author": "James Kyle <me@thejameskyle.com>",
   "license": "MIT",
   "repository": "thejameskyle/react-loadable",
   "files": [
-    "lib/**"
+    "lib/**",
+    "es/**"
   ],
   "scripts": {
-    "test": "jest",
-    "build": "babel src -d lib",
+    "test": "cross-env BABEL_ENV=cjs jest",
+    "build:cjs": "cross-env BABEL_ENV=cjs babel src --out-dir lib",
+    "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
+    "build": "npm run build:cjs && npm run build:es",
     "prepublish": "yarn run -s build"
   },
   "dependencies": {
@@ -23,6 +27,7 @@
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
+    "cross-env": "^5.0.1",
     "flow-bin": "^0.41.0",
     "jest": "^19.0.2",
     "react": "^15.4.2",
