@@ -17,7 +17,7 @@
   "dependencies": {
     "import-inspector": "^2.0.0",
     "is-webpack-bundle": "^1.0.0",
-    "webpack-require-weak": "^1.0.0"
+    "webpack-require-weak": "^1.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
