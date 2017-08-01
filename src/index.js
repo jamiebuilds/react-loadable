@@ -130,7 +130,9 @@ function createLoadableComponent(loadFn, options) {
       if (!res) {
         res = loadFn(opts.loader);
       }
-
+      // placing promise outside of state as it does not have to be monitored for changes
+      // and triggersx updates in other ways.
+      this.promise = res.promise
       this.state = {
         error: res.error,
         pastDelay: false,
@@ -203,7 +205,8 @@ function createLoadableComponent(loadFn, options) {
           isLoading: this.state.loading,
           pastDelay: this.state.pastDelay,
           timedOut: this.state.timedOut,
-          error: this.state.error
+          error: this.state.error,
+          promise: this.promise
         });
       } else if (this.state.loaded) {
         return opts.render(this.state.loaded, this.props);
