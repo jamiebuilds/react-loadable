@@ -2664,9 +2664,9 @@ webidl-conversions@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-4.0.1.tgz#8015a17ab83e7e1b311638486ace81da6ce206a0"
 
-webpack-require-weak@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/webpack-require-weak/-/webpack-require-weak-1.0.0.tgz#6d79b31f04a65d5897d015bfc952e30c07b1c5b6"
+webpack-require-weak@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/webpack-require-weak/-/webpack-require-weak-1.0.1.tgz#a6a8e60871bebbe5b085a915ab0af633a412433f"
   dependencies:
     is-webpack-bundle "^1.0.0"
 
