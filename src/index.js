@@ -31,8 +31,8 @@ function load(loader) {
   try {
     if (isWebpackBundle) {
       if (typeof metadata.webpackRequireWeakId === 'function') {
-        state.loading = false;
         state.loaded = webpackRequireWeak(metadata.webpackRequireWeakId());
+        if (state.loaded) state.loading = false;
       }
     } else {
       if (typeof metadata.serverSideRequirePath === 'string') {
