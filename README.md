@@ -299,13 +299,13 @@ Rendering server-side should then just work.
 ### Sync rendering preloaded imports in Webpack
 
 See [`babel-plugin-import-inspector`](#babel-plugin-import-inspector) and make
-sure to set `serverSideRequirePath` to `true`.
+sure to set `webpackRequireWeakId` to `true`.
 
 ```js
 {
   "plugins": [
     ["import-inspector", {
-      "serverSideRequirePath": true,
+      "webpackRequireWeakId": true,
     }]
   ]
 }
