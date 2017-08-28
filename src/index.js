@@ -86,7 +86,7 @@ function loadMap(obj) {
       });
     });
   } catch (err) {
-    error = err;
+    state.error = err;
   }
 
   state.promise = Promise.all(promises).then(res => {
