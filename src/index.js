@@ -1,7 +1,7 @@
-const React = require('react');
-const isWebpackBundle = require('is-webpack-bundle');
-const webpackRequireWeak = require('webpack-require-weak');
-const {inspect} = require('import-inspector');
+import React from 'react';
+import isWebpackBundle from 'is-webpack-bundle';
+import webpackRequireWeak from 'webpack-require-weak';
+import {inspect} from 'import-inspector';
 
 function capture(fn) {
   let reported = [];
@@ -218,7 +218,7 @@ function Loadable(opts) {
   return createLoadableComponent(load, opts);
 }
 
-function LoadableMap(opts) {
+export function LoadableMap(opts) {
   if (typeof opts.render !== 'function') {
     throw new Error('LoadableMap requires a `render(loaded, props)` function');
   }
@@ -226,6 +226,4 @@ function LoadableMap(opts) {
   return createLoadableComponent(loadMap, opts);
 }
 
-Loadable.Map = LoadableMap;
-
-module.exports = Loadable;
+export default Loadable;
