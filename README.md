@@ -273,7 +273,7 @@ yarn add --dev babel-plugin-import-inspector
   "plugins": [
     ["import-inspector", {
       "serverSideRequirePath": true,
-      "webpackRequireWeakId": true,
+      "webpackRequireWeakId": true
     }]
   ]
 }
@@ -288,7 +288,7 @@ sure to set `serverSideRequirePath` to `true`.
 {
   "plugins": [
     ["import-inspector", {
-      "serverSideRequirePath": true,
+      "serverSideRequirePath": true
     }]
   ]
 }
@@ -305,7 +305,7 @@ sure to set `webpackRequireWeakId` to `true`.
 {
   "plugins": [
     ["import-inspector", {
-      "webpackRequireWeakId": true,
+      "webpackRequireWeakId": true
     }]
   ]
 }
@@ -333,7 +333,7 @@ Then add this to your `.babelrc`:
 {
   "plugins": [
     ["import-inspector", {
-      "serverSideRequirePath": true,
+      "serverSideRequirePath": true
     }]
   ]
 }
