@@ -3,6 +3,10 @@ const isWebpackBundle = require('is-webpack-bundle');
 const webpackRequireWeak = require('webpack-require-weak');
 const {inspect} = require('import-inspector');
 
+function isNode() {
+  return !!(typeof process !== 'undefined' && process.versions && process.versions.node);
+}
+
 function capture(fn) {
   let reported = [];
   let stopInspecting = inspect(metadata => reported.push(metadata));
@@ -127,7 +131,7 @@ function createLoadableComponent(loadFn, options) {
     constructor(props) {
       super(props);
 
-      if (!res) {
+      if (!res || (isNode() && isWebpackBundle)) {
         res = loadFn(opts.loader);
       }
 
