@@ -1,48 +1,15 @@
+'use strict';
 const React = require('react');
-const isWebpackBundle = require('is-webpack-bundle');
-const webpackRequireWeak = require('webpack-require-weak');
-const {inspect} = require('import-inspector');
-
-function capture(fn) {
-  let reported = [];
-  let stopInspecting = inspect(metadata => reported.push(metadata));
-  let promise = fn();
-  stopInspecting();
-  return {promise, reported};
-}
+const INITIALIZERS = [];
 
 function load(loader) {
-  let {promise, reported} = capture(() => {
-    return loader();
-  });
-
-  if (reported.length > 1) {
-    throw new Error('react-loadable cannot handle more than one import() in each loader');
-  }
+  let promise = loader();
 
   let state = {
     loading: true,
     loaded: null,
     error: null
   };
-
-  let metadata = reported[0] || {};
-
-  try {
-    if (isWebpackBundle) {
-      if (typeof metadata.webpackRequireWeakId === 'function') {
-        state.loaded = webpackRequireWeak(metadata.webpackRequireWeakId());
-        if (state.loaded) state.loading = false;
-      }
-    } else {
-      if (typeof metadata.serverSideRequirePath === 'string') {
-        state.loading = false;
-        state.loaded = module.require(metadata.serverSideRequirePath);
-      }
-    }
-  } catch (err) {
-    state.error = err;
-  }
 
   state.promise = promise.then(loaded => {
     state.loading = false;
@@ -123,13 +90,19 @@ function createLoadableComponent(loadFn, options) {
 
   let res = null;
 
+  function init() {
+    if (!res) {
+      res = loadFn(opts.loader);
+    }
+    return res.promise;
+  }
+
+  INITIALIZERS.push(init);
+
   return class LoadableComponent extends React.Component {
     constructor(props) {
       super(props);
-
-      if (!res) {
-        res = loadFn(opts.loader);
-      }
+      init();
 
       this.state = {
         error: res.error,
@@ -141,9 +114,7 @@ function createLoadableComponent(loadFn, options) {
     }
 
     static preload() {
-      if (!res) {
-        res = loadFn(opts.loader);
-      }
+      init();
     }
 
     componentWillMount() {
@@ -227,5 +198,28 @@ function LoadableMap(opts) {
 }
 
 Loadable.Map = LoadableMap;
+
+Loadable.preloadAll = () => {
+  return new Promise((resolve, reject) => {
+    function flush() {
+      let promises = [];
+
+      while (INITIALIZERS.length) {
+        let init = INITIALIZERS.pop();
+        promises.push(init());
+      }
+
+      return Promise.all(promises).then(() => {
+        if (INITIALIZERS.length) {
+          return flush();
+        } else {
+          resolve();
+        }
+      });
+    }
+
+    flush().catch(reject);
+  });
+};
 
 module.exports = Loadable;

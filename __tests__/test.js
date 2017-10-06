@@ -3,8 +3,7 @@
 const path = require('path');
 const React = require('react');
 const renderer = require('react-test-renderer');
-const Loadable = require('./src');
-const {report} = require('import-inspector');
+const Loadable = require('../src');
 
 function waitFor(delay) {
   return new Promise(resolve => {
@@ -12,15 +11,15 @@ function waitFor(delay) {
   });
 }
 
-function createLoader(delay, Component, error, metadata) {
+function createLoader(delay, loader, error) {
   return () => {
-    return report(waitFor(delay).then(() => {
-      if (Component) {
-        return Component;
+    return waitFor(delay).then(() => {
+      if (loader) {
+        return loader();
       } else {
         throw error;
       }
-    }), metadata);
+    });
   };
 }
 
@@ -32,9 +31,15 @@ function MyComponent(props) {
   return <div>MyComponent {JSON.stringify(props)}</div>;
 }
 
+afterEach(async () => {
+  try {
+    await Loadable.preloadAll();
+  } catch (err) {}
+});
+
 test('loading success', async () => {
   let LoadableMyComponent = Loadable({
-    loader: createLoader(400, MyComponent),
+    loader: createLoader(400, () => MyComponent),
     loading: MyLoadingComponent
   });
 
@@ -53,7 +58,7 @@ test('loading success', async () => {
 
 test('delay and timeout', async () => {
   let LoadableMyComponent = Loadable({
-    loader: createLoader(300, MyComponent),
+    loader: createLoader(300, () => MyComponent),
     loading: MyLoadingComponent,
     delay: 100,
     timeout: 200,
@@ -87,11 +92,11 @@ test('loading error', async () => {
 
 test('server side rendering', async () => {
   let LoadableMyComponent = Loadable({
-    loader: createLoader(400, null, new Error('test error'), {
-      serverSideRequirePath: path.join(__dirname, './__fixtures__/component.js')
-    }),
+    loader: createLoader(400, () => require('../__fixtures__/component')),
     loading: MyLoadingComponent,
   });
+
+  await Loadable.preloadAll();
 
   let component = renderer.create(<LoadableMyComponent prop="baz" />);
 
@@ -100,11 +105,11 @@ test('server side rendering', async () => {
 
 test('server side rendering es6', async () => {
   let LoadableMyComponent = Loadable({
-    loader: createLoader(400, null, new Error('test error'), {
-      serverSideRequirePath: path.join(__dirname, './__fixtures__/component.es6.js')
-    }),
+    loader: createLoader(400, () => require('../__fixtures__/component.es6')),
     loading: MyLoadingComponent,
   });
+
+  await Loadable.preloadAll();
 
   let component = renderer.create(<LoadableMyComponent prop="baz" />);
 
@@ -113,7 +118,7 @@ test('server side rendering es6', async () => {
 
 test('preload', async () => {
   let LoadableMyComponent = Loadable({
-    loader: createLoader(400, MyComponent),
+    loader: createLoader(400, () => MyComponent),
     loading: MyLoadingComponent
   });
 
@@ -132,7 +137,7 @@ test('preload', async () => {
 
 test('render', async () => {
   let LoadableMyComponent = Loadable({
-    loader: createLoader(400, { MyComponent }),
+    loader: createLoader(400, () => ({ MyComponent })),
     loading: MyLoadingComponent,
     render(loaded, props) {
       return <loaded.MyComponent {...props}/>;
@@ -149,8 +154,8 @@ test('render', async () => {
 test('loadable map success', async () => {
   let LoadableMyComponent = Loadable.Map({
     loader: {
-      a: createLoader(200, { MyComponent }),
-      b: createLoader(400, { MyComponent }),
+      a: createLoader(200, () => ({ MyComponent })),
+      b: createLoader(400, () => ({ MyComponent })),
     },
     loading: MyLoadingComponent,
     render(loaded, props) {
@@ -174,7 +179,7 @@ test('loadable map success', async () => {
 test('loadable map error', async () => {
   let LoadableMyComponent = Loadable.Map({
     loader: {
-      a: createLoader(200, { MyComponent }),
+      a: createLoader(200, () => ({ MyComponent })),
       b: createLoader(400, null, new Error('test error')),
     },
     loading: MyLoadingComponent,
