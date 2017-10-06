@@ -222,6 +222,87 @@ Loadable.Map({
 When using `Loadable.Map` the `render()` method's `loaded` param will be an
 object with the same shape as your `loader`.
 
+### `Loadable.preloadAll()`
+
+In order to avoid rendering loading states server-side, we need to preload all
+of our loadable components before we start responding to requests. For this
+there is the `Loadable.preloadAll()` method.
+
+When you declare your loadable components React Loadable stores references to
+each of them. So when you call `Loadable.preloadAll()` it will go through each
+of these references and call their `loader()` methods.
+
+`Loadable.preloadAll` returns a promise that resolves when every `loader()`
+method is done loading, you can wait for your app to be loaded before starting
+your app.
+
+**Example:**
+
+```js
+import express from 'express';
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
+import Loadable from 'react-loadable';
+import App from './components/App';
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send(`
+    <!doctype html>
+    <html>
+      <head>
+        <title>My App</title>
+      </head>
+      <body>
+        <div id="app">
+          ${ReactDOMServer.renderToString(React.createElement(App))}
+        </div>
+      </body>
+    </html>
+  `);
+});
+
+Loadable.preloadAll().then(() => {
+  app.listen(3000, () => {
+    console.log('Running on http://localhost:3000/');
+  });
+});
+```
+
+It's important to note that this requires that you declare all of your loadable
+components when modules are initialized rather than when your app is being
+rendered.
+
+**Good:**
+
+```js
+// During module initialization...
+const LoadableComponent = Loadable({...});
+
+class MyComponent extends React.Component {
+  componentDidMount() {
+    // ...
+  }
+}
+```
+
+**Bad:**
+
+```js
+// ...
+
+class MyComponent extends React.Component {
+  componentDidMount() {
+    // During app render...
+    const LoadableComponent = Loadable({...});
+  }
+}
+```
+
+> **Note:** `Loadable.preloadAll()` will not work if you have more than one
+> copy of `react-loadable` in your app.
+
 ### How do I avoid repetition?
 
 Specifying the same `loading` component or `delay` every time you use
@@ -256,97 +337,3 @@ export default class App extends React.Component {
   }
 }
 ```
-
-### `babel-plugin-import-inspector`
-
-To allow for some more complicated features like server-side rendering and
-synchronous rendering in webpack, you'll need to use the
-[`import-inspector`](https://github.com/thejameskyle/babel-plugin-import-inspector)
-[Babel](https://babeljs.io) plugin.
-
-```js
-yarn add --dev babel-plugin-import-inspector
-```
-
-```js
-{
-  "plugins": [
-    ["import-inspector", {
-      "serverSideRequirePath": true,
-      "webpackRequireWeakId": true,
-    }]
-  ]
-}
-```
-
-### Server-side rendering
-
-See [`babel-plugin-import-inspector`](#babel-plugin-import-inspector) and make
-sure to set `serverSideRequirePath` to `true`.
-
-```js
-{
-  "plugins": [
-    ["import-inspector", {
-      "serverSideRequirePath": true,
-    }]
-  ]
-}
-```
-
-Rendering server-side should then just work.
-
-### Sync rendering preloaded imports in Webpack
-
-See [`babel-plugin-import-inspector`](#babel-plugin-import-inspector) and make
-sure to set `webpackRequireWeakId` to `true`.
-
-```js
-{
-  "plugins": [
-    ["import-inspector", {
-      "webpackRequireWeakId": true,
-    }]
-  ]
-}
-```
-
-Synchronously rendering preloaded imports in Webpack should then just work.
-
-
-### Server-side rendering
-
-This requires using a special [Babel](https://babeljs.io) plugin,
-[`babel-plugin-import-inspector`](https://github.com/thejameskyle/babel-plugin-import-inspector),
-which will wrap every dynamic `import()` in your app with metadata which will
-allow React Loadable to render your component server-side.
-
-To install:
-
-```js
-yarn add --dev babel-plugin-import-inspector
-```
-
-Then add this to your `.babelrc`:
-
-```js
-{
-  "plugins": [
-    ["import-inspector", {
-      "serverSideRequirePath": true,
-    }]
-  ]
-}
-```
-
-Your imports will then look like this:
-
-```js
-report(import("./module"), {
-  // ...
-  serverSideRequirePath: path.join(__dirname, "./module"),
-  webpackRequireWeakId: () => require.resolveWeak("./module"),
-});
-```
-
-Rendering server-side should then just work.
