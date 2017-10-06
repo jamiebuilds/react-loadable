@@ -10,7 +10,7 @@
     "lib/**"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest --coverage",
     "build": "babel src -d lib",
     "start": "babel-node example/server.js",
     "prepublish": "yarn run -s build"
