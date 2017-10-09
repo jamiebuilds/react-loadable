@@ -196,10 +196,6 @@ class App extends React.Component {
 }
 ```
 
-> **Note:** `preload()` intentionally does not return a promise. You should not
-> be depending on the timing of `preload()`. It's meant as a performance
-> optimization, not for creating UI logic.
-
 ### `Loadable.Map`
 
 If you want to load multiple resources, you can use `Loadable.Map` and pass an

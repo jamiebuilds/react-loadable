@@ -122,13 +122,13 @@ test('preload', async () => {
     loading: MyLoadingComponent
   });
 
-  LoadableMyComponent.preload();
+  let promise = LoadableMyComponent.preload();
   await waitFor(200);
 
   let component1 = renderer.create(<LoadableMyComponent prop="baz" />);
 
   expect(component1.toJSON()).toMatchSnapshot(); // still loading...
-  await waitFor(200);
+  await promise;
   expect(component1.toJSON()).toMatchSnapshot(); // success
 
   let component2 = renderer.create(<LoadableMyComponent prop="baz" />);

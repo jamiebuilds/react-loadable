@@ -114,7 +114,7 @@ function createLoadableComponent(loadFn, options) {
     }
 
     static preload() {
-      init();
+      return init();
     }
 
     componentWillMount() {
