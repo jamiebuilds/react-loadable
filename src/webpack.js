@@ -9,7 +9,7 @@ function buildManifest(compiler, compilation) {
     chunk.files.forEach(file => {
       chunk.forEachModule(module => {
         let id = module.id;
-        let name = module.libIdent({ context });
+        let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
         manifest[module.rawRequest] = { id, name, file };
       });
     });
