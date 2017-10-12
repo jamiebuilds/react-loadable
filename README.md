@@ -31,7 +31,15 @@ export default class App extends React.Component {
 
 - [`react-loadable-visibility`](https://github.com/stratiformltd/react-loadable-visibility) - Building on top of and keeping the same API as `react-loadable`, this library enables you to load content that is visible on the screen.
 
-## Guide
+---
+
+---
+
+![GUIDE](http://thejameskyle.com/img/react-loadable-guide.png)
+
+---
+
+---
 
 So you've got your React app, you're bundling it with Webpack, and things are
 going smooth. But then one day you notice your app's bundle is getting so big
@@ -358,7 +366,15 @@ class MyComponent extends React.Component {
 }
 ```
 
-## Server-side rendering
+---
+
+---
+
+![SERVER SIDE RENDERING DOCS](http://thejameskyle.com/img/react-loadable-ssr.png)
+
+---
+
+---
 
 When you go to render all these dynamically loaded components, what you'll get
 is a whole bunch of loading screens.
@@ -602,7 +618,13 @@ res.send(`
 
 ---
 
-## API Docs
+---
+
+![API DOCS](http://thejameskyle.com/img/react-loadable-api-docs.png)
+
+---
+
+---
 
 ### `Loadable`
 
@@ -1049,7 +1071,15 @@ let bundles = getBundles(stats, modules);
 
 [Read more about mapping modules to bundles](#mapping-loaded-modules-to-bundles).
 
-## FAQ
+---
+
+---
+
+![API DOCS](http://thejameskyle.com/img/react-loadable-faq.png)
+
+---
+
+---
 
 ### How do I avoid repetition?
 
