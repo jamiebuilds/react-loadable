@@ -4,6 +4,15 @@
     "react",
   ],
   "plugins": [
-    "dynamic-import-node"
+    "dynamic-import-node",
+    "transform-class-properties",
+    "../babel",
+    ["module-resolver", {
+      "alias": {
+        "react-loadable": "./src/index.js",
+        "react-loadable/server": "./src/server.js",
+        "react-loadable/webpack": "./src/webpack.js",
+      },
+    }]
   ],
 }

@@ -1,12 +1,24 @@
 import express from 'express';
+import path from 'path';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import Loadable from '../src/index';
+import Loadable from 'react-loadable';
+import { getBundles } from 'react-loadable/webpack'
 import App from './components/App';
 
+const stats = require('./dist/react-loadable.json');
 const app = express();
 
 app.get('/', (req, res) => {
+  let modules = [];
+  let html = ReactDOMServer.renderToString(
+    <Loadable.Capture report={moduleName => modules.push(moduleName)}>
+      <App/>
+    </Loadable.Capture>
+  );
+
+  let bundles = getBundles(stats, modules);
+
   res.send(`
     <!doctype html>
     <html lang="en">
@@ -17,16 +29,23 @@ app.get('/', (req, res) => {
         <title>My App</title>
       </head>
       <body>
-        <div id="app">
-          ${ReactDOMServer.renderToString(React.createElement(App))}
-        </div>
+        <div id="app">${html}</div>
+        <script src="/dist/main.js"></script>
+        ${bundles.map(bundle => {
+          return `<script src="/dist/${bundle.file}"></script>`
+        }).join('\n')}
+        <script>window.main();</script>
       </body>
     </html>
   `);
 });
 
+app.use('/dist', express.static(path.join(__dirname, 'dist')));
+
 Loadable.preloadAll().then(() => {
   app.listen(3000, () => {
     console.log('Running on http://localhost:3000/');
   });
+}).catch(err => {
+  console.log(err);
 });

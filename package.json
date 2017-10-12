@@ -12,13 +12,16 @@
   "scripts": {
     "test": "jest --coverage",
     "build": "babel src -d lib",
-    "start": "babel-node example/server.js",
-    "prepublish": "yarn run -s build"
+    "start": "yarn build && webpack && babel-node example/server.js",
+    "prepublish": "yarn build"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-loader": "^7.1.2",
     "babel-plugin-dynamic-import-node": "^1.1.0",
+    "babel-plugin-module-resolver": "^2.7.1",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "express": "^4.16.1",
@@ -26,9 +29,11 @@
     "jest": "^19.0.2",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "react-test-renderer": "^16.0.0"
+    "react-test-renderer": "^16.0.0",
+    "webpack": "^3.6.0"
   },
   "peerDependencies": {
-    "react": "*"
+    "react": "*",
+    "prop-types": "*"
   }
 }

@@ -146,6 +146,34 @@ exports[`preload 3`] = `
 </div>
 `;
 
+exports[`preloadReady many 1`] = `
+<div>
+  MyComponent 
+  {"prop":"baz"}
+</div>
+`;
+
+exports[`preloadReady missing 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null}
+</div>
+`;
+
+exports[`preloadReady one 1`] = `
+<div>
+  MyComponent 
+  {"prop":"baz"}
+</div>
+`;
+
+exports[`preloadReady undefined 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null}
+</div>
+`;
+
 exports[`render 1`] = `
 <div>
   MyLoadingComponent 

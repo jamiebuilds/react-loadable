@@ -1,10 +1,11 @@
 import React from 'react';
-import Loadable from '../../src/index';
+import Loadable from 'react-loadable';
 import Loading from './Loading';
 import delay from '../utils/delay';
+import path from 'path';
 
 const LoadableExample = Loadable({
-  loader: () => delay(1000).then(() => import('./Example')),
+  loader: () => import('./Example'),
   loading: Loading,
 });
 
