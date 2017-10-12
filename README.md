@@ -36,7 +36,7 @@ export default class App extends React.Component {
 ---
 
 
-<h1>
+<h1 id="guide">
   <img src="http://thejameskyle.com/img/react-loadable-guide.png" alt="GUIDE">
 </h1>
 
