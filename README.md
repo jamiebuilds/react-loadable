@@ -1,4 +1,4 @@
-# `react-loadable`
+![React Loadable](http://thejameskyle.com/img/react-loadable-header.png)
 
 > A higher order component for loading components with dynamic imports.
 
