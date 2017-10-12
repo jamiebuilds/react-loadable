@@ -31,18 +31,14 @@ export default class App extends React.Component {
 
 - [`react-loadable-visibility`](https://github.com/stratiformltd/react-loadable-visibility) - Building on top of and keeping the same API as `react-loadable`, this library enables you to load content that is visible on the screen.
 
----
-
----
-
-
-<h1 id="guide">
+<h2>
+  <hr>
+  <hr>  
   <img src="http://thejameskyle.com/img/react-loadable-guide.png" alt="GUIDE">
-</h1>
-
----
-
----
+  <hr>
+  <hr>
+  <small>guide</small>
+</h2>
 
 So you've got your React app, you're bundling it with Webpack, and things are
 going smooth. But then one day you notice your app's bundle is getting so big
