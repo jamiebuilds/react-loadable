@@ -37,7 +37,7 @@ export default class App extends React.Component {
   <img src="http://thejameskyle.com/img/react-loadable-guide.png" alt="GUIDE">
   <hr>
   <hr>
-  <small>guide</small>
+  <small>Guide</small>
 </h2>
 
 So you've got your React app, you're bundling it with Webpack, and things are
@@ -365,15 +365,14 @@ class MyComponent extends React.Component {
 }
 ```
 
----
-
----
-
-![SERVER SIDE RENDERING DOCS](http://thejameskyle.com/img/react-loadable-ssr.png)
-
----
-
----
+<h2>
+  <hr>
+  <hr>  
+  <img src="http://thejameskyle.com/img/react-loadable-ssr.png" alt="SERVER SIDE RENDERING">
+  <hr>
+  <hr>
+  <small>Server-Side Rendering</small>
+</h2>
 
 When you go to render all these dynamically loaded components, what you'll get
 is a whole bunch of loading screens.
@@ -609,21 +608,18 @@ res.send(`
 `);
 ```
 
----
-
 <h4 align="center">
   Now server-side rendering should work perfectly!
 </h4>
 
----
-
----
-
-![API DOCS](http://thejameskyle.com/img/react-loadable-api-docs.png)
-
----
-
----
+<h2>
+  <hr>
+  <hr>  
+  <img src="http://thejameskyle.com/img/react-loadable-api-docs.png" alt="API DOCS">
+  <hr>
+  <hr>
+  <small>API Docs</small>
+</h2>
 
 ### `Loadable`
 
@@ -1070,15 +1066,14 @@ let bundles = getBundles(stats, modules);
 
 [Read more about mapping modules to bundles](#mapping-loaded-modules-to-bundles).
 
----
-
----
-
-![API DOCS](http://thejameskyle.com/img/react-loadable-faq.png)
-
----
-
----
+<h2>
+  <hr>
+  <hr>  
+  <img src="http://thejameskyle.com/img/react-loadable-faq.png" alt="FAQ">
+  <hr>
+  <hr>
+  <small>FAQ</small>
+</h2>
 
 ### How do I avoid repetition?
 
