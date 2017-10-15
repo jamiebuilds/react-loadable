@@ -203,7 +203,7 @@ test('loadable map error', async () => {
 
 describe('preloadReady', () => {
   beforeEach(() => {
-    global.__webpack_modules__ = { 1: true, 2: true };
+    global.__webpack_modules__ = { 1: undefined, 2: undefined, 42: true };
   });
 
   afterEach(() => {
