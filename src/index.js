@@ -119,7 +119,7 @@ function createLoadableComponent(loadFn, options) {
 
   if (typeof opts.webpack === 'function') {
     READY_INITIALIZERS.push(() => {
-      if (isWebpackReady(opts.webpack)) {
+      if (!isWebpackReady(opts.webpack)) {
         return init();
       }
     });
