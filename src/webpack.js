@@ -1,5 +1,6 @@
 'use strict';
 const fs = require('fs');
+const path = require('path');
 
 function buildManifest(compiler, compilation) {
   let context = compiler.options.context;
@@ -27,6 +28,10 @@ class ReactLoadablePlugin {
     compiler.plugin('emit', (compilation, callback) => {
       const manifest = buildManifest(compiler, compilation);
       var json = JSON.stringify(manifest, null, 2);
+      const outputDirectory = path.dirname(this.filename);
+      if (!fs.existsSync(outputDirectory)) {
+        fs.mkdirSync(outputDirectory);
+      }
       fs.writeFileSync(this.filename, json);
       callback();
     });
