@@ -146,6 +146,13 @@ exports[`preload 3`] = `
 </div>
 `;
 
+exports[`preloadReady delay with 0 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"timedOut":false,"error":null}
+</div>
+`;
+
 exports[`preloadReady many 1`] = `
 <div>
   MyComponent 
