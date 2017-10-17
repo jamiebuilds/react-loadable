@@ -29,8 +29,12 @@ class ReactLoadablePlugin {
       const manifest = buildManifest(compiler, compilation);
       var json = JSON.stringify(manifest, null, 2);
       const outputDirectory = path.dirname(this.filename);
-      if (!fs.existsSync(outputDirectory)) {
+      try {
         fs.mkdirSync(outputDirectory);
+      } catch (err) {
+        if (err.code !== 'EEXIST') {
+          throw err;
+        }
       }
       fs.writeFileSync(this.filename, json);
       callback();
