@@ -11,7 +11,9 @@ function buildManifest(compiler, compilation) {
       chunk.forEachModule(module => {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
-        manifest[module.rawRequest] = { id, name, file };
+        if (name && !/(node_modules|webpack|multi)/.test(name)) {
+          manifest[module.rawRequest] = {id, name, file};
+        }
       });
     });
   });
