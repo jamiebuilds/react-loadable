@@ -163,9 +163,13 @@ function createLoadableComponent(loadFn, options) {
       }
 
       if (typeof opts.delay === 'number') {
-        this._delay = setTimeout(() => {
+        if (opts.delay === 0) {
           this.setState({ pastDelay: true });
-        }, opts.delay);
+        } else {
+          this._delay = setTimeout(() => {
+            this.setState({ pastDelay: true });
+          }, opts.delay);
+        }
       }
 
       if (typeof opts.timeout === 'number') {
