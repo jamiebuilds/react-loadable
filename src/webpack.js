@@ -1,6 +1,6 @@
-'use strict';
-const fs = require('fs');
-const path = require('path');
+"use strict";
+const fs = require("fs");
+const path = require("path");
 
 function buildManifest(compiler, compilation) {
   let context = compiler.options.context;
@@ -10,8 +10,23 @@ function buildManifest(compiler, compilation) {
     chunk.files.forEach(file => {
       chunk.forEachModule(module => {
         let id = module.id;
-        let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
-        manifest[module.rawRequest] = { id, name, file };
+        let name =
+          typeof module.libIdent === "function"
+            ? module.libIdent({ context })
+            : null;
+        const filenames = {};
+        if (isJs(file)) {
+          filename.js = file;
+        }
+        if (isCss(file)) {
+          filename.css = file;
+        }
+        manifest[module.rawRequest] = {
+          ...manifest[module.rawRequest],
+          id,
+          name,
+          ...filenames
+        };
       });
     });
   });
@@ -25,14 +40,14 @@ class ReactLoadablePlugin {
   }
 
   apply(compiler) {
-    compiler.plugin('emit', (compilation, callback) => {
+    compiler.plugin("emit", (compilation, callback) => {
       const manifest = buildManifest(compiler, compilation);
       var json = JSON.stringify(manifest, null, 2);
       const outputDirectory = path.dirname(this.filename);
       try {
         fs.mkdirSync(outputDirectory);
       } catch (err) {
-        if (err.code !== 'EEXIST') {
+        if (err.code !== "EEXIST") {
           throw err;
         }
       }
