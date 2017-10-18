@@ -550,16 +550,24 @@ We can then render these bundles into `<script>` tags in our HTML.
 
 ```js
 let bundles = getBundles(stats, modules);
+/*
+  [{ id, name, js, css}]
+*/
 
 res.send(`
   <!doctype html>
   <html lang="en">
-    <head>...</head>
+    <head>
+    ...
+    ${bundles.map(bundle => {
+      return `<link href="/dist/${bundle.css}" rel="stylesheet"/>`
+    }).join('\n')}
+    </head>
     <body>
       <div id="app">${html}</div>
       <script src="/dist/main.js"></script>
       ${bundles.map(bundle => {
-        return `<script src="/dist/${bundle.file}"></script>`
+        return `<script src="/dist/${bundle.js}"></script>`
       }).join('\n')}
     </body>
   </html>
