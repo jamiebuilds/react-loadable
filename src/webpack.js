@@ -7,7 +7,7 @@ function buildManifest(compiler, compilation) {
   let manifest = {};
 
   compilation.chunks.forEach(chunk => {
-    chunk.files.forEach(file => {
+    chunk.files.filter(f => path.extname(f) !== ".map").forEach(file => {
       chunk.forEachModule(module => {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
