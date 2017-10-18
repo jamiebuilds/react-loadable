@@ -7,11 +7,11 @@ function buildManifest(compiler, compilation) {
   let manifest = {};
 
   compilation.chunks.forEach(chunk => {
-    chunk.files.filter(f => path.extname(f) !== ".map").forEach(file => {
+    chunk.files.forEach(file => {
       chunk.forEachModule(module => {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
-        manifest[module.rawRequest] = { id, name, file };
+        manifest[module.rawRequest] = { id: id, name: name, file: path.extname(file) !== ".map" ? file : manifest[module.rawRequest].file || file, sourceMap: path.extname(file) === ".map" ? file : null };
       });
     });
   });
