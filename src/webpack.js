@@ -11,7 +11,9 @@ function buildManifest(compiler, compilation) {
       chunk.forEachModule(module => {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
-        manifest[module.rawRequest] = { id: id, name: name, file: path.extname(file) !== ".map" ? file : manifest[module.rawRequest].file || file, sourceMap: path.extname(file) === ".map" ? file : null };
+        let source = path.extname(file) !== ".map" ? file : manifest[module.rawRequest].file || file;
+        let sourcemap = path.extname(file) === ".map" ? file : null;
+        manifest[module.rawRequest] = { id: id, name: name, file: source, ...(sourcemap ? { sourcemap } : {}) };
       });
     });
   });
