@@ -17,6 +17,9 @@
     "start": "yarn build && webpack && babel-node example/server.js",
     "prepublish": "yarn build"
   },
+  "dependencies": {
+    "prop-types": "^15.5.7"
+  },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-loader": "^7.1.2",
@@ -35,7 +38,6 @@
     "webpack": "^3.6.0"
   },
   "peerDependencies": {
-    "react": "*",
-    "prop-types": "*"
+    "react": "*"
   }
 }
