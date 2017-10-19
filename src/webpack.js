@@ -11,7 +11,12 @@ function buildManifest(compiler, compilation) {
       chunk.forEachModule(module => {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
-        manifest[module.rawRequest] = { id, name, file };
+
+        if (!manifest[module.rawRequest]) {
+          manifest[module.rawRequest] = [];
+        }
+
+        manifest[module.rawRequest].push({ id, name, file });
       });
     });
   });
@@ -43,9 +48,9 @@ class ReactLoadablePlugin {
 }
 
 function getBundles(manifest, moduleIds) {
-  return moduleIds.map(moduleId => {
-    return manifest[moduleId];
-  });
+  return moduleIds.reduce((bundles, moduleId) => {
+    return bundles.concat(manifest[moduleId]);
+  }, []);
 }
 
 exports.ReactLoadablePlugin = ReactLoadablePlugin;

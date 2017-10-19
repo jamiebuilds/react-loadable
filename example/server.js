@@ -19,6 +19,9 @@ app.get('/', (req, res) => {
 
   let bundles = getBundles(stats, modules);
 
+  let styles = bundles.filter(bundle => bundle.endsWith('.css'));
+  let scripts = bundles.filter(bundle => bundle.endsWith('.js'));
+
   res.send(`
     <!doctype html>
     <html lang="en">
@@ -27,12 +30,15 @@ app.get('/', (req, res) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>My App</title>
+        ${styles.map(style => {
+          return `<link href="/dist/${style.file}" rel="stylesheet"/>`;
+        }).join('\n')}
       </head>
       <body>
         <div id="app">${html}</div>
         <script src="/dist/main.js"></script>
-        ${bundles.map(bundle => {
-          return `<script src="/dist/${bundle.file}"></script>`
+        ${scripts.map(script => {
+          return `<script src="/dist/${script.file}"></script>`
         }).join('\n')}
         <script>window.main();</script>
       </body>

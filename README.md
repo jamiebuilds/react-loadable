@@ -1109,3 +1109,37 @@ export default class App extends React.Component {
   }
 }
 ```
+
+### How do I handle other styles `.css` or sourcemaps `.map` with server-side rendering?
+
+When you call [`getBundles`](#getbundles), it may return file types other than
+JavaScript depending on your Webpack configuration.
+
+To handle this, you should manually filter down to the file extensions that
+you care about:
+
+```js
+let bundles = getBundles(stats, modules);
+
+let styles = bundles.filter(bundle => bundle.endsWith('.css'));
+let scripts = bundles.filter(bundle => bundle.endsWith('.js'));
+
+res.send(`
+  <!doctype html>
+  <html lang="en">
+    <head>
+      ...
+      ${styles.map(style => {
+        return `<link href="/dist/${style.file}" rel="stylesheet"/>`
+      }).join('\n')}
+    </head>
+    <body>
+      <div id="app">${html}</div>
+      <script src="/dist/main.js"></script>
+      ${scripts.map(script => {
+        return `<script src="/dist/${script.file}"></script>`
+      }).join('\n')}
+    </body>
+  </html>
+`);
+```
