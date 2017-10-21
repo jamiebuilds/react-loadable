@@ -18,7 +18,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
-    "prop-types": "^15.5.7"
+    "prop-types": "^15.5.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
