@@ -1,6 +1,6 @@
 {
   "name": "react-loadable",
-  "version": "5.3.0",
+  "version": "5.3.1",
   "description": "A higher order component for loading components with promises",
   "main": "lib/index.js",
   "author": "James Kyle <me@thejameskyle.com>",
