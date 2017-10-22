@@ -1,10 +1,18 @@
-'use strict';
-const fs = require('fs');
-const path = require('path');
+// @flow
+import * as fs from 'fs';
+import * as path from 'path';
 
-function buildManifest(compiler, compilation) {
+type Manifest = {
+  [rawRequest: string]: Array<{
+    id: number,
+    name: string,
+    file: string,
+  }>,
+};
+
+function buildManifest(compiler, compilation): Manifest {
   let context = compiler.options.context;
-  let manifest = {};
+  let manifest: Manifest = {};
 
   compilation.chunks.forEach(chunk => {
     chunk.files.forEach(file => {
@@ -24,15 +32,21 @@ function buildManifest(compiler, compilation) {
   return manifest;
 }
 
-class ReactLoadablePlugin {
-  constructor(opts = {}) {
+type PluginOptions = {
+  filename: string,
+};
+
+export class ReactLoadablePlugin {
+  filename: string;
+
+  constructor(opts: PluginOptions) {
     this.filename = opts.filename;
   }
 
-  apply(compiler) {
+  apply(compiler: Object) {
     compiler.plugin('emit', (compilation, callback) => {
       const manifest = buildManifest(compiler, compilation);
-      var json = JSON.stringify(manifest, null, 2);
+      const json = JSON.stringify(manifest, null, 2);
       const outputDirectory = path.dirname(this.filename);
       try {
         fs.mkdirSync(outputDirectory);
@@ -47,11 +61,8 @@ class ReactLoadablePlugin {
   }
 }
 
-function getBundles(manifest, moduleIds) {
-  return moduleIds.reduce((bundles, moduleId) => {
-    return bundles.concat(manifest[moduleId]);
+export function getBundles(manifest: Manifest, moduleRequests: Array<string>) {
+  return moduleRequests.reduce((bundles, moduleRequest) => {
+    return bundles.concat(manifest[moduleRequest]);
   }, []);
 }
-
-exports.ReactLoadablePlugin = ReactLoadablePlugin;
-exports.getBundles = getBundles;

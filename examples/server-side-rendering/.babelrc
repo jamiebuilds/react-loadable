@@ -1,0 +1,25 @@
+{
+  "env": {
+    "client": {
+      "presets": [
+        ["es2015", { "modules": false }],
+        "react"
+      ],
+      "plugins": [
+        "syntax-dynamic-import",
+        "transform-class-properties"
+      ]
+    },
+    "server": {
+      "presets": [
+        "es2015",
+        "react",
+      ],
+      "plugins": [
+        "dynamic-import-node",
+        "transform-class-properties",
+        "react-loadable"
+      ]
+    }
+  }
+}

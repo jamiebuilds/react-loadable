@@ -1,0 +1,18 @@
+{
+  "name": "react-loadable-loader",
+  "version": "5.3.1",
+  "description": "Webpack Loader for React Loadable server-side rendering",
+  "main": "lib/index.js",
+  "author": "James Kyle <me@thejameskyle.com>",
+  "license": "MIT",
+  "repository": "thejameskyle/react-loadable",
+  "files": [
+    "lib/**"
+  ],
+  "dependencies": {
+    "prop-types": "^15.5.0"
+  },
+  "peerDependencies": {
+    "react": "^0.14.0 || ^15.0.0 || ^16.0.0"
+  }
+}

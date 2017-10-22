@@ -1,0 +1,23 @@
+{
+  "name": "react-loadable",
+  "version": "5.3.1",
+  "description": "A higher order component for loading components with promises",
+  "main": "index.js",
+  "author": "James Kyle <me@thejameskyle.com>",
+  "license": "MIT",
+  "repository": "thejameskyle/react-loadable",
+  "files": [
+    "index.js",
+    "babel.js",
+    "webpack.js",
+    "lib/**"
+  ],
+  "dependencies": {
+    "babel-plugin-react-loadable": "^5.3.1",
+    "prop-types": "^15.5.0",
+    "react-loadable-loader": "^5.3.1"
+  },
+  "peerDependencies": {
+    "react": "^0.14.0 || ^15.0.0 || ^16.0.0"
+  }
+}
