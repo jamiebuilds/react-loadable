@@ -32,6 +32,7 @@ export default class App extends React.Component {
 
 - [Atlassian](https://www.atlassian.com/)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
+- [Spectrum.chat](https://spectrum.chat)
 - [Talentpair](https://talentpair.com)
 - [Tinder](https://tinder.com/)
 
