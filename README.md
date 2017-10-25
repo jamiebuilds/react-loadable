@@ -32,6 +32,7 @@ export default class App extends React.Component {
 
 - [Atlassian](https://www.atlassian.com/)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
+- [Tinder](https://tinder.com/)
 
 > _If your company or project is using React Loadable, please open a PR and add
 > yourself to this list (in alphabetical order please)_
