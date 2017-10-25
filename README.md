@@ -31,6 +31,7 @@ export default class App extends React.Component {
 ## Users
 
 - [Atlassian](https://www.atlassian.com/)
+- [MediaTek MCS-Lite](https://github.com/MCS-Lite) - An on-premises Internet of Things cloud platform, which can be quickly built and get started with.
 
 > _If your company or project is using React Loadable, please open a PR and add
 > yourself to this list (in alphabetical order please)_
