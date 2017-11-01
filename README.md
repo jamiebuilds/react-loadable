@@ -31,6 +31,7 @@ export default class App extends React.Component {
 ## Users
 
 - [Atlassian](https://www.atlassian.com/)
+- [Cloudflare](https://www.cloudflare.com)
 - [Curio](https://www.curio.org)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
 - [Spectrum.chat](https://spectrum.chat)
