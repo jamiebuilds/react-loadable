@@ -34,6 +34,7 @@ export default class App extends React.Component {
 - [Curio](https://www.curio.org)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
 - [Spectrum.chat](https://spectrum.chat)
+- [Talentpair](https://talentpair.com)
 - [Tinder](https://tinder.com/)
 
 > _If your company or project is using React Loadable, please open a PR and add
