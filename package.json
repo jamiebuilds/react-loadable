@@ -32,7 +32,7 @@
     "babel-preset-react": "^6.24.1",
     "express": "^4.16.1",
     "flow-bin": "^0.41.0",
-    "jest": "^19.0.2",
+    "jest": "^21.2.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-test-renderer": "^16.0.0",
