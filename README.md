@@ -78,7 +78,7 @@ experience on the web.
 
 But we can do better than that.
 
-Using most routing tools for React, a route is simple a component. There's
+Using most routing tools for React, a route is simply a component. There's
 nothing particularly special about them (Sorry Ryan and Michael– you're what's
 special). So what if we optimized for splitting around components instead of
 routes? What would that get us?
