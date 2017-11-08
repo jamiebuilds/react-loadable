@@ -151,7 +151,10 @@ function createLoadableComponent(loadFn, options) {
 
     componentWillMount() {
       this._mounted = true;
+      this._loadModule();
+    }
 
+    _loadModule() {
       if (this.context.loadable && Array.isArray(opts.modules)) {
         opts.modules.forEach(moduleName => {
           this.context.loadable.report(moduleName);
@@ -209,13 +212,20 @@ function createLoadableComponent(loadFn, options) {
       clearTimeout(this._timeout);
     }
 
+    retry() {
+      this.setState({ error: null, loading: true });
+      res = loadFn(opts.loader);
+      this._loadModule();
+    };
+
     render() {
       if (this.state.loading || this.state.error) {
         return React.createElement(opts.loading, {
           isLoading: this.state.loading,
           pastDelay: this.state.pastDelay,
           timedOut: this.state.timedOut,
-          error: this.state.error
+          error: this.state.error,
+          retry: this.retry.bind(this)
         });
       } else if (this.state.loaded) {
         return opts.render(this.state.loaded, this.props);
