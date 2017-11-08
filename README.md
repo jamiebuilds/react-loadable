@@ -215,7 +215,7 @@ will be `false`).
 ```js
 function Loading(props) {
   if (props.error) {
-    return <div>Error!</div>;
+    return <div>Error! <button type="button" onClick={ props.retry }>Retry</button></div>;
   } else {
     return <div>Loading...</div>;
   }
@@ -238,7 +238,7 @@ which will only be true once the component has taken longer to load than a set
 ```js
 function Loading(props) {
   if (props.error) {
-    return <div>Error!</div>;
+    return <div>Error! <button type="button" onClick={ props.retry }>Retry</button></div>;
   } else if (props.pastDelay) {
     return <div>Loading...</div>;
   } else {
@@ -271,9 +271,9 @@ The [loading component](#loadingcomponent) will receive a
 ```js
 function Loading(props) {
   if (props.error) {
-    return <div>Error!</div>;
+    return <div>Error! <button type="button" onClick={ props.retry }>Retry</button></div>;
   } else if (props.timedOut) {
-    return <div>Taking a long time...</div>;
+    return <div>Taking a long time... <button type="button" onClick={ props.retry }>Retry</button></div>;
   } else if (props.pastDelay) {
     return <div>Loading...</div>;
   } else {
@@ -831,10 +831,10 @@ This is the component you pass to [`opts.loading`](#optsloading).
 function LoadingComponent(props) {
   if (props.error) {
     // When the loader has errored
-    return <div>Error!</div>;
+    return <div>Error! <button type="button" onClick={ props.retry }>Retry</button></div>;
   } else if (props.timedOut) {
     // When the loader has taken longer than the timeout
-    return <div>Taking a long time...</div>;
+    return <div>Taking a long time... <button type="button" onClick={ props.retry }>Retry</button></div>;
   } else if (props.pastDelay) {
     // When the loader has taken longer than the delay
     return <div>Loading...</div>;
@@ -860,6 +860,23 @@ A boolean prop passed to [`LoadingComponent`](#loadingcomponent) when the
 function LoadingComponent(props) {
   if (props.error) {
     return <div>Error!</div>;
+  } else {
+    return <div>Loading...</div>;
+  }
+}
+```
+
+[Read more about errors](#loading-error-states).
+
+#### `props.retry`
+
+A function prop passed to [`LoadingComponent`](#loadingcomponent) when the
+[`loader`](#optsloader) has failed, used to retry loading the component.
+
+```js
+function LoadingComponent(props) {
+  if (props.error) {
+    return <div>Error! <button type="button" onClick={ props.retry }>Retry</button></div>;
   } else {
     return <div>Loading...</div>;
   }
