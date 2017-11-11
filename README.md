@@ -47,7 +47,7 @@ export default class App extends React.Component {
 
 <h2>
   <hr>
-  <hr>  
+  <hr>
   <img src="http://thejameskyle.com/img/react-loadable-guide.png" alt="GUIDE">
   <hr>
   <hr>
@@ -381,7 +381,7 @@ class MyComponent extends React.Component {
 
 <h2>
   <hr>
-  <hr>  
+  <hr>
   <img src="http://thejameskyle.com/img/react-loadable-ssr.png" alt="SERVER SIDE RENDERING">
   <hr>
   <hr>
@@ -628,7 +628,7 @@ res.send(`
 
 <h2>
   <hr>
-  <hr>  
+  <hr>
   <img src="http://thejameskyle.com/img/react-loadable-api-docs.png" alt="API DOCS">
   <hr>
   <hr>
@@ -1082,7 +1082,7 @@ let bundles = getBundles(stats, modules);
 
 <h2>
   <hr>
-  <hr>  
+  <hr>
   <img src="http://thejameskyle.com/img/react-loadable-faq.png" alt="FAQ">
   <hr>
   <hr>
@@ -1115,6 +1115,24 @@ import MyLoadable from './MyLoadable';
 
 const LoadableMyComponent = MyLoadable({
   loader: () => import('./MyComponent'),
+});
+
+export default class App extends React.Component {
+  render() {
+    return <LoadableMyComponent/>;
+  }
+}
+```
+
+Unfortunately at the moment using wrapped Loadable breaks [react-loadable/babel](#babel-plugin) so in such case you have to add required properties (`modules`, `webpack`) manually.
+
+```js
+import MyLoadable from './MyLoadable';
+
+const LoadableMyComponent = MyLoadable({
+  loader: () => import('./MyComponent'),
+  modules: ['./MyComponent'],
+  webpack: () => [require.resolveWeak('./MyComponent')],
 });
 
 export default class App extends React.Component {
