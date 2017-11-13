@@ -215,7 +215,7 @@ will be `false`).
 ```js
 function Loading(props) {
   if (props.error) {
-    return <div>Error! <button type="button" onClick={ props.retry }>Retry</button></div>;
+    return <div>Error! <button onClick={ props.retry }>Retry</button></div>;
   } else {
     return <div>Loading...</div>;
   }
@@ -238,7 +238,7 @@ which will only be true once the component has taken longer to load than a set
 ```js
 function Loading(props) {
   if (props.error) {
-    return <div>Error! <button type="button" onClick={ props.retry }>Retry</button></div>;
+    return <div>Error! <button onClick={ props.retry }>Retry</button></div>;
   } else if (props.pastDelay) {
     return <div>Loading...</div>;
   } else {
@@ -271,9 +271,9 @@ The [loading component](#loadingcomponent) will receive a
 ```js
 function Loading(props) {
   if (props.error) {
-    return <div>Error! <button type="button" onClick={ props.retry }>Retry</button></div>;
+    return <div>Error! <button onClick={ props.retry }>Retry</button></div>;
   } else if (props.timedOut) {
-    return <div>Taking a long time... <button type="button" onClick={ props.retry }>Retry</button></div>;
+    return <div>Taking a long time... <button onClick={ props.retry }>Retry</button></div>;
   } else if (props.pastDelay) {
     return <div>Loading...</div>;
   } else {
@@ -831,10 +831,10 @@ This is the component you pass to [`opts.loading`](#optsloading).
 function LoadingComponent(props) {
   if (props.error) {
     // When the loader has errored
-    return <div>Error! <button type="button" onClick={ props.retry }>Retry</button></div>;
+    return <div>Error! <button onClick={ props.retry }>Retry</button></div>;
   } else if (props.timedOut) {
     // When the loader has taken longer than the timeout
-    return <div>Taking a long time... <button type="button" onClick={ props.retry }>Retry</button></div>;
+    return <div>Taking a long time... <button onClick={ props.retry }>Retry</button></div>;
   } else if (props.pastDelay) {
     // When the loader has taken longer than the delay
     return <div>Loading...</div>;
@@ -876,7 +876,7 @@ A function prop passed to [`LoadingComponent`](#loadingcomponent) when the
 ```js
 function LoadingComponent(props) {
   if (props.error) {
-    return <div>Error! <button type="button" onClick={ props.retry }>Retry</button></div>;
+    return <div>Error! <button onClick={ props.retry }>Retry</button></div>;
   } else {
     return <div>Loading...</div>;
   }
