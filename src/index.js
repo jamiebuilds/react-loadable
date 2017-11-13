@@ -212,11 +212,11 @@ function createLoadableComponent(loadFn, options) {
       clearTimeout(this._timeout);
     }
 
-    retry() {
+    retry = () => {
       this.setState({ error: null, loading: true });
       res = loadFn(opts.loader);
       this._loadModule();
-    };
+    }
 
     render() {
       if (this.state.loading || this.state.error) {
@@ -225,7 +225,7 @@ function createLoadableComponent(loadFn, options) {
           pastDelay: this.state.pastDelay,
           timedOut: this.state.timedOut,
           error: this.state.error,
-          retry: this.retry.bind(this)
+          retry: this.retry
         });
       } else if (this.state.loaded) {
         return opts.render(this.state.loaded, this.props);
