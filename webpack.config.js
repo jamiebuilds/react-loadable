@@ -27,6 +27,7 @@ module.exports = {
             plugins: [
               'syntax-dynamic-import',
               'transform-class-properties',
+              'transform-object-assign',
               require.resolve('./babel'),
             ],
           }
