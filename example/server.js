@@ -19,8 +19,8 @@ app.get('/', (req, res) => {
 
   let bundles = getBundles(stats, modules);
 
-  let styles = bundles.filter(bundle => bundle.endsWith('.css'));
-  let scripts = bundles.filter(bundle => bundle.endsWith('.js'));
+  let styles = bundles.filter(bundle => bundle.file.endsWith('.css'));
+  let scripts = bundles.filter(bundle => bundle.file.endsWith('.js'));
 
   res.send(`
     <!doctype html>
