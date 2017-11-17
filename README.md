@@ -460,7 +460,7 @@ component is trying to load: [`opts.modules`](#optsmodules) and
 
 ```js
 Loadable({
-  loading: () => import('./Bar'),
+  loader: () => import('./Bar'),
   modules: ['./Bar'],
   webpack: () => [require.resolveWeak('./Bar')],
 });
