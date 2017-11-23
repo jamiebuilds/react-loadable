@@ -37,6 +37,7 @@ export default class App extends React.Component {
 - [Spectrum.chat](https://spectrum.chat)
 - [Talentpair](https://talentpair.com)
 - [Tinder](https://tinder.com/)
+- [Unsplash](https://unsplash.com/)
 
 > _If your company or project is using React Loadable, please open a PR and add
 > yourself to this list (in alphabetical order please)_
