@@ -16,7 +16,9 @@ function buildManifest(compiler, compilation) {
           manifest[module.rawRequest] = [];
         }
 
-        manifest[module.rawRequest].push({ id, name, file });
+        const path = compilation.outputOptions.publicPath || '';
+
+        manifest[module.rawRequest].push({ id, name, file: path + file });
       });
     });
   });
