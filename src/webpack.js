@@ -11,12 +11,13 @@ function buildManifest(compiler, compilation) {
       chunk.forEachModule(module => {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
+        let publicPath = path.join(compilation.outputOptions.publicPath || '', file);
 
         if (!manifest[module.rawRequest]) {
           manifest[module.rawRequest] = [];
         }
 
-        manifest[module.rawRequest].push({ id, name, file });
+        manifest[module.rawRequest].push({ id, name, file, publicPath });
       });
     });
   });
