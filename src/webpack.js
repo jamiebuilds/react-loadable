@@ -1,6 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 
 function buildManifest(compiler, compilation) {
   let context = compiler.options.context;
@@ -11,7 +12,7 @@ function buildManifest(compiler, compilation) {
       chunk.forEachModule(module => {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
-        let publicPath = path.join(compilation.outputOptions.publicPath || '', file);
+        let publicPath = url.resolve(compilation.outputOptions.publicPath || '', file);
 
         if (!manifest[module.rawRequest]) {
           manifest[module.rawRequest] = [];
