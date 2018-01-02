@@ -4,6 +4,12 @@
 
 ## Example
 
+```bash
+yarn add react-loadable
+# or
+npm i react-loadable
+```
+
 ```js
 import Loadable from 'react-loadable';
 import Loading from './my-loading-component';
