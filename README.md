@@ -2,13 +2,13 @@
 
 > A higher order component for loading components with dynamic imports.
 
-## Example
+## Install
 
-```bash
+```sh
 yarn add react-loadable
-# or
-npm i react-loadable
 ```
+
+## Example
 
 ```js
 import Loadable from 'react-loadable';
