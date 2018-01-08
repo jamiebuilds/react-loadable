@@ -593,7 +593,7 @@ res.send(`
 Because of the way that Webpack works, our app in the main bundle will render
 before the other scripts are loaded.
 
-So we'll need to defer rendering our app until they are all loaded.
+So we'll need to defer hydrating our app until they are all loaded.
 
 To do this we'll expose a global function for us to call when all the bundles
 are loaded, and we'll use the [`Loadable.preloadReady()`](#loadablepreloadready)
