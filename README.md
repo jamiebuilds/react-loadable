@@ -8,6 +8,10 @@
 yarn add react-loadable
 ```
 
+```sh
+npm i react-loadable
+```
+
 ## Example
 
 ```js
