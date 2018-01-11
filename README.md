@@ -41,6 +41,7 @@ export default class App extends React.Component {
 - [Curio](https://www.curio.org)
 - [Flyhomes](https://flyhomes.com)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
+- [Snipit](https://snipit.io)
 - [Spectrum.chat](https://spectrum.chat)
 - [Talentpair](https://talentpair.com)
 - [Tinder](https://tinder.com/)
