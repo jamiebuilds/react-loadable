@@ -1,5 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`custom render 1`] = `
+<div>
+  <div>
+    loading...
+  </div>
+</div>
+`;
+
+exports[`custom render 2`] = `
+<div>
+  <div>
+    done loading, we could fade this out now
+  </div>
+  <div>
+    MyComponent 
+    {"prop":"foo"}
+  </div>
+</div>
+`;
+
 exports[`delay and timeout 1`] = `
 <div>
   MyLoadingComponent 

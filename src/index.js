@@ -92,8 +92,8 @@ function render(loaded, props) {
 }
 
 function createLoadableComponent(loadFn, options) {
-  if (!options.loading) {
-    throw new Error('react-loadable requires a `loading` component')
+  if (!options.loading && !options.custom) {
+    throw new Error('react-loadable requires a `loading` component or a `custom` renderer')
   }
 
   let opts = Object.assign({
@@ -104,6 +104,7 @@ function createLoadableComponent(loadFn, options) {
     render: render,
     webpack: null,
     modules: null,
+    custom: null
   }, options);
 
   let res = null;
@@ -210,7 +211,16 @@ function createLoadableComponent(loadFn, options) {
     }
 
     render() {
-      if (this.state.loading || this.state.error) {
+      if (opts.custom) {
+        return opts.custom({
+          isLoading: this.state.loading,
+          pastDelay: this.state.pastDelay,
+          timedOut: this.state.timedOut,
+          error: this.state.error,
+          loaded: this.state.loaded,
+          props: this.props
+        })
+      } else if (this.state.loading || this.state.error) {
         return React.createElement(opts.loading, {
           isLoading: this.state.loading,
           pastDelay: this.state.pastDelay,

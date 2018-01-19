@@ -151,6 +151,24 @@ test('render', async () => {
   expect(component.toJSON()).toMatchSnapshot(); // success
 });
 
+test('custom render', async () => {
+  let LoadableMyComponent = Loadable({
+    custom: ({isLoading, loaded, props}) => (
+      <div>
+        <div>{isLoading ? "loading..." : "done loading, we could fade this out now"}</div>
+        {loaded && React.createElement(loaded, props)}
+      </div>
+    ),
+    loader: createLoader(100, () => MyComponent)
+  });
+
+  let component1 = renderer.create(<LoadableMyComponent prop="foo" />);
+
+  expect(component1.toJSON()).toMatchSnapshot(); // initial
+  await waitFor(120);
+  expect(component1.toJSON()).toMatchSnapshot(); // loaded
+});
+
 test('loadable map success', async () => {
   let LoadableMyComponent = Loadable.Map({
     loader: {
