@@ -8,19 +8,21 @@ function buildManifest(compiler, compilation) {
   let manifest = {};
 
   compilation.chunks.forEach(chunk => {
-    chunk.files.forEach(file => {
-      chunk.forEachModule(module => {
-        let id = module.id;
-        let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
-        let publicPath = url.resolve(compilation.outputOptions.publicPath || '', file);
+    if (chunk.name !== 'main') {
+      chunk.files.forEach(file => {
+        chunk.forEachModule(module => {
+          let id = module.id;
+          let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
+          let publicPath = url.resolve(compilation.outputOptions.publicPath || '', file);
 
-        if (!manifest[module.rawRequest]) {
-          manifest[module.rawRequest] = [];
-        }
+          if (!manifest[module.rawRequest]) {
+            manifest[module.rawRequest] = [];
+          }
 
-        manifest[module.rawRequest].push({ id, name, file, publicPath });
+          manifest[module.rawRequest].push({ id, name, file, publicPath });
+        });
       });
-    });
+    }
   });
 
   return manifest;
