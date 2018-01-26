@@ -572,6 +572,26 @@ app.get('/', (req, res) => {
 
 We can then render these bundles into `<script>` tags in our HTML.
 
+It is important that the bundles are included _before_ the main bundle, so that
+they can be loaded by the browser prior to the app rendering.
+
+However, as the Webpack manifest (including the logic for parsing bundles) lives in
+the main bundle, it will need to be extracted into its own chunk.
+
+This is easy to do with the [CommonsChunkPlugin](https://webpack.js.org/plugins/commons-chunk-plugin/)
+
+```js
+// webpack.config.js
+export default {
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest',
+      minChunks: Infinity
+    });
+  ]
+}
+```
+
 ```js
 let bundles = getBundles(stats, modules);
 
@@ -581,26 +601,23 @@ res.send(`
     <head>...</head>
     <body>
       <div id="app">${html}</div>
-      <script src="/dist/main.js"></script>
+      <script src="/dist/manifest.js"></script>
       ${bundles.map(bundle => {
         return `<script src="/dist/${bundle.file}"></script>`
       }).join('\n')}
+      <script src="/dist/main.js"></script>
     </body>
   </html>
 `);
 ```
 
-#### Waiting to render on the client until all the bundles are loaded
+#### Preloading ready loadable components on the client
 
-Because of the way that Webpack works, our app in the main bundle will render
-before the other scripts are loaded.
+We can use the [`Loadable.preloadReady()`](#loadablepreloadready) method on the
+client to preload the loadable components that were included on the page.
 
-So we'll need to defer hydrating our app until they are all loaded.
-
-To do this we'll expose a global function for us to call when all the bundles
-are loaded, and we'll use the [`Loadable.preloadReady()`](#loadablepreloadready)
-method just like our [`Loadable.preloadAll()`](#loadablepreloadall) method on
-the server.
+Like [`Loadable.preloadAll()`](#loadablepreloadall), it returns a promise,
+which on resolution means that we can hydrate our app.
 
 ```js
 // src/entry.js
@@ -609,27 +626,10 @@ import ReactDOM from 'react-dom';
 import Loadable from 'react-loadable';
 import App from './components/App';
 
-window.main = () => {
-  Loadable.preloadReady().then(() => {
-    ReactDOM.hydrate(<App/>, document.getElementById('app'));
-  });
-};
-```
+Loadable.preloadReady().then(() => {
+  ReactDOM.hydrate(<App/>, document.getElementById('app'));
+});
 
-Then in our HTML returned by the server, we'll call our global function in a
-final `<script>` tag.
-
-```js
-let bundles = getBundles(stats, modules);
-
-res.send(`
-      ...
-      <script src="/dist/main.js"></script>
-      ${bundles.map(...).join('\n')}
-      <script>window.main();</script>
-    </body>
-  </html>
-`);
 ```
 
 <h4 align="center">
@@ -968,11 +968,9 @@ Check for modules that are already loaded in the browser and call the matching
 [`LoadableComponent.preload`](#loadablecomponentpreload) methods.
 
 ```js
-window.main = () => {
-  Loadable.preloadReady().then(() => {
-    ReactDOM.hydrate(<App/>, document.getElementById('app'));
-  });
-};
+Loadable.preloadReady().then(() => {
+  ReactDOM.hydrate(<App/>, document.getElementById('app'));
+});
 ```
 
 [Read more about preloading on the client](#waiting-to-render-on-the-client-until-all-the-bundles-are-loaded).
