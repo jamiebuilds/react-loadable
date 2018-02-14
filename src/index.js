@@ -1,32 +1,32 @@
-'use strict';
-const React = require('react');
-const PropTypes = require('prop-types');
+"use strict";
+const React = require("react");
+const PropTypes = require("prop-types");
 
 const ALL_INITIALIZERS = [];
 const READY_INITIALIZERS = [];
 
 function isPreloaded(moduleIds) {
-  if (typeof window !== "undefined") {
+  if (typeof window === "undefined") {
     return false;
   }
 
   return moduleIds.every(moduleId => {
     return (
-      typeof moduleId !== 'undefined' &&
-      typeof window.__PRELOADED_COMPONENTS__.indexOf(moduleId) > -1
+      typeof moduleId !== "undefined" &&
+      window.__PRELOADED_COMPONENTS__.indexOf(moduleId) > -1
     );
   });
 }
 
 function isWebpackReady(getModuleIds) {
-  if (typeof __webpack_modules__ !== 'object') {
+  if (typeof __webpack_modules__ !== "object") {
     return false;
   }
 
   return getModuleIds().every(moduleId => {
     return (
-      typeof moduleId !== 'undefined' &&
-      typeof __webpack_modules__[moduleId] !== 'undefined'
+      typeof moduleId !== "undefined" &&
+      typeof __webpack_modules__[moduleId] !== "undefined"
     );
   });
 }
@@ -40,15 +40,17 @@ function load(loader) {
     error: null
   };
 
-  state.promise = promise.then(loaded => {
-    state.loading = false;
-    state.loaded = loaded;
-    return loaded;
-  }).catch(err => {
-    state.loading = false;
-    state.error = err;
-    throw err;
-  });
+  state.promise = promise
+    .then(loaded => {
+      state.loading = false;
+      state.loaded = loaded;
+      return loaded;
+    })
+    .catch(err => {
+      state.loading = false;
+      state.error = err;
+      throw err;
+    });
 
   return state;
 }
@@ -75,23 +77,27 @@ function loadMap(obj) {
 
       promises.push(result.promise);
 
-      result.promise.then(res => {
-        state.loaded[key] = res;
-      }).catch(err => {
-        state.error = err;
-      });
+      result.promise
+        .then(res => {
+          state.loaded[key] = res;
+        })
+        .catch(err => {
+          state.error = err;
+        });
     });
   } catch (err) {
     state.error = err;
   }
 
-  state.promise = Promise.all(promises).then(res => {
-    state.loading = false;
-    return res;
-  }).catch(err => {
-    state.loading = false;
-    throw err;
-  });
+  state.promise = Promise.all(promises)
+    .then(res => {
+      state.loading = false;
+      return res;
+    })
+    .catch(err => {
+      state.loading = false;
+      throw err;
+    });
 
   return state;
 }
@@ -106,18 +112,21 @@ function render(loaded, props) {
 
 function createLoadableComponent(loadFn, options) {
   if (!options.loading) {
-    throw new Error('react-loadable requires a `loading` component')
+    throw new Error("react-loadable requires a `loading` component");
   }
 
-  let opts = Object.assign({
-    loader: null,
-    loading: null,
-    delay: 200,
-    timeout: null,
-    render: render,
-    webpack: null,
-    modules: null,
-  }, options);
+  let opts = Object.assign(
+    {
+      loader: null,
+      loading: null,
+      delay: 200,
+      timeout: null,
+      render: render,
+      webpack: null,
+      modules: null
+    },
+    options
+  );
 
   let res = null;
 
@@ -130,12 +139,16 @@ function createLoadableComponent(loadFn, options) {
 
   ALL_INITIALIZERS.push(init);
 
-  if (typeof opts.webpack === 'function') {
+  if (opts.modules && opts.modules.length) {
     READY_INITIALIZERS.push(() => {
       if (isPreloaded(opts.modules)) {
         return init();
       }
-      
+    });
+  }
+
+  if (typeof opts.webpack === "function") {
+    READY_INITIALIZERS.push(() => {
       if (isWebpackReady(opts.webpack)) {
         return init();
       }
@@ -158,8 +171,8 @@ function createLoadableComponent(loadFn, options) {
 
     static contextTypes = {
       loadable: PropTypes.shape({
-        report: PropTypes.func.isRequired,
-      }),
+        report: PropTypes.func.isRequired
+      })
     };
 
     static preload() {
@@ -179,7 +192,7 @@ function createLoadableComponent(loadFn, options) {
         return;
       }
 
-      if (typeof opts.delay === 'number') {
+      if (typeof opts.delay === "number") {
         if (opts.delay === 0) {
           this.setState({ pastDelay: true });
         } else {
@@ -189,7 +202,7 @@ function createLoadableComponent(loadFn, options) {
         }
       }
 
-      if (typeof opts.timeout === 'number') {
+      if (typeof opts.timeout === "number") {
         this._timeout = setTimeout(() => {
           this.setState({ timedOut: true });
         }, opts.timeout);
@@ -209,11 +222,13 @@ function createLoadableComponent(loadFn, options) {
         this._clearTimeouts();
       };
 
-      res.promise.then(() => {
-        update();
-      }).catch(err => {
-        update();
-      });
+      res.promise
+        .then(() => {
+          update();
+        })
+        .catch(err => {
+          update();
+        });
     }
 
     componentWillUnmount() {
@@ -248,8 +263,8 @@ function Loadable(opts) {
 }
 
 function LoadableMap(opts) {
-  if (typeof opts.render !== 'function') {
-    throw new Error('LoadableMap requires a `render(loaded, props)` function');
+  if (typeof opts.render !== "function") {
+    throw new Error("LoadableMap requires a `render(loaded, props)` function");
   }
 
   return createLoadableComponent(loadMap, opts);
@@ -259,20 +274,20 @@ Loadable.Map = LoadableMap;
 
 class Capture extends React.Component {
   static propTypes = {
-    report: PropTypes.func.isRequired,
+    report: PropTypes.func.isRequired
   };
 
   static childContextTypes = {
     loadable: PropTypes.shape({
-      report: PropTypes.func.isRequired,
-    }).isRequired,
+      report: PropTypes.func.isRequired
+    }).isRequired
   };
 
   getChildContext() {
     return {
       loadable: {
-        report: this.props.report,
-      },
+        report: this.props.report
+      }
     };
   }
 
