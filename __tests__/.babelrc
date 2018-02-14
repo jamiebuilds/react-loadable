@@ -1,0 +1,11 @@
+{
+  "presets": [
+    ["es2015", {
+      "loose": true,
+    }],
+    "react",
+  ],
+  "plugins": [
+    "transform-async-to-generator",
+  ],
+}
