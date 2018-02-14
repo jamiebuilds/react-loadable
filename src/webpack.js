@@ -11,6 +11,7 @@ function buildManifest(compiler, compilation) {
     chunk.files.forEach(file => {
       chunk.forEachModule(module => {
         let id = module.id;
+
         let name =
           typeof module.libIdent === "function"
             ? module.libIdent({ context })

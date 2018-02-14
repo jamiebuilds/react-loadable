@@ -3,6 +3,7 @@ export default function({ types: t, template }) {
     visitor: {
       ImportDeclaration(path) {
         let source = path.node.source.value;
+
         if (source !== "react-loadable") return;
 
         let defaultSpecifier = path.get("specifiers").find(specifier => {
@@ -28,6 +29,7 @@ export default function({ types: t, template }) {
           if (!callExpression.isCallExpression()) return;
 
           let args = callExpression.get("arguments");
+
           if (args.length !== 1) throw callExpression.error;
 
           let options = args[0];
@@ -38,6 +40,7 @@ export default function({ types: t, template }) {
 
           properties.forEach(property => {
             let key = property.get("key");
+
             propertiesMap[key.node.name] = property;
           });
 
@@ -46,6 +49,7 @@ export default function({ types: t, template }) {
           }
 
           let loaderMethod = propertiesMap.loader.get("value");
+
           let dynamicImports = [];
 
           loaderMethod.traverse({
@@ -59,6 +63,7 @@ export default function({ types: t, template }) {
           propertiesMap.loader.insertAfter(
             t.objectProperty(
               t.identifier("webpack"),
+
               t.arrowFunctionExpression(
                 [],
                 t.arrayExpression(
