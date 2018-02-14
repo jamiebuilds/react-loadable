@@ -5,6 +5,19 @@ const PropTypes = require('prop-types');
 const ALL_INITIALIZERS = [];
 const READY_INITIALIZERS = [];
 
+function isPreloaded(moduleIds) {
+  if (typeof window !== "undefined") {
+    return false;
+  }
+
+  return moduleIds.every(moduleId => {
+    return (
+      typeof moduleId !== 'undefined' &&
+      typeof window.__PRELOADED_COMPONENTS__.indexOf(moduleId) > -1
+    );
+  });
+}
+
 function isWebpackReady(getModuleIds) {
   if (typeof __webpack_modules__ !== 'object') {
     return false;
@@ -119,6 +132,10 @@ function createLoadableComponent(loadFn, options) {
 
   if (typeof opts.webpack === 'function') {
     READY_INITIALIZERS.push(() => {
+      if (isPreloaded(opts.modules)) {
+        return init();
+      }
+      
       if (isWebpackReady(opts.webpack)) {
         return init();
       }
