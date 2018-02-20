@@ -87,23 +87,32 @@ function resolve(obj) {
   return obj && obj.__esModule ? obj.default : obj;
 }
 
-function render(loaded, props) {
-  return React.createElement(resolve(loaded), props);
+function backwardsCompatibleRender(loaded, props) {
+  if (loaded) {
+    return React.createElement(resolve(loaded), props);
+  }
+
+  return null;
+}
+
+function stateRender(state, props) {
+    const { loaded } = state;
+    if (loaded) {
+      return React.createElement(resolve(loaded), props);
+    }
+
+    return null;
 }
 
 function createLoadableComponent(loadFn, options) {
-  if (!options.loading) {
-    throw new Error('react-loadable requires a `loading` component')
-  }
-
   let opts = Object.assign({
     loader: null,
     loading: null,
     delay: 200,
     timeout: null,
-    render: render,
+    render: options.loading ? backwardsCompatibleRender : stateRender,
     webpack: null,
-    modules: null,
+    modules: [],
   }, options);
 
   let res = null;
@@ -147,6 +156,14 @@ function createLoadableComponent(loadFn, options) {
 
     static preload() {
       return init();
+    }
+
+    static getModules() {
+      return opts.modules;
+    }
+
+    static getLoader() {
+      return opts.loader;
     }
 
     componentWillMount() {
@@ -210,18 +227,28 @@ function createLoadableComponent(loadFn, options) {
     }
 
     render() {
-      if (this.state.loading || this.state.error) {
-        return React.createElement(opts.loading, {
-          isLoading: this.state.loading,
-          pastDelay: this.state.pastDelay,
-          timedOut: this.state.timedOut,
-          error: this.state.error
-        });
-      } else if (this.state.loaded) {
-        return opts.render(this.state.loaded, this.props);
-      } else {
-        return null;
+      const renderState = {
+        isLoading: this.state.loading,
+        pastDelay: this.state.pastDelay,
+        timedOut: this.state.timedOut,
+        error: this.state.error,
+      };
+
+      if (opts.loading) {
+        // maintain full backwards compatibility - support 'loading' option
+        if (renderState.isLoading || renderState.error) {
+          return React.createElement(opts.loading, renderState);
+        }
+
+        return React.isValidElement(opts.render) ?
+          React.cloneElement(opts.render, Object.assign({}, this.props, { codeSplit: this.state.loaded })) :
+          opts.render(this.state.loaded, this.props);
       }
+
+      renderState.loaded = this.state.loaded;
+      return React.isValidElement(opts.render) ?
+        React.cloneElement(opts.render, Object.assign({}, this.props, { codeSplit: renderState })) :
+        opts.render(renderState, this.props);
     }
   };
 }
@@ -231,8 +258,8 @@ function Loadable(opts) {
 }
 
 function LoadableMap(opts) {
-  if (typeof opts.render !== 'function') {
-    throw new Error('LoadableMap requires a `render(loaded, props)` function');
+  if (!(React.isValidElement(opts.render) || typeof opts.render === 'function')) {
+    throw new Error('LoadableMap requires a `render` react element or function');
   }
 
   return createLoadableComponent(loadMap, opts);
@@ -291,6 +318,24 @@ Loadable.preloadReady = () => {
   return new Promise((resolve, reject) => {
     // We always will resolve, errors should be handled within loading UIs.
     flushInitializers(READY_INITIALIZERS).then(resolve, resolve);
+  });
+};
+
+Loadable.preload = (loaders) => {
+  return new Promise((resolve, reject) => {
+    const allLoaders = loaders.reduce((acc, loader) => {
+      if (typeof loader === 'function') {
+        acc.push(loader);
+      }
+      else if (typeof loader === 'object' && !Array.isArray(loader) && loader !== null) {
+        Object.keys(loader).forEach(mapKey => acc.push(loader[mapKey]));
+      }
+
+      return acc;
+    }, []);
+
+    // reject on error - manually handler error scenarios for manual preload
+    return Promise.all(allLoaders).then(resolve, reject);
   });
 };
 
