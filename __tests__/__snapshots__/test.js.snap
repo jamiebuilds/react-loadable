@@ -28,6 +28,33 @@ exports[`delay and timeout 4`] = `
 </div>
 `;
 
+exports[`loadable map element success without loading prop 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null,"loaded":{}}
+</div>
+`;
+
+exports[`loadable map element success without loading prop 2`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"timedOut":false,"error":null,"loaded":{}}
+</div>
+`;
+
+exports[`loadable map element success without loading prop 3`] = `
+<div>
+  <div>
+    MyComponent 
+    {"prop":"baz"}
+  </div>
+  <div>
+    MyComponent 
+    {"prop":"baz"}
+  </div>
+</div>
+`;
+
 exports[`loadable map error 1`] = `
 <div>
   MyLoadingComponent 
@@ -49,6 +76,27 @@ exports[`loadable map error 3`] = `
 </div>
 `;
 
+exports[`loadable map error without loading prop 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null,"loaded":{}}
+</div>
+`;
+
+exports[`loadable map error without loading prop 2`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"timedOut":false,"error":null,"loaded":{}}
+</div>
+`;
+
+exports[`loadable map error without loading prop 3`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":false,"pastDelay":true,"timedOut":false,"error":{},"loaded":{"a":{}}}
+</div>
+`;
+
 exports[`loadable map success 1`] = `
 <div>
   MyLoadingComponent 
@@ -64,6 +112,33 @@ exports[`loadable map success 2`] = `
 `;
 
 exports[`loadable map success 3`] = `
+<div>
+  <div>
+    MyComponent 
+    {"prop":"baz"}
+  </div>
+  <div>
+    MyComponent 
+    {"prop":"baz"}
+  </div>
+</div>
+`;
+
+exports[`loadable map success without loading prop 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null,"loaded":{}}
+</div>
+`;
+
+exports[`loadable map success without loading prop 2`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"timedOut":false,"error":null,"loaded":{}}
+</div>
+`;
+
+exports[`loadable map success without loading prop 3`] = `
 <div>
   <div>
     MyComponent 
@@ -202,21 +277,63 @@ exports[`render 3`] = `
 </div>
 `;
 
-exports[`render loading inline 1`] = `
+exports[`render element 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null}
+</div>
+`;
+
+exports[`render element 2`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"timedOut":false,"error":null}
+</div>
+`;
+
+exports[`render element 3`] = `
+<div>
+  MyComponent 
+  {"prop":"baz"}
+</div>
+`;
+
+exports[`render element without loading prop 1`] = `
 <div>
   MyLoadingComponent 
   {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null,"loaded":null}
 </div>
 `;
 
-exports[`render loading inline 2`] = `
+exports[`render element without loading prop 2`] = `
 <div>
   MyLoadingComponent 
   {"isLoading":true,"pastDelay":true,"timedOut":false,"error":null,"loaded":null}
 </div>
 `;
 
-exports[`render loading inline 3`] = `
+exports[`render element without loading prop 3`] = `
+<div>
+  MyComponent 
+  {"prop":"baz"}
+</div>
+`;
+
+exports[`render without loading prop 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null,"loaded":null}
+</div>
+`;
+
+exports[`render without loading prop 2`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"timedOut":false,"error":null,"loaded":null}
+</div>
+`;
+
+exports[`render without loading prop 3`] = `
 <div>
   MyComponent 
   {"prop":"baz"}

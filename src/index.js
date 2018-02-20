@@ -87,7 +87,15 @@ function resolve(obj) {
   return obj && obj.__esModule ? obj.default : obj;
 }
 
-function defaultRender(state, props) {
+function backwardsCompatibleRender(loaded, props) {
+  if (loaded) {
+    return React.createElement(resolve(loaded), props);
+  }
+
+  return null;
+}
+
+function stateRender(state, props) {
     const { loaded } = state;
     if (loaded) {
       return React.createElement(resolve(loaded), props);
@@ -102,7 +110,7 @@ function createLoadableComponent(loadFn, options) {
     loading: null,
     delay: 200,
     timeout: null,
-    render: defaultRender,
+    render: options.loading ? backwardsCompatibleRender : stateRender,
     webpack: null,
     modules: [],
   }, options);
@@ -227,14 +235,20 @@ function createLoadableComponent(loadFn, options) {
       };
 
       if (opts.loading) {
-        // maintain backwards compatibility - support 'loading' option
-        if ((renderState.isLoading || renderState.error) && opts.loading) {
-          return React.createElement(opts.loading, renderState)
+        // maintain full backwards compatibility - support 'loading' option
+        if (renderState.isLoading || renderState.error) {
+          return React.createElement(opts.loading, renderState);
         }
+
+        return React.isValidElement(opts.render) ?
+          React.cloneElement(opts.render, Object.assign({}, this.props, { codeSplit: this.state.loaded })) :
+          opts.render(this.state.loaded, this.props);
       }
 
       renderState.loaded = this.state.loaded;
-      return opts.render(renderState, this.props);
+      return React.isValidElement(opts.render) ?
+        React.cloneElement(opts.render, Object.assign({}, this.props, { codeSplit: renderState })) :
+        opts.render(renderState, this.props);
     }
   };
 }
@@ -244,8 +258,8 @@ function Loadable(opts) {
 }
 
 function LoadableMap(opts) {
-  if (typeof opts.render !== 'function') {
-    throw new Error('LoadableMap requires a `render(state, props)` function');
+  if (!(React.isValidElement(opts.render) || typeof opts.render === 'function')) {
+    throw new Error('LoadableMap requires a `render` react element or function');
   }
 
   return createLoadableComponent(loadMap, opts);

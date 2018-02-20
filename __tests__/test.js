@@ -30,6 +30,39 @@ function MyComponent(props) {
   return <div>MyComponent {JSON.stringify(props)}</div>;
 }
 
+function CodeSplitRenderer({ codeSplit, ...props }) {
+  // Enable component to render with or without a 'loading' component configured
+  const { isLoading, loaded } = typeof codeSplit.isLoading === 'boolean' ? codeSplit : { loaded: codeSplit };
+  if (isLoading) {
+    return <MyLoadingComponent {...codeSplit} />;
+  }
+
+  return <loaded.MyComponent {...props}/>;
+}
+
+function CodeSplitMapRenderer({ codeSplit, ...props }) {
+  const { loaded } = codeSplit;
+  return whenLoaded(codeSplit, () => (
+    <div>
+      <loaded.a.MyComponent {...props}/>
+      <loaded.b.MyComponent {...props}/>
+    </div>
+  ));
+}
+
+function whenLoaded(state, loadedComponent) {
+  const { isLoading, error, loaded } = state;
+  if (isLoading || error) {
+    return <div>MyLoadingComponent {JSON.stringify(state)}</div>;
+  }
+
+  if (loaded) {
+    return loadedComponent();
+  }
+
+  return null;
+}
+
 afterEach(async () => {
   try {
     await Loadable.preloadAll();
@@ -138,7 +171,7 @@ test('render', async () => {
   let LoadableMyComponent = Loadable({
     loader: createLoader(400, () => ({ MyComponent })),
     loading: MyLoadingComponent,
-    render({ loaded }, props) {
+    render(loaded, props) {
       return <loaded.MyComponent {...props}/>;
     }
   });
@@ -150,7 +183,21 @@ test('render', async () => {
   expect(component.toJSON()).toMatchSnapshot(); // success
 });
 
-test('render loading inline', async () => {
+test('render element', async () => {
+    let LoadableMyComponent = Loadable({
+        loader: createLoader(400, () => ({ MyComponent })),
+        loading: MyLoadingComponent,
+        render: <CodeSplitRenderer />
+    });
+    let component = renderer.create(<LoadableMyComponent prop="baz" />);
+    expect(component.toJSON()).toMatchSnapshot(); // initial
+    await waitFor(200);
+    expect(component.toJSON()).toMatchSnapshot(); // loading
+    await waitFor(200);
+    expect(component.toJSON()).toMatchSnapshot(); // success
+});
+
+test('render without loading prop', async () => {
   let LoadableMyComponent = Loadable({
     loader: createLoader(400, () => ({ MyComponent })),
     render(state, props) {
@@ -169,6 +216,19 @@ test('render loading inline', async () => {
   expect(component.toJSON()).toMatchSnapshot(); // success
 });
 
+test('render element without loading prop', async () => {
+  let LoadableMyComponent = Loadable({
+    loader: createLoader(400, () => ({ MyComponent })),
+    render: <CodeSplitRenderer />
+  });
+  let component = renderer.create(<LoadableMyComponent prop="baz" />);
+  expect(component.toJSON()).toMatchSnapshot(); // initial
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // loading
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // success
+});
+
 test('loadable map success', async () => {
   let LoadableMyComponent = Loadable.Map({
     loader: {
@@ -176,7 +236,7 @@ test('loadable map success', async () => {
       b: createLoader(400, () => ({ MyComponent })),
     },
     loading: MyLoadingComponent,
-    render({ loaded }, props) {
+    render(loaded, props) {
       return (
         <div>
           <loaded.a.MyComponent {...props}/>
@@ -194,6 +254,48 @@ test('loadable map success', async () => {
   expect(component.toJSON()).toMatchSnapshot(); // success
 });
 
+test('loadable map success without loading prop', async () => {
+    let LoadableMyComponent = Loadable.Map({
+      loader: {
+        a: createLoader(200, () => ({ MyComponent })),
+        b: createLoader(400, () => ({ MyComponent })),
+      },
+      render(state, props) {
+        const { loaded } = state;
+        return whenLoaded(state, () => (
+          <div>
+            <loaded.a.MyComponent {...props}/>
+            <loaded.b.MyComponent {...props}/>
+          </div>
+        ));
+      }
+    });
+
+    let component = renderer.create(<LoadableMyComponent prop="baz" />);
+    expect(component.toJSON()).toMatchSnapshot(); // initial
+    await waitFor(200);
+    expect(component.toJSON()).toMatchSnapshot(); // loading
+    await waitFor(200);
+    expect(component.toJSON()).toMatchSnapshot(); // success
+});
+
+test('loadable map element success without loading prop', async () => {
+  let LoadableMyComponent = Loadable.Map({
+    loader: {
+        a: createLoader(200, () => ({ MyComponent })),
+        b: createLoader(400, () => ({ MyComponent })),
+    },
+    render: <CodeSplitMapRenderer />
+  });
+
+  let component = renderer.create(<LoadableMyComponent prop="baz" />);
+  expect(component.toJSON()).toMatchSnapshot(); // initial
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // loading
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // success
+});
+
 test('loadable map error', async () => {
   let LoadableMyComponent = Loadable.Map({
     loader: {
@@ -201,7 +303,7 @@ test('loadable map error', async () => {
       b: createLoader(400, null, new Error('test error')),
     },
     loading: MyLoadingComponent,
-    render({loaded}, props) {
+    render(loaded, props) {
       return (
         <div>
           <loaded.a.MyComponent {...props}/>
@@ -216,7 +318,32 @@ test('loadable map error', async () => {
   await waitFor(200);
   expect(component.toJSON()).toMatchSnapshot(); // loading
   await waitFor(200);
-  expect(component.toJSON()).toMatchSnapshot(); // success
+  expect(component.toJSON()).toMatchSnapshot(); // error
+});
+
+test('loadable map error without loading prop', async () => {
+    let LoadableMyComponent = Loadable.Map({
+      loader: {
+        a: createLoader(200, () => ({ MyComponent })),
+        b: createLoader(400, null, new Error('test error')),
+      },
+      render(state, props) {
+        const { loaded } = state;
+        return whenLoaded(state, () => (
+          <div>
+            <loaded.a.MyComponent {...props}/>
+            <loaded.b.MyComponent {...props}/>
+          </div>
+        ));
+      }
+    });
+
+    let component = renderer.create(<LoadableMyComponent prop="baz" />);
+    expect(component.toJSON()).toMatchSnapshot(); // initial
+    await waitFor(200);
+    expect(component.toJSON()).toMatchSnapshot(); // loading
+    await waitFor(200);
+    expect(component.toJSON()).toMatchSnapshot(); // error
 });
 
 describe('preloadReady', () => {

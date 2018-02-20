@@ -305,11 +305,31 @@ Loadable({
 
 ### Customizing rendering
 
-`render(state, props)` can access `state` and `props` to determine the current state of the loader.
-
 By default `Loadable` will render the `default` export of the returned module.
 If you want to customize this behavior you can use the
 [`render` option](#optsrender).
+
+#### With a `loading` component
+
+When a `loading` prop is defined on Loadable, the `render` method is only invoked
+after the loader import has completed loading.
+
+```js
+Loadable({
+  loader: () => import('./my-component'),
+  loading: Loading,
+  render(loaded, props) {
+    let Component = loaded.namedExport;
+    return <Component {...props}/>;
+  }
+});
+```
+
+#### Without a `loading` component
+
+When no `loading` prop is defined on Loadable, `render(state, props)` can access
+`state` and `props` to determine the current state of the loader. `render` is invoked
+for every render of the component, regardless of the current loader state.
 
 ```js
 Loadable({
@@ -335,13 +355,41 @@ But writing it out can be a bit annoying.
 To make it easier to load multiple resources in parallel, you can use
 [`Loadable.Map`](#loadablemap).
 
+When using `Loadable.Map` the [`render()` method](#optsrender) is required.
+
+#### With a `loading` component
+
 ```js
 Loadable.Map({
   loader: {
     Bar: () => import('./Bar'),
     i18n: () => fetch('./i18n/bar.json').then(res => res.json()),
   },
-  render({ loaded }, props) {
+  loading: Loading,
+  render(loaded, props) {
+    let Bar = loaded.Bar.default;
+    let i18n = loaded.i18n;
+    return <Bar {...props} i18n={i18n}/>;
+  },
+});
+```
+The `render(loaded, props)` method is passed `loaded` and `props` arguments, and invoked after
+the loader has completed loading.
+
+#### Without a `loading` component
+
+```js
+Loadable.Map({
+  loader: {
+    Bar: () => import('./Bar'),
+    i18n: () => fetch('./i18n/bar.json').then(res => res.json()),
+  },
+  render(state, props) {
+    const { isLoading, loaded } = state;
+    if (isLoading) {
+	  return <div>Loading...</div>;
+	}
+
     let Bar = loaded.Bar.default;
     let i18n = loaded.i18n;
     return <Bar {...props} i18n={i18n}/>;
@@ -349,9 +397,8 @@ Loadable.Map({
 });
 ```
 
-When using `Loadable.Map` the [`render()` method](#optsrender) is required. It
-will be passed a `loaded` param which will be an object matching the shape of
-your `loader`.
+The `render(state, props)` method is passed `state` and `props` arguments, and is invoked
+for every render of the Loadable regardless of the internal loadable state.
 
 ### Preloading
 
@@ -676,13 +723,19 @@ A higher-order component that allows you to load multiple resources in parallel.
 Loadable.Map's [`opts.loader`](#optsloader) accepts an object of functions, and
 needs a [`opts.render`](#optsrender) method.
 
+#### With a `loading` component
+
+When a `loading` prop is defined on Loadable, the `render` method is only invoked
+after the loader import has completed loading.
+
 ```js
 Loadable.Map({
   loader: {
     Bar: () => import('./Bar'),
     i18n: () => fetch('./i18n/bar.json').then(res => res.json()),
   },
-  render({ loaded }, props) {
+  loading: Loading,
+  render(loaded, props) {
     let Bar = loaded.Bar.default;
     let i18n = loaded.i18n;
     return <Bar {...props} i18n={i18n}/>;
@@ -690,8 +743,33 @@ Loadable.Map({
 });
 ```
 
-When using `Loadable.Map` the `render()` method's `loaded` param will be an
-object with the same shape as your `loader`.
+When using `Loadable.Map` the `render()` method's `loaded` param is an object and
+it will have a `loader` prop with the same shape as your `loader`.
+
+#### Without a `loading` component
+
+```js
+Loadable.Map({
+  loader: {
+    Bar: () => import('./Bar'),
+    i18n: () => fetch('./i18n/bar.json').then(res => res.json()),
+  },
+  render(state, props) {
+    const { isLoading, loaded } = state;
+    if (isLoading) {
+	  return <div>Loading...</div>;
+	}
+
+    let Bar = loaded.Bar.default;
+    let i18n = loaded.i18n;
+    return <Bar {...props} i18n={i18n}/>;
+  },
+});
+```
+
+When using `Loadable.Map` the `render(state, props)` method is passed `state` and `props` arguments, and is invoked
+for every render of the Loadable regardless of the internal loadable state.
+
 
 ### `Loadable` and `Loadable.Map` Options
 
@@ -725,17 +803,15 @@ When using with `Loadable.Map` you'll also need to pass a
 A [`LoadingComponent`](#loadingcomponent) that renders while a module is
 loading or when it errors.
 
+The `loading` prop changes the arguments received by the `render` method, this is to maintain backwards compatibility.
+ * When the `loading` prop **is** defined, the first argument received by the `render(loaded, props)` method
+ is the `loaded` that is the resolved value of [`opts.loader`](#optsloader)
+ * When the `loading` props **is not** defined, the first argument received by `render(state, props)` method
+ is the loadable state. You can access the loaded component(s) using `state.loaded`.
+
 ```js
 Loadable({
   loading: LoadingComponent,
-});
-```
-
-This option is required, if you don't want to render anything, return `null`.
-
-```js
-Loadable({
-  loading: () => null,
 });
 ```
 
@@ -769,15 +845,81 @@ Loadable({
 
 #### `opts.render`
 
-A function to customize the rendering of loaded modules.
+A react element or function to customize the rendering of loaded modules.
 
-Receives `loaded` which is the resolved value of [`opts.loader`](#optsloader)
+##### React element with a `loading` component
+
+Receives a `loaded` prop that is the resolved value of [`opts.loader`](#optsloader)
+and `props` which are the props passed to the
+[`LoadableComponent`](#loadablecomponent).
+
+```js
+function CodeSplitRenderer(props) {
+  const { codeSplit, ...componentProps } = props;
+
+  // when used with a 'loading' component, the loaded state is assigned directly to the `codeSplit` prop
+  let Component = codeSplit.default;
+  return <Component {...componentProps}/>;
+}
+
+Loadable({
+  loading: Loading,
+  render: <CodeSplitRenderer />
+});
+```
+
+##### React element without a `loading` component
+
+Receives `state`, with a `loader` prop that is the resolved value of [`opts.loader`](#optsloader)
+and `props` which are the props passed to the
+[`LoadableComponent`](#loadablecomponent).
+
+```js
+function CodeSplitRenderer(props) {
+  const { codeSplit, ...componentProps } = props;
+
+  // when used without a 'loading' component, the loadable state is assigned to the `codeSplit` prop
+  const { isLoading, loaded, pastDelay, timedOut, error } = codeSplit;
+
+  let Component = loaded.default;
+  return <Component {...componentProps}/>;
+}
+
+Loadable({
+  render: <CodeSplitRenderer />
+});
+```
+
+##### Function with a `loading` component
+
+Receives a `loaded` prop that is the resolved value of [`opts.loader`](#optsloader)
 and `props` which are the props passed to the
 [`LoadableComponent`](#loadablecomponent).
 
 ```js
 Loadable({
-  render({ loaded }, props) {
+  loading: Loading,
+  render(loaded, props) {
+    let Component = loaded.default;
+    return <Component {...props}/>;
+  }
+});
+```
+
+##### Function without a `loading` component
+
+Receives `state`, with a `loader` prop that is the resolved value of [`opts.loader`](#optsloader)
+and `props` which are the props passed to the
+[`LoadableComponent`](#loadablecomponent).
+
+```js
+Loadable({
+  render(state, props) {
+    const { isLoading, loaded, pastDelay, timedOut, error } = state;
+    if (isLoading) {
+	  return <div>Loading...</div>;
+	}
+
     let Component = loaded.default;
     return <Component {...props}/>;
   }

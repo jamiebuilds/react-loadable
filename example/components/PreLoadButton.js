@@ -3,7 +3,7 @@ import Loadable from 'react-loadable';
 import Loading from "./Loading";
 
 const LoadableContent = Loadable({
-    loader: () => import('./PreLoadedContent'),
+    loader: () => import(/* webpackChunkName: "PreLoadedContent" */ './PreLoadedContent'),
     loading: Loading,
 });
 
