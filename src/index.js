@@ -104,7 +104,7 @@ function createLoadableComponent(loadFn, options) {
     timeout: null,
     render: defaultRender,
     webpack: null,
-    modules: null,
+    modules: [],
   }, options);
 
   let res = null;
@@ -148,6 +148,14 @@ function createLoadableComponent(loadFn, options) {
 
     static preload() {
       return init();
+    }
+
+    static getModules() {
+      return opts.modules;
+    }
+
+    static getLoader() {
+      return opts.loader;
     }
 
     componentWillMount() {
@@ -296,6 +304,24 @@ Loadable.preloadReady = () => {
   return new Promise((resolve, reject) => {
     // We always will resolve, errors should be handled within loading UIs.
     flushInitializers(READY_INITIALIZERS).then(resolve, resolve);
+  });
+};
+
+Loadable.preload = (loaders) => {
+  return new Promise((resolve, reject) => {
+    const allLoaders = loaders.reduce((acc, loader) => {
+      if (typeof loader === 'function') {
+        acc.push(loader);
+      }
+      else if (typeof loader === 'object' && !Array.isArray(loader) && loader !== null) {
+        Object.keys(loader).forEach(mapKey => acc.push(loader[mapKey]));
+      }
+
+      return acc;
+    }, []);
+
+    // reject on error - manually handler error scenarios for manual preload
+    return Promise.all(allLoaders).then(resolve, reject);
   });
 };
 

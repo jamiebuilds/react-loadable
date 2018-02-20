@@ -295,4 +295,38 @@ describe('preloadReady', () => {
   
     expect(loadingComponent.toJSON()).toMatchSnapshot(); // loading
   });
+
+  test('getModules', () => {
+    let LoadableMyComponent = Loadable({
+      loader: createLoader(300, () => MyComponent),
+      modules: ['./myModule']
+    });
+    expect(LoadableMyComponent.getModules()).toEqual(['./myModule']);
+  });
+
+  test('getLoader', () => {
+    const componentLoader = createLoader(300, () => MyComponent);
+    let LoadableMyComponent = Loadable({
+      loader: componentLoader
+    });
+    expect(LoadableMyComponent.getLoader()).toBe(componentLoader);
+  });
+
+  test('preload', (done) => {
+    let LoadableMyComponent = Loadable({
+      loader: createLoader(200, () => MyComponent)
+    });
+
+    let LoadableMapComponent = Loadable({
+      loader: {
+        myComponent: createLoader(400, () => MyComponent)
+      }
+    });
+
+    const loaders = [LoadableMyComponent.getLoader(), LoadableMapComponent.getLoader()];
+    Loadable.preload(loaders).then((modules) => {
+      expect(modules).toHaveLength(2);
+      done();
+    });
+  });
 });
