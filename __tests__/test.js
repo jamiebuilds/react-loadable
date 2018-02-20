@@ -1,6 +1,5 @@
 'use strict';
 
-const path = require('path');
 const React = require('react');
 const renderer = require('react-test-renderer');
 const Loadable = require('../src');
@@ -139,7 +138,26 @@ test('render', async () => {
   let LoadableMyComponent = Loadable({
     loader: createLoader(400, () => ({ MyComponent })),
     loading: MyLoadingComponent,
-    render(loaded, props) {
+    render({ loaded }, props) {
+      return <loaded.MyComponent {...props}/>;
+    }
+  });
+  let component = renderer.create(<LoadableMyComponent prop="baz" />);
+  expect(component.toJSON()).toMatchSnapshot(); // initial
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // loading
+  await waitFor(200);
+  expect(component.toJSON()).toMatchSnapshot(); // success
+});
+
+test('render loading inline', async () => {
+  let LoadableMyComponent = Loadable({
+    loader: createLoader(400, () => ({ MyComponent })),
+    render(state, props) {
+      const { isLoading, loaded } = state;
+      if (isLoading) {
+        return <MyLoadingComponent {...state} />;
+      }
       return <loaded.MyComponent {...props}/>;
     }
   });
@@ -158,7 +176,7 @@ test('loadable map success', async () => {
       b: createLoader(400, () => ({ MyComponent })),
     },
     loading: MyLoadingComponent,
-    render(loaded, props) {
+    render({ loaded }, props) {
       return (
         <div>
           <loaded.a.MyComponent {...props}/>
@@ -183,7 +201,7 @@ test('loadable map error', async () => {
       b: createLoader(400, null, new Error('test error')),
     },
     loading: MyLoadingComponent,
-    render(loaded, props) {
+    render({loaded}, props) {
       return (
         <div>
           <loaded.a.MyComponent {...props}/>

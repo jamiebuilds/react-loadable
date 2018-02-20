@@ -305,6 +305,8 @@ Loadable({
 
 ### Customizing rendering
 
+`render(state, props)` can access `state` and `props` to determine the current state of the loader.
+
 By default `Loadable` will render the `default` export of the returned module.
 If you want to customize this behavior you can use the
 [`render` option](#optsrender).
@@ -312,7 +314,12 @@ If you want to customize this behavior you can use the
 ```js
 Loadable({
   loader: () => import('./my-component'),
-  render(loaded, props) {
+  render(state, props) {
+    const { isLoading, pastDelay, timedOut, error, loaded } = state;
+    if (isLoading) {
+      return <div>Loading...</div>;
+    }
+
     let Component = loaded.namedExport;
     return <Component {...props}/>;
   }
@@ -334,7 +341,7 @@ Loadable.Map({
     Bar: () => import('./Bar'),
     i18n: () => fetch('./i18n/bar.json').then(res => res.json()),
   },
-  render(loaded, props) {
+  render({ loaded }, props) {
     let Bar = loaded.Bar.default;
     let i18n = loaded.i18n;
     return <Bar {...props} i18n={i18n}/>;
@@ -675,7 +682,7 @@ Loadable.Map({
     Bar: () => import('./Bar'),
     i18n: () => fetch('./i18n/bar.json').then(res => res.json()),
   },
-  render(loaded, props) {
+  render({ loaded }, props) {
     let Bar = loaded.Bar.default;
     let i18n = loaded.i18n;
     return <Bar {...props} i18n={i18n}/>;
@@ -770,7 +777,7 @@ and `props` which are the props passed to the
 
 ```js
 Loadable({
-  render(loaded, props) {
+  render({ loaded }, props) {
     let Component = loaded.default;
     return <Component {...props}/>;
   }

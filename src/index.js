@@ -87,21 +87,22 @@ function resolve(obj) {
   return obj && obj.__esModule ? obj.default : obj;
 }
 
-function render(loaded, props) {
-  return React.createElement(resolve(loaded), props);
+function defaultRender(state, props) {
+    const { loaded } = state;
+    if (loaded) {
+      return React.createElement(resolve(loaded), props);
+    }
+
+    return null;
 }
 
 function createLoadableComponent(loadFn, options) {
-  if (!options.loading) {
-    throw new Error('react-loadable requires a `loading` component')
-  }
-
   let opts = Object.assign({
     loader: null,
     loading: null,
     delay: 200,
     timeout: null,
-    render: render,
+    render: defaultRender,
     webpack: null,
     modules: null,
   }, options);
@@ -210,18 +211,22 @@ function createLoadableComponent(loadFn, options) {
     }
 
     render() {
-      if (this.state.loading || this.state.error) {
-        return React.createElement(opts.loading, {
-          isLoading: this.state.loading,
-          pastDelay: this.state.pastDelay,
-          timedOut: this.state.timedOut,
-          error: this.state.error
-        });
-      } else if (this.state.loaded) {
-        return opts.render(this.state.loaded, this.props);
-      } else {
-        return null;
+      const renderState = {
+        isLoading: this.state.loading,
+        pastDelay: this.state.pastDelay,
+        timedOut: this.state.timedOut,
+        error: this.state.error,
+      };
+
+      if (opts.loading) {
+        // maintain backwards compatibility - support 'loading' option
+        if ((renderState.isLoading || renderState.error) && opts.loading) {
+          return React.createElement(opts.loading, renderState)
+        }
       }
+
+      renderState.loaded = this.state.loaded;
+      return opts.render(renderState, this.props);
     }
   };
 }
@@ -232,7 +237,7 @@ function Loadable(opts) {
 
 function LoadableMap(opts) {
   if (typeof opts.render !== 'function') {
-    throw new Error('LoadableMap requires a `render(loaded, props)` function');
+    throw new Error('LoadableMap requires a `render(state, props)` function');
   }
 
   return createLoadableComponent(loadMap, opts);

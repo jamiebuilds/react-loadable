@@ -202,6 +202,27 @@ exports[`render 3`] = `
 </div>
 `;
 
+exports[`render loading inline 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null,"loaded":null}
+</div>
+`;
+
+exports[`render loading inline 2`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"timedOut":false,"error":null,"loaded":null}
+</div>
+`;
+
+exports[`render loading inline 3`] = `
+<div>
+  MyComponent 
+  {"prop":"baz"}
+</div>
+`;
+
 exports[`server side rendering 1`] = `
 <div>
   fixture1
