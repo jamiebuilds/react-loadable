@@ -1222,6 +1222,12 @@ export default {
 This will create a file (`opts.filename`) which you can import to map modules
 to bundles.
 
+### `opts.filename`
+Required, the destination file for writing react-loadable module data
+
+### `opts.ignoreChunkNames`
+Optional, an array of webpack chunk names to exclude from the module data
+
 [Read more about mapping modules to bundles](#mapping-loaded-modules-to-bundles).
 
 ### `getBundles`
