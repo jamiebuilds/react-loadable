@@ -7,13 +7,13 @@ function buildManifest(compiler, compilation) {
   let context = compiler.options.context;
   let manifest = {};
 
-  compilation.chunks.forEach(chunk => {
-    chunk.files.forEach(file => {
-      chunk.forEachModule(module => {
+  for (const chunk of compilation.chunks) {
+    for (const file of chunk.files) {
+      for (const module of chunk.modulesIterable) {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
         let publicPath = url.resolve(compilation.outputOptions.publicPath || '', file);
-        
+
         let currentModule = module;
         if (module.constructor.name === 'ConcatenatedModule') {
           currentModule = module.rootModule;
@@ -23,9 +23,9 @@ function buildManifest(compiler, compilation) {
         }
 
         manifest[currentModule.rawRequest].push({ id, name, file, publicPath });
-      });
-    });
-  });
+      };
+    };
+  };
 
   return manifest;
 }
