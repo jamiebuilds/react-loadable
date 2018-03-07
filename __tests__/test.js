@@ -37,24 +37,51 @@ afterEach(async () => {
   } catch (err) {}
 });
 
-test('loading success', async () => {
-  let LoadableMyComponent = Loadable({
-    loader: createLoader(400, () => MyComponent),
-    loading: MyLoadingComponent
+describe('loading success', async () => {
+  afterAll(() => {
+    Loadable.setDefaultOptions({})
+  })
+
+  test('no defaults, object arg', async () => {
+    let LoadableMyComponent = Loadable({
+      loader: createLoader(400, () => MyComponent),
+      loading: MyLoadingComponent
+    });
+
+    let component1 = renderer.create(<LoadableMyComponent prop="foo" />);
+
+    expect(component1.toJSON()).toMatchSnapshot(); // initial
+    await waitFor(200);
+    expect(component1.toJSON()).toMatchSnapshot(); // loading
+    await waitFor(200);
+    expect(component1.toJSON()).toMatchSnapshot(); // loaded
+
+    let component2 = renderer.create(<LoadableMyComponent prop="bar" />);
+
+    expect(component2.toJSON()).toMatchSnapshot(); // reload
   });
 
-  let component1 = renderer.create(<LoadableMyComponent prop="foo" />);
+  test('default options.loading, fn arg', async () => {
+    Loadable.setDefaultOptions({
+      loading: MyLoadingComponent
+    });
 
-  expect(component1.toJSON()).toMatchSnapshot(); // initial
-  await waitFor(200);
-  expect(component1.toJSON()).toMatchSnapshot(); // loading
-  await waitFor(200);
-  expect(component1.toJSON()).toMatchSnapshot(); // loaded
+    // pass what would be `options.loader`
+    let LoadableMyComponent = Loadable(createLoader(400, () => MyComponent));
 
-  let component2 = renderer.create(<LoadableMyComponent prop="bar" />);
+    let component1 = renderer.create(<LoadableMyComponent prop="foo" />);
 
-  expect(component2.toJSON()).toMatchSnapshot(); // reload
-});
+    expect(component1.toJSON()).toMatchSnapshot(); // initial
+    await waitFor(200);
+    expect(component1.toJSON()).toMatchSnapshot(); // loading
+    await waitFor(200);
+    expect(component1.toJSON()).toMatchSnapshot(); // loaded
+
+    let component2 = renderer.create(<LoadableMyComponent prop="bar" />);
+
+    expect(component2.toJSON()).toMatchSnapshot(); // reload
+  });
+})
 
 test('delay and timeout', async () => {
   let LoadableMyComponent = Loadable({
