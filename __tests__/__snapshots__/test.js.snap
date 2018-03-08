@@ -97,28 +97,56 @@ exports[`loading error 3`] = `
 </div>
 `;
 
-exports[`loading success 1`] = `
+exports[`loading success default options.loading, fn arg 1`] = `
 <div>
   MyLoadingComponent 
   {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null}
 </div>
 `;
 
-exports[`loading success 2`] = `
+exports[`loading success default options.loading, fn arg 2`] = `
 <div>
   MyLoadingComponent 
   {"isLoading":true,"pastDelay":true,"timedOut":false,"error":null}
 </div>
 `;
 
-exports[`loading success 3`] = `
+exports[`loading success default options.loading, fn arg 3`] = `
 <div>
   MyComponent 
   {"prop":"foo"}
 </div>
 `;
 
-exports[`loading success 4`] = `
+exports[`loading success default options.loading, fn arg 4`] = `
+<div>
+  MyComponent 
+  {"prop":"bar"}
+</div>
+`;
+
+exports[`loading success no defaults, object arg 1`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":false,"timedOut":false,"error":null}
+</div>
+`;
+
+exports[`loading success no defaults, object arg 2`] = `
+<div>
+  MyLoadingComponent 
+  {"isLoading":true,"pastDelay":true,"timedOut":false,"error":null}
+</div>
+`;
+
+exports[`loading success no defaults, object arg 3`] = `
+<div>
+  MyComponent 
+  {"prop":"foo"}
+</div>
+`;
+
+exports[`loading success no defaults, object arg 4`] = `
 <div>
   MyComponent 
   {"prop":"bar"}

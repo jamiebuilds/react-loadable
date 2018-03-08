@@ -5,6 +5,8 @@ const PropTypes = require('prop-types');
 const ALL_INITIALIZERS = [];
 const READY_INITIALIZERS = [];
 
+let optionDefaults = {};
+
 function isWebpackReady(getModuleIds) {
   if (typeof __webpack_modules__ !== 'object') {
     return false;
@@ -92,7 +94,13 @@ function render(loaded, props) {
 }
 
 function createLoadableComponent(loadFn, options) {
-  if (!options.loading) {
+  if (typeof options === 'function') {
+    options = {
+      loader: options
+    }
+  }
+
+  if (!options.loading && !optionDefaults.loading) {
     throw new Error('react-loadable requires a `loading` component')
   }
 
@@ -104,7 +112,7 @@ function createLoadableComponent(loadFn, options) {
     render: render,
     webpack: null,
     modules: null,
-  }, options);
+  }, optionDefaults, options);
 
   let res = null;
 
@@ -293,5 +301,12 @@ Loadable.preloadReady = () => {
     flushInitializers(READY_INITIALIZERS).then(resolve, resolve);
   });
 };
+
+Loadable.setDefaultOptions = (options) => {
+  if (typeof options !== 'object' || options === null) {
+    throw new Error('Loadable.setDefaultOptions expects an object')
+  }
+  optionDefaults = options
+}
 
 module.exports = Loadable;
