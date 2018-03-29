@@ -220,7 +220,7 @@ couple different props.
 
 When your [`loader`](optsloader) fails, your [loading component](#loadingcomponent)
 will receive an [`error`](propserror) prop which will be `true` (otherwise it
-will be `false`).
+will be an `Error` object).
 
 ```js
 function Loading(props) {
