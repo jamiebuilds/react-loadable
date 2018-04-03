@@ -219,8 +219,8 @@ couple different props.
 #### Loading error states
 
 When your [`loader`](optsloader) fails, your [loading component](#loadingcomponent)
-will receive an [`error`](propserror) prop which will be `true` (otherwise it
-will be an `Error` object).
+will receive an [`error`](propserror) prop which will be an `Error` object (otherwise it
+will be `false`).
 
 ```js
 function Loading(props) {
