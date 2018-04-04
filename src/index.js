@@ -142,6 +142,7 @@ function createLoadableComponent(loadFn, options) {
     static contextTypes = {
       loadable: PropTypes.shape({
         report: PropTypes.func.isRequired,
+        webpackReport: PropTypes.func,
       }),
     };
 
@@ -152,10 +153,17 @@ function createLoadableComponent(loadFn, options) {
     componentWillMount() {
       this._mounted = true;
 
-      if (this.context.loadable && Array.isArray(opts.modules)) {
-        opts.modules.forEach(moduleName => {
-          this.context.loadable.report(moduleName);
-        });
+      if (this.context.loadable) {
+        if (Array.isArray(opts.modules)) {
+          opts.modules.forEach(moduleName => {
+            this.context.loadable.report(moduleName);
+          });
+        }
+
+        // Get the Webpack module IDs via `require.resolveWeak()`
+        if ([opts.webpack, this.context.loadable.webpackReport].every(f => typeof f === "function")) {
+          opts.webpack().forEach(moduleId => this.context.loadable.webpackReport(moduleId));
+        }
       }
 
       if (!res.loading) {
@@ -243,11 +251,13 @@ Loadable.Map = LoadableMap;
 class Capture extends React.Component {
   static propTypes = {
     report: PropTypes.func.isRequired,
+    webpackReport: PropTypes.func,
   };
 
   static childContextTypes = {
     loadable: PropTypes.shape({
       report: PropTypes.func.isRequired,
+      webpackReport: PropTypes.func,
     }).isRequired,
   };
 
@@ -255,6 +265,7 @@ class Capture extends React.Component {
     return {
       loadable: {
         report: this.props.report,
+        webpackReport: this.props.webpackReport,
       },
     };
   }
