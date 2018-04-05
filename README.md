@@ -592,6 +592,8 @@ export default {
 }
 ```
 
+_Notice: As of Webpack 4 the CommonsChunkPlugin has been removed and the manifest doesn't need to be extracted anymore._
+
 ```js
 let bundles = getBundles(stats, modules);
 
