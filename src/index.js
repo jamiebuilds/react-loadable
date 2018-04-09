@@ -149,6 +149,12 @@ function createLoadableComponent(loadFn, options) {
       return init();
     }
 
+    static preFetch(...args) {
+      init().then(() => {
+        return res.loaded.preFetch(...args);
+      });
+    };
+
     componentWillMount() {
       this._mounted = true;
 
