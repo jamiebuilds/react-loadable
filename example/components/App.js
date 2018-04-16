@@ -5,7 +5,7 @@ import delay from '../utils/delay';
 import path from 'path';
 
 const LoadableExample = Loadable({
-  loader: () => import('./Example'),
+  loader: () => import(/* webpackChunkName: 'Example' */ './Example'),
   loading: Loading,
 });
 

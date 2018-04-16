@@ -5,7 +5,7 @@ import delay from '../utils/delay';
 import path from 'path';
 
 const LoadableNested = Loadable({
-  loader: () => import('./ExampleNested'),
+  loader: () => import(/* webpackChunkName: 'ExampleNested' */ './ExampleNested'),
   loading: Loading,
 });
 
