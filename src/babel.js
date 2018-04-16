@@ -66,7 +66,7 @@ export default function({ types: t, template }) {
                     return t.callExpression(
                       t.memberExpression(
                       	t.identifier('require'),
-                        t.identifier('resolveWeak'),
+                        t.identifier('resolve'),
                       ),
                       [dynamicImport.get('arguments')[0].node],
                     )

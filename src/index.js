@@ -4,6 +4,7 @@ const PropTypes = require('prop-types');
 
 const ALL_INITIALIZERS = [];
 const READY_INITIALIZERS = [];
+const INITIALIZERS_BY_WEBPACK = {};
 
 function isWebpackReady(getModuleIds) {
   if (typeof __webpack_modules__ !== 'object') {
@@ -123,6 +124,9 @@ function createLoadableComponent(loadFn, options) {
         return init();
       }
     });
+    INITIALIZERS_BY_WEBPACK[opts.webpack().sort().join(',')] = () => {
+      return init();
+    }
   }
 
   return class LoadableComponent extends React.Component {
@@ -142,6 +146,7 @@ function createLoadableComponent(loadFn, options) {
     static contextTypes = {
       loadable: PropTypes.shape({
         report: PropTypes.func.isRequired,
+        reportResolved: PropTypes.func
       }),
     };
 
@@ -156,6 +161,12 @@ function createLoadableComponent(loadFn, options) {
         opts.modules.forEach(moduleName => {
           this.context.loadable.report(moduleName);
         });
+      }
+
+      if (this.context.loadable &&
+        typeof this.context.loadable.reportResolved === 'function' &&
+        typeof opts.webpack === 'function') {
+        this.context.loadable.reportResolved(opts.webpack())
       }
 
       if (!res.loading) {
@@ -243,11 +254,13 @@ Loadable.Map = LoadableMap;
 class Capture extends React.Component {
   static propTypes = {
     report: PropTypes.func.isRequired,
+    reportResolved: PropTypes.func
   };
 
   static childContextTypes = {
     loadable: PropTypes.shape({
       report: PropTypes.func.isRequired,
+      reportResolved: PropTypes.func
     }).isRequired,
   };
 
@@ -255,6 +268,7 @@ class Capture extends React.Component {
     return {
       loadable: {
         report: this.props.report,
+        reportResolved: this.props.reportResolved,
       },
     };
   }
@@ -293,5 +307,12 @@ Loadable.preloadReady = () => {
     flushInitializers(READY_INITIALIZERS).then(resolve, resolve);
   });
 };
+
+Loadable.preloadablesReady = (preloadables) => {
+  const initializers = preloadables.map(preloadable => {
+    return INITIALIZERS_BY_WEBPACK[preloadable.sort().join(',')];
+  });
+  return flushInitializers(initializers)
+}
 
 module.exports = Loadable;
