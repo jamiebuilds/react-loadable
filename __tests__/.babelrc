@@ -1,11 +1,11 @@
 {
   "presets": [
-    ["es2015", {
-      "loose": true,
+    ["env", {
+      "loose": true
     }],
-    "react",
+    "react"
   ],
   "plugins": [
-    "transform-async-to-generator",
-  ],
+    "transform-async-to-generator"
+  ]
 }
