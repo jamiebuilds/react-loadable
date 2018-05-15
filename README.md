@@ -222,7 +222,7 @@ couple different props.
 
 When your [`loader`](optsloader) fails, your [loading component](#loadingcomponent)
 will receive an [`error`](propserror) prop which will be an `Error` object (otherwise it
-will be `false`).
+will be `null`).
 
 ```js
 function Loading(props) {
@@ -865,8 +865,9 @@ Loading({
 
 #### `props.error`
 
-A boolean prop passed to [`LoadingComponent`](#loadingcomponent) when the
-[`loader`](#optsloader) has failed.
+An `Error` object passed to [`LoadingComponent`](#loadingcomponent) when the
+[`loader`](#optsloader) has failed. When there is no error, `null` is
+passed.
 
 ```js
 function LoadingComponent(props) {
