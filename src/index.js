@@ -168,31 +168,32 @@ function createLoadableComponent(loadFn, options) {
         return;
       }
 
-      let delayedSetState = (newState, timeout) => setTimeout(() => {
+      let setStateWithMounCheck = (newState) => {
         if (!this._mounted) {
           return;
         }
+
         this.setState(newState);
-      }, timeout);
+      }
 
       if (typeof opts.delay === 'number') {
         if (opts.delay === 0) {
           this.setState({ pastDelay: true });
         } else {
-          this._delay = delayedSetState({ pastDelay: true }, opts.delay);
+          this._delay = setTimeout(() => {
+            setStateWithMounCheck({ pastDelay: true });
+          }, opts.delay);
         }
       }
 
       if (typeof opts.timeout === 'number') {
-        this._timeout = delayedSetState({ timedOut: true }, opts.timeout);
+        this._timeout = setTimeout(() => {
+          setStateWithMounCheck({ timedOut: true });
+        }, opts.timeout);
       }
 
       let update = () => {
-        if (!this._mounted) {
-          return;
-        }
-
-        this.setState({
+        setStateWithMounCheck({
           error: res.error,
           loaded: res.loaded,
           loading: res.loading
