@@ -161,8 +161,8 @@ test('loadable map success', async () => {
     render(loaded, props) {
       return (
         <div>
-          <loaded.a.MyComponent {...props}/>
-          <loaded.b.MyComponent {...props}/>
+          { loaded.a && <loaded.a.MyComponent {...props}/> }
+          { loaded.b && <loaded.b.MyComponent {...props}/> }
         </div>
       );
     }
@@ -186,8 +186,8 @@ test('loadable map error', async () => {
     render(loaded, props) {
       return (
         <div>
-          <loaded.a.MyComponent {...props}/>
-          <loaded.b.MyComponent {...props}/>
+          { loaded.a && <loaded.a.MyComponent {...props}/> }
+          { loaded.b && <loaded.b.MyComponent {...props}/> }
         </div>
       );
     }
