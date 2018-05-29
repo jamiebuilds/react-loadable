@@ -168,7 +168,7 @@ function createLoadableComponent(loadFn, options) {
         return;
       }
 
-      let setStateWithMounCheck = (newState) => {
+      let setStateWithMountCheck = (newState) => {
         if (!this._mounted) {
           return;
         }
@@ -181,19 +181,19 @@ function createLoadableComponent(loadFn, options) {
           this.setState({ pastDelay: true });
         } else {
           this._delay = setTimeout(() => {
-            setStateWithMounCheck({ pastDelay: true });
+            setStateWithMountCheck({ pastDelay: true });
           }, opts.delay);
         }
       }
 
       if (typeof opts.timeout === 'number') {
         this._timeout = setTimeout(() => {
-          setStateWithMounCheck({ timedOut: true });
+          setStateWithMountCheck({ timedOut: true });
         }, opts.timeout);
       }
 
       let update = () => {
-        setStateWithMounCheck({
+        setStateWithMountCheck({
           error: res.error,
           loaded: res.loaded,
           loading: res.loading
