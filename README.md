@@ -149,7 +149,7 @@ class MyComponent extends React.Component {
     Bar: null
   };
 
-  componentWillMount() {
+  componentDidMount() {
     import('./components/Bar').then(Bar => {
       this.setState({ Bar });
     });
