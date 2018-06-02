@@ -606,6 +606,9 @@ res.send(`
       <script src="/dist/manifest.js"></script>
       ${bundles.map(bundle => {
         return `<script src="/dist/${bundle.file}"></script>`
+        // alternatively if you are using publicPath option in webpack config
+        // you can use the publicPath value from bundle, e.g:
+        // return `<script src="${bundle.publicPath}"></script>`
       }).join('\n')}
       <script src="/dist/main.js"></script>
     </body>
