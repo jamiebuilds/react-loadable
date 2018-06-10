@@ -41,6 +41,7 @@ export default class App extends React.Component {
 - [Atlassian](https://www.atlassian.com/)
 - [Cloudflare](https://www.cloudflare.com)
 - [Curio](https://www.curio.org)
+- [Dresez](https://dresez.pk/)
 - [Flyhomes](https://flyhomes.com)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
 - [Snipit](https://snipit.io)
