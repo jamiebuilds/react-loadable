@@ -41,25 +41,8 @@ class ReactLoadablePlugin {
         source() {
           return json;
         },
-
         size() {
           return json.length
-        },
-      
-        map(options) {
-          return null;
-        },
-      
-        node(options) {
-          return null;
-        },
-      
-        listMap(options) {
-          return null;
-        },
-      
-        updateHash(hash) {
-          hash.update(json);
         }
       }
       callback();
