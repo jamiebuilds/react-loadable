@@ -199,6 +199,7 @@ function createLoadableComponent(loadFn, options) {
         update();
       }).catch(err => {
         update();
+        throw err;
       });
     }
 
