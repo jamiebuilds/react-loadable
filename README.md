@@ -42,6 +42,7 @@ export default class App extends React.Component {
 - [Cloudflare](https://www.cloudflare.com)
 - [Curio](https://www.curio.org)
 - [Flyhomes](https://flyhomes.com)
+- [Gogo](https://gogoair.com)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
 - [Snipit](https://snipit.io)
 - [Spectrum.chat](https://spectrum.chat)
