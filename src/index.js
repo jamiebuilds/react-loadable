@@ -84,7 +84,9 @@ function loadMap(obj) {
 }
 
 function resolve(obj) {
-  return obj && obj.__esModule ? obj.default : obj;
+  obj = obj && obj.default ? obj.default : obj
+  obj = obj && obj.default ? obj.default : obj
+  return obj;
 }
 
 function render(loaded, props) {
