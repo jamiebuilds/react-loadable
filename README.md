@@ -45,6 +45,7 @@ export default class App extends React.Component {
 - [Dresez](https://dresez.pk/)
 - [Flyhomes](https://flyhomes.com)
 - [Gogo](https://gogoair.com)
+- [Gofore](https://gofore.com/en/home/)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
 - [Render](https://render.com)
 - [Snipit](https://snipit.io)
