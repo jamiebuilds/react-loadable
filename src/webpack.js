@@ -49,7 +49,7 @@ class ReactLoadablePlugin {
       }
       fs.writeFileSync(this.filename, json);
       callback();
-    });
+    };
     if (compiler.hooks) {
       const plugin = { name: 'ReactLoadablePlugin' };
       compiler.hooks.emit.tapAsync(plugin, emit);
