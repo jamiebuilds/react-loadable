@@ -38,11 +38,17 @@ export default class App extends React.Component {
 ## Users
 
 - [Analog.Cafe](https://www.analog.cafe)
+- [Appbase.io](https://github.com/appbaseio/reactivesearch)
 - [Atlassian](https://www.atlassian.com/)
 - [Cloudflare](https://www.cloudflare.com)
 - [Curio](https://www.curio.org)
+- [Dresez](https://dresez.pk/)
 - [Flyhomes](https://flyhomes.com)
+- [Gogo](https://gogoair.com)
+- [Gofore](https://gofore.com/en/home/)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
+- [Officepulse](https://www.officepulse.in/)
+- [Render](https://render.com)
 - [Snipit](https://snipit.io)
 - [Spectrum.chat](https://spectrum.chat)
 - [Talentpair](https://talentpair.com)
@@ -222,7 +228,7 @@ couple different props.
 
 When your [`loader`](optsloader) fails, your [loading component](#loadingcomponent)
 will receive an [`error`](propserror) prop which will be an `Error` object (otherwise it
-will be `false`).
+will be `null`).
 
 ```js
 function Loading(props) {
@@ -594,6 +600,8 @@ export default {
 }
 ```
 
+_Notice: As of Webpack 4 the CommonsChunkPlugin has been removed and the manifest doesn't need to be extracted anymore._
+
 ```js
 let bundles = getBundles(stats, modules);
 
@@ -606,6 +614,9 @@ res.send(`
       <script src="/dist/manifest.js"></script>
       ${bundles.map(bundle => {
         return `<script src="/dist/${bundle.file}"></script>`
+        // alternatively if you are using publicPath option in webpack config
+        // you can use the publicPath value from bundle, e.g:
+        // return `<script src="${bundle.publicPath}"></script>`
       }).join('\n')}
       <script src="/dist/main.js"></script>
     </body>
@@ -865,8 +876,9 @@ Loading({
 
 #### `props.error`
 
-A boolean prop passed to [`LoadingComponent`](#loadingcomponent) when the
-[`loader`](#optsloader) has failed.
+An `Error` object passed to [`LoadingComponent`](#loadingcomponent) when the
+[`loader`](#optsloader) has failed. When there is no error, `null` is
+passed.
 
 ```js
 function LoadingComponent(props) {
@@ -1130,7 +1142,7 @@ export default function MyLoadable(opts) {
   return Loadable(Object.assign({
     loading: Loading,
     delay: 200,
-    timeout: 10,
+    timeout: 10000,
   }, opts));
 };
 ```
