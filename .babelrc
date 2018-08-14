@@ -7,5 +7,6 @@
   ],
   "plugins": [
     "transform-class-properties",
+    "transform-object-assign",
   ],
 }
