@@ -110,10 +110,15 @@ function createLoadableComponent(loadFn, options) {
       timeout: null,
       render: render,
       webpack: null,
-      modules: null
+      modules: null,
+      noSsr: false,
+      noReport: undefined
     },
     options
   );
+  if (opts.noReport === undefined) {
+    opts.noReport = opts.noSsr;
+  }
 
   let res = null;
 
@@ -124,14 +129,16 @@ function createLoadableComponent(loadFn, options) {
     return res.promise;
   }
 
-  ALL_INITIALIZERS.push(init);
+  if (!opts.noSsr) {
+    ALL_INITIALIZERS.push(init);
 
-  if (typeof opts.webpack === "function") {
-    READY_INITIALIZERS.push(() => {
-      if (isWebpackReady(opts.webpack)) {
-        return init();
-      }
-    });
+    if (typeof opts.webpack === "function") {
+      READY_INITIALIZERS.push(() => {
+        if (isWebpackReady(opts.webpack)) {
+          return init();
+        }
+      });
+    }
   }
 
   return class LoadableComponent extends React.Component {
@@ -164,13 +171,13 @@ function createLoadableComponent(loadFn, options) {
     }
 
     _loadModule() {
-      if (this.context.loadable && Array.isArray(opts.modules)) {
+      if (this.context.loadable && Array.isArray(opts.modules) && !opts.noReport) {
         opts.modules.forEach(moduleName => {
-          this.context.loadable.report(moduleName);
+          this.context.loadable.report(moduleName, !opts.noSsr);
         });
       }
 
-      if (!res.loading) {
+      if (!res.loading || opts.noSsr) {
         return;
       }
 
