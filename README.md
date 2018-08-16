@@ -42,6 +42,7 @@ export default class App extends React.Component {
 - [Atlassian](https://www.atlassian.com/)
 - [Cloudflare](https://www.cloudflare.com)
 - [Curio](https://www.curio.org)
+- [Dollar Shave Club](https://github.com/dollarshaveclub)
 - [Dresez](https://dresez.pk/)
 - [Flyhomes](https://flyhomes.com)
 - [Gogo](https://gogoair.com)
