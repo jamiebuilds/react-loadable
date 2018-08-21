@@ -868,7 +868,7 @@ function LoadingComponent(props) {
   }
 }
 
-Loading({
+Loadable({
   loading: LoadingComponent,
 });
 ```
