@@ -49,6 +49,7 @@ export default class App extends React.Component {
 - [Gofore](https://gofore.com/en/home/)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
 - [Officepulse](https://www.officepulse.in/)
+- [Plottu](https://public.plottu.com)
 - [Render](https://render.com)
 - [Snipit](https://snipit.io)
 - [Spectrum.chat](https://spectrum.chat)
