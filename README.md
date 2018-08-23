@@ -159,7 +159,7 @@ class MyComponent extends React.Component {
 
   componentWillMount() {
     import('./components/Bar').then(Bar => {
-      this.setState({ Bar });
+      this.setState({ Bar: Bar.default });
     });
   }
 
