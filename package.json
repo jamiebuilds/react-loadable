@@ -4,7 +4,7 @@
   "description": "A higher order component for loading components with promises",
   "main": "lib/index.js",
   "author": "James Kyle <me@thejameskyle.com>",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "repository": "thejameskyle/react-loadable",
   "files": [
     "babel.js",
