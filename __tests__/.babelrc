@@ -1,11 +1,14 @@
 {
   "presets": [
-    ["es2015", {
-      "loose": true,
-    }],
-    "react",
+    [
+      "@babel/preset-env",
+      {
+        "loose": true
+      }
+    ],
+    "@babel/preset-react"
   ],
   "plugins": [
-    "transform-async-to-generator",
-  ],
+    "@babel/plugin-transform-async-to-generator"
+  ]
 }
