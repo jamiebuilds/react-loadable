@@ -548,11 +548,12 @@ import { ReactLoadablePlugin } from 'react-loadable/webpack';
 export default {
   plugins: [
     new ReactLoadablePlugin({
-      filename: './dist/react-loadable.json',
+      filename: 'react-loadable.json',
     }),
   ],
 };
 ```
+> For others available settings, see [Webpack Plugin Options](#options)
 
 Then we'll go back to our server and use this data to convert our modules to
 bundles.
@@ -1097,16 +1098,61 @@ import { ReactLoadablePlugin } from 'react-loadable/webpack';
 export default {
   plugins: [
     new ReactLoadablePlugin({
-      filename: './dist/react-loadable.json',
+      filename: 'react-loadable.json',
     }),
   ],
 };
 ```
 
-This will create a file (`opts.filename`) which you can import to map modules
-to bundles.
+This will create an assets manifest (`opts.filename`) which you can import to
+ map modules to bundles.
+
 
 [Read more about mapping modules to bundles](#mapping-loaded-modules-to-bundles).
+
+### options
+
+#### `filename`
+
+Type: `string`
+Default: `react-loadable.json`
+
+Assets manifest file name. May contain relative or absolute path.
+
+
+#### `integrity`
+
+Type: `boolean`
+Default: `false`
+
+Enable or disable generation of [Subresource Integrity (SRI).](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) hash.
+
+#### `integrityAlgorithms`
+
+Type: `array`
+Default: `[ 'sha256', 'sha384', 'sha512' ]`
+
+Algorithms to generate hash.
+
+
+#### `integrityPropertyName`
+
+Type: `string`
+Default: `integrity`
+
+Custom property name to be output in the assets manifest file.
+
+
+**Full configuration example**
+
+```js
+new ReactLoadablePlugin({
+  filename: 'react-loadable.json',
+  integrity: false,
+  integrityAlgorithms: [ 'sha256', 'sha384', 'sha512' ],
+  integrityPropertyName: 'integrity',
+}),
+```
 
 ### `getBundles`
 
@@ -1194,8 +1240,8 @@ you care about:
 ```js
 let bundles = getBundles(stats, modules);
 
-let styles = bundles.filter(bundle => bundle.file.endsWith('.css'));
-let scripts = bundles.filter(bundle => bundle.file.endsWith('.js'));
+let styles = bundles.css || [];
+let scripts = bundles.js || [];
 
 res.send(`
   <!doctype html>
