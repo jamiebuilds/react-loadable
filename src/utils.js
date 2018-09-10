@@ -18,17 +18,6 @@ const computeIntegrity = (algorithms, source) =>
     })
     .join(' ') : '';
 
-/**
- * toArray
- *
- * @desc Check and convert given data to Array, if needed.
- * @param  {string|array} data
- * @return {array}
- */
-const toArray = data =>  Array.isArray(data) ? data : [data];
-
-
 module.exports = {
   computeIntegrity,
-  toArray,
 };

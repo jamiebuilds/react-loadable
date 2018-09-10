@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const { computeIntegrity, toArray, } = require('./utils');
+const { computeIntegrity } = require('./utils');
 
 const PLUGIN_NAME = 'ReactLoadablePlugin';
 
@@ -23,35 +23,14 @@ class ReactLoadablePlugin {
     this.manifest = {};
   }
 
-  apply(compiler) {
-    this.compiler = compiler;
-    if (compiler.hooks) {
-      compiler.hooks.emit.tapAsync(PLUGIN_NAME, this.handleEmit.bind(this));
-    } else {
-      compiler.plugin('emit', this.handleEmit.bind(this));
-    }
-  }
-
-  handleEmit(compilation, callback) {
-    this.stats = compilation.getStats().toJson();
-    this.options.publicPath = (compilation.outputOptions ? compilation.outputOptions.publicPath : compilation.options.output.publicPath) || '';
-    this.getEntrypoints(this.stats.entrypoints);
-    this.getAssets(this.stats.chunks);
-    this.processAssets(compilation.assets);
-    this.writeAssetsFile();
-
-    callback();
-  }
-
   getAssets(assetsChunk) {
     assetsChunk.forEach(chunk => {
-      const { id: chunkName, files, hash } = chunk;
-      const id = chunk.origins[0].request
-        || chunk.names.length > 0 && chunk.names[0]
-        || chunk.modules[0].reasons[0].userRequest
-        || chunkName;
+      const { id, files, siblings = [], hash } = chunk;
+      const key = this.getChunkKey(chunk)
+        || (chunk.names.length > 0 && chunk.names[0])
+        || id;
 
-      this.assetsByName.set(id, { files, hash, });
+      this.assetsByName.set(key, { id, files, hash, siblings });
     });
 
     return this.assetsByName;
@@ -78,6 +57,24 @@ class ReactLoadablePlugin {
     return ext && ext.length ? ext[0] : '';
   };
 
+  getChunkKey(chunk) {
+    let key = null;
+
+    for (let i = 0; i < chunk.modules.length; i++) {
+      const { reasons } = chunk.modules[i];
+      for (let j = 0; j < reasons.length; j++) {
+        const { type, userRequest } = reasons[j];
+        if (type === 'import()') {
+          key = userRequest;
+          break;
+        }
+      }
+      if (key) break;
+    }
+
+    return key;
+  }
+
   getManifestOutputPath() {
     if (path.isAbsolute(this.options.filename)) {
       return this.options.filename;
@@ -98,24 +95,54 @@ class ReactLoadablePlugin {
 
   };
 
+  apply(compiler) {
+    this.compiler = compiler;
+    if (compiler.hooks) {
+      compiler.hooks.emit.tapAsync(PLUGIN_NAME, this.handleEmit.bind(this));
+    } else {
+      compiler.plugin('emit', this.handleEmit.bind(this));
+    }
+  }
+
+  handleEmit(compilation, callback) {
+    this.stats = compilation.getStats().toJson();
+    this.options.publicPath = (compilation.outputOptions ? compilation.outputOptions.publicPath : compilation.options.output.publicPath) || '';
+    this.getEntrypoints(this.stats.entrypoints);
+    this.getAssets(this.stats.chunks);
+    this.processAssets(compilation.assets);
+    this.writeAssetsFile();
+
+    callback();
+  }
+
   processAssets(originAssets) {
     const assets = {};
+    const origins = {};
     const { entrypoints } = this;
 
-    for (const [ id, value ] of this.assetsByName) {
-      value.files.forEach(file => {
+    for (const [ key, { files, id, siblings, hash } ] of this.assetsByName) {
+      files.forEach(file => {
         const currentAsset = originAssets[file];
         const ext = this.getFileExtension(file).replace(/^\.+/, '').toLowerCase();
+
         if (!assets[id]) { assets[id] = {}; }
         if (!assets[id][ext]) { assets[id][ext] = []; }
+        if (!origins[key]) { origins[key] = []; }
 
         if (currentAsset && this.options.integrity && !currentAsset[this.options.integrityPropertyName]) {
           currentAsset[this.options.integrityPropertyName] = computeIntegrity(this.options.integrityAlgorithms, currentAsset.source())
         }
 
+        siblings.push(id);
+        siblings.forEach(sibling => {
+          if (!origins[key].includes(sibling)) {
+            origins[key].push(sibling);
+          }
+        });
+
         assets[id][ext].push({
           file,
-          hash: value.hash,
+          hash,
           publicPath: url.resolve(this.options.publicPath || '', file),
           integrity: currentAsset[this.options.integrityPropertyName],
         });
@@ -124,6 +151,7 @@ class ReactLoadablePlugin {
 
     this.manifest = {
       entrypoints: Array.from(entrypoints),
+      origins,
       assets,
     }
   }
@@ -147,14 +175,19 @@ class ReactLoadablePlugin {
 }
 
 function getBundles(manifest, chunks) {
-  return chunks.reduce((bundle, chunk) => {
-    if (manifest.assets[chunk]) {
-      Object.keys(manifest.assets[chunk]).forEach(key => {
-        const content = manifest.assets[chunk][key];
-        if (!bundle[key]) { bundle[key] = []; }
-        bundle[key] = [...bundle[key], ...content];
-      });
+  const assetsKey = chunks.reduce((key, chunk) => {
+    if (manifest.origins[chunk]) {
+      key = [...key, ...manifest.origins[chunk]];
     }
+    return key;
+  }, []);
+
+  return assetsKey.reduce((bundle, asset) => {
+    Object.keys(manifest.assets[asset]).forEach(key => {
+      const content = manifest.assets[asset][key];
+      if (!bundle[key]) { bundle[key] = []; }
+      bundle[key] = [...bundle[key], ...content];
+    });
     return bundle;
   }, {});
 }
