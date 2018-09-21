@@ -44,6 +44,7 @@ export default class App extends React.Component {
 - [Curio](https://www.curio.org)
 - [Dollar Shave Club](https://github.com/dollarshaveclub)
 - [Dresez](https://dresez.pk/)
+- [Flexport] (https://flexport.com/)
 - [Flyhomes](https://flyhomes.com)
 - [Gogo](https://gogoair.com)
 - [Gofore](https://gofore.com/en/home/)
