@@ -747,6 +747,17 @@ Loadable({
 });
 ```
 
+#### `opts.children`
+
+This boolean option controls whether `children` will be passed to the [`LoadingComponent`](#loadingcomponent)
+
+```js
+Loadable({
+  loading: ({ children }) => <div>{children}</div>,
+  children: true
+});
+```
+
 #### `opts.delay`
 
 Time to wait (in milliseconds) before passing

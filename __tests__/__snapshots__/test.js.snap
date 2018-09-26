@@ -1,5 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`allow children 1`] = `
+<span>
+  Hello World
+</span>
+`;
+
+exports[`allow children 2`] = `
+<h1>
+  Hello World
+</h1>
+`;
+
 exports[`delay and timeout 1`] = `
 <div>
   MyLoadingComponent 

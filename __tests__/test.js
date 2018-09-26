@@ -201,6 +201,22 @@ test('loadable map error', async () => {
   expect(component.toJSON()).toMatchSnapshot(); // success
 });
 
+test('allow children', async () => {
+  let LoadableMyComponent = Loadable({
+    loader: createLoader(100, () => ({ children }) => <h1>{children}</h1>),
+    loading: ({ children }) => <span>{children}</span>,
+    children: true
+  });
+
+  let component1 = renderer.create(
+    <LoadableMyComponent>Hello World</LoadableMyComponent>
+  );
+
+  expect(component1.toJSON()).toMatchSnapshot(); // initial
+  await waitFor(200);
+  expect(component1.toJSON()).toMatchSnapshot(); // loaded
+});
+
 describe('preloadReady', () => {
   beforeEach(() => {
     global.__webpack_modules__ = { 1: true, 2: true };
