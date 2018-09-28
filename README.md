@@ -53,6 +53,7 @@ export default class App extends React.Component {
 - [Officepulse](https://www.officepulse.in/)
 - [Plottu](https://public.plottu.com)
 - [Render](https://render.com)
+- [Shift](https://shift.com)
 - [Snipit](https://snipit.io)
 - [Spectrum.chat](https://spectrum.chat)
 - [Talentpair](https://talentpair.com)
