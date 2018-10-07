@@ -43,7 +43,9 @@ module.exports = {
   },
   plugins: [
     new ReactLoadablePlugin({
-      filename:  path.resolve(__dirname, 'example', 'dist', 'react-loadable.json'),
+      writeToDisk: false,
+      emitAssets: true,
+      filename: 'react-loadable.json',
     }),
   ]
 };
