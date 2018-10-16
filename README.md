@@ -462,7 +462,7 @@ Loadable.preloadAll().then(() => {
 
 ### Picking up a server-side rendered app on the client
 
-This is where things get a little bit tricky. So let's prepare ourselves
+This is where things get a little bit tricky. So let's prepare ourselves a
 little bit.
 
 In order for us to pick up what was rendered from the server we need to have
