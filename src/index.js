@@ -229,6 +229,10 @@ function createLoadableComponent(loadFn, options) {
       this._loadModule();
     };
 
+    getWrappedInstance = () => {
+      return this._wrappedInstance;
+    };
+
     render() {
       if (this.state.loading || this.state.error) {
         return React.createElement(opts.loading, {
@@ -239,7 +243,11 @@ function createLoadableComponent(loadFn, options) {
           retry: this.retry
         });
       } else if (this.state.loaded) {
-        return opts.render(this.state.loaded, this.props);
+        return opts.render(this.state.loaded, Object.assign(
+          {},
+          this.props,
+          { ref: ref => this._wrappedInstance = ref }
+        ));
       } else {
         return null;
       }
