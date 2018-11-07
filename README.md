@@ -49,6 +49,7 @@ export default class App extends React.Component {
 - [Gofore](https://gofore.com/en/home/)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
 - [Officepulse](https://www.officepulse.in/)
+- [Perx](https://www.perxtech.com/)
 - [Plottu](https://public.plottu.com)
 - [Render](https://render.com)
 - [Snipit](https://snipit.io)
@@ -57,7 +58,6 @@ export default class App extends React.Component {
 - [Tinder](https://tinder.com/)
 - [Unsplash](https://unsplash.com/)
 - [Wave](https://waveapps.com/)
-- [Perx](https://www.perxtech.com/)
 
 > _If your company or project is using React Loadable, please open a PR and add
 > yourself to this list (in alphabetical order please)_
