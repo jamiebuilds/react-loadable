@@ -1,5 +1,4 @@
 'use strict';
-const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
@@ -41,13 +40,13 @@ class ReactLoadablePlugin {
       var json = JSON.stringify(manifest, null, 2);
       const outputDirectory = path.dirname(this.filename);
       try {
-        fs.mkdirSync(outputDirectory);
+        compiler.outputFileSystem.mkdirSync(outputDirectory);
       } catch (err) {
         if (err.code !== 'EEXIST') {
           throw err;
         }
       }
-      fs.writeFileSync(this.filename, json);
+      compiler.outputFileSystem.writeFileSync(this.filename, json);
       callback();
     });
   }
