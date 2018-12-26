@@ -324,7 +324,7 @@ If you want to customize this behavior you can use the
 Loadable({
   loader: () => import('./my-component'),
   render(loaded, props) {
-    let Component = loaded.namedExport;
+    let Component = loaded.default;
     return <Component {...props}/>;
   }
 });
