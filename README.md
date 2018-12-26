@@ -41,6 +41,7 @@ export default class App extends React.Component {
 - [Appbase.io](https://github.com/appbaseio/reactivesearch)
 - [Atlassian](https://www.atlassian.com/)
 - [Cloudflare](https://www.cloudflare.com)
+- [Chibaki](https://chibaki.co)
 - [Curio](https://www.curio.org)
 - [Dollar Shave Club](https://github.com/dollarshaveclub)
 - [Dresez](https://dresez.pk/)
