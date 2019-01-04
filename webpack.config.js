@@ -1,5 +1,5 @@
 const path = require('path');
-const { ReactLoadablePlugin } = require('./webpack');
+const { ReactLoadablePlugin } = require('./lib/webpack');
 
 module.exports = {
   entry: {
@@ -28,7 +28,7 @@ module.exports = {
               'syntax-dynamic-import',
               'transform-class-properties',
               'transform-object-assign',
-              require.resolve('./babel'),
+              require.resolve('./lib/babel'),
             ],
           }
         },

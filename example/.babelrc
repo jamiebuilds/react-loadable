@@ -6,7 +6,7 @@
   "plugins": [
     "dynamic-import-node",
     "transform-class-properties",
-    "../babel",
+    "../lib/babel",
     ["module-resolver", {
       "alias": {
         "react-loadable": "./src/index.js",
