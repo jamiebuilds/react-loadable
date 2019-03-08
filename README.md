@@ -60,6 +60,7 @@ export default class App extends React.Component {
 - [Tinder](https://tinder.com/)
 - [Unsplash](https://unsplash.com/)
 - [Wave](https://waveapps.com/)
+- [Evidation Health](https://evidation.com/)
 
 > _If your company or project is using React Loadable, please open a PR and add
 > yourself to this list (in alphabetical order please)_
