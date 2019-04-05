@@ -36,6 +36,7 @@ export default class App extends React.Component {
 
 ## Users
 
+- [AdHawk / Flooring Stores](https://www.flooringstores.com)
 - [Analog.Cafe](https://www.analog.cafe)
 - [Ambrosus](https://ambrosus.com)
 - [Appbase.io](https://github.com/appbaseio/reactivesearch)
