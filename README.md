@@ -49,6 +49,7 @@ export default class App extends React.Component {
 - [Chibaki](https://chibaki.co)
 - [Curio](https://www.curio.org)
 - [Delivery.com](https://www.delivery.com)
+- [Doctor.com](https://www.doctor.com/)
 - [Dollar Shave Club](https://github.com/dollarshaveclub)
 - [Dresez](https://dresez.pk/)
 - [Evidation Health](https://evidation.com/)
