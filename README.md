@@ -29,23 +29,27 @@ export default class App extends React.Component {
 ## Happy Customers:
 
 - ["I'm obsessed with this right now: CRA with React Router v4 and react-loadable. Free code splitting, this is so easy."](https://twitter.com/matzatorski/status/872059865350406144)
-- ["Webpack 2 upgrade & react-loadable; initial load from 1.1mb to 529kb in under 2 hours. Immense."](https://twitter.com/jwbradley87/status/847191118269833216)
 - ["Oh hey - using loadable component I knocked 13K off my initial load. Easy win!"](https://twitter.com/AdamRackis/status/846593080992153600)
 - ["Had a look and its awesome. shaved like 50kb off our main bundle."](https://github.com/quran/quran.com-frontend/pull/701#issuecomment-287908551)
 - ["I've got that server-side rendering + code splitting + PWA ServiceWorker caching setup done 😎 (thanks to react-loadable). Now our frontend is super fast."](https://twitter.com/mxstbr/status/922375575217627136)
 - ["Using react-loadable went from 221.28 KB → 115.76 KB @ main bundle. Fucking awesome and very simple API."](https://twitter.com/evgenyrodionov/status/958821614644269057)
+- ["We've reduced our entry chunk by a lot & reduced initial load time by ~50%!"](https://github.com/jamiebuilds/react-loadable/pull/181)
 
 ## Users
 
+- [AdHawk / Flooring Stores](https://www.flooringstores.com)
 - [Analog.Cafe](https://www.analog.cafe)
 - [Ambrosus](https://ambrosus.com)
 - [Appbase.io](https://github.com/appbaseio/reactivesearch)
 - [Atlassian](https://www.atlassian.com/)
 - [Blytzpay](https://www.blytzpay.com)
+- [ClearTax](https://cleartax.in)
 - [Cloudflare](https://www.cloudflare.com)
+- [Chibaki](https://chibaki.co)
 - [Curio](https://www.curio.org)
 - [Dollar Shave Club](https://github.com/dollarshaveclub)
 - [Dresez](https://dresez.pk/)
+- [Evidation Health](https://evidation.com/)
 - [Flyhomes](https://flyhomes.com)
 - [Gogo](https://gogoair.com)
 - [Gofore](https://gofore.com/en/home/)
@@ -53,6 +57,7 @@ export default class App extends React.Component {
 - [Officepulse](https://www.officepulse.in/)
 - [Plottu](https://public.plottu.com)
 - [Render](https://render.com)
+- [Shift](https://shift.com)
 - [Snipit](https://snipit.io)
 - [Spectrum.chat](https://spectrum.chat)
 - [Talentpair](https://talentpair.com)
