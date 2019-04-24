@@ -46,6 +46,7 @@ export default class App extends React.Component {
 - [Curio](https://www.curio.org)
 - [Dollar Shave Club](https://github.com/dollarshaveclub)
 - [Dresez](https://dresez.pk/)
+- [Evidation Health](https://evidation.com/)
 - [Flyhomes](https://flyhomes.com)
 - [Gogo](https://gogoair.com)
 - [Gofore](https://gofore.com/en/home/)
@@ -60,7 +61,6 @@ export default class App extends React.Component {
 - [Tinder](https://tinder.com/)
 - [Unsplash](https://unsplash.com/)
 - [Wave](https://waveapps.com/)
-- [Evidation Health](https://evidation.com/)
 
 > _If your company or project is using React Loadable, please open a PR and add
 > yourself to this list (in alphabetical order please)_
