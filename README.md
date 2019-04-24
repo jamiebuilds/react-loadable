@@ -54,6 +54,7 @@ export default class App extends React.Component {
 - [Flyhomes](https://flyhomes.com)
 - [Gogo](https://gogoair.com)
 - [Gofore](https://gofore.com/en/home/)
+- [Localie](https://localie.co/en)
 - [MediaTek MCS-Lite](https://github.com/MCS-Lite)
 - [NiYO Solutions Inc.](https://www.goniyo.com/)
 - [Officepulse](https://www.officepulse.in/)
