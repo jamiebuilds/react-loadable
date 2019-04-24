@@ -33,6 +33,7 @@ export default class App extends React.Component {
 - ["Had a look and its awesome. shaved like 50kb off our main bundle."](https://github.com/quran/quran.com-frontend/pull/701#issuecomment-287908551)
 - ["I've got that server-side rendering + code splitting + PWA ServiceWorker caching setup done 😎 (thanks to react-loadable). Now our frontend is super fast."](https://twitter.com/mxstbr/status/922375575217627136)
 - ["Using react-loadable went from 221.28 KB → 115.76 KB @ main bundle. Fucking awesome and very simple API."](https://twitter.com/evgenyrodionov/status/958821614644269057)
+- ["We've reduced our entry chunk by a lot & reduced initial load time by ~50%!"](https://github.com/jamiebuilds/react-loadable/pull/181)
 
 ## Users
 
