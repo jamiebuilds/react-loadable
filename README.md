@@ -42,6 +42,7 @@ export default class App extends React.Component {
 - [Ambrosus](https://ambrosus.com)
 - [Appbase.io](https://github.com/appbaseio/reactivesearch)
 - [Atlassian](https://www.atlassian.com/)
+- [Blytzpay](https://www.blytzpay.com)
 - [ClearTax](https://cleartax.in)
 - [Cloudflare](https://www.cloudflare.com)
 - [Chibaki](https://chibaki.co)
