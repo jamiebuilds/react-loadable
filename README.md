@@ -68,6 +68,7 @@ export default class App extends React.Component {
 - [Shift](https://shift.com)
 - [Snipit](https://snipit.io)
 - [Spectrum.chat](https://spectrum.chat)
+- [Superblocks](https://superblocks.com)
 - [Talentpair](https://talentpair.com)
 - [Tinder](https://tinder.com/)
 - [Unsplash](https://unsplash.com/)
