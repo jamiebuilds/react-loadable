@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const shell = require('shelljs');
 
 function buildManifest(compiler, compilation) {
   let context = compiler.options.context;
@@ -13,7 +14,7 @@ function buildManifest(compiler, compilation) {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
         let publicPath = url.resolve(compilation.outputOptions.publicPath || '', file);
-        
+
         let currentModule = module;
         if (module.constructor.name === 'ConcatenatedModule') {
           currentModule = module.rootModule;
@@ -41,7 +42,7 @@ class ReactLoadablePlugin {
       var json = JSON.stringify(manifest, null, 2);
       const outputDirectory = path.dirname(this.filename);
       try {
-        fs.mkdirSync(outputDirectory);
+        shell.mkdir('-p', outputDirectory);
       } catch (err) {
         if (err.code !== 'EEXIST') {
           throw err;
