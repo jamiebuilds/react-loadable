@@ -18,6 +18,7 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
+    "mkdirp": "^0.5.1",
     "prop-types": "^15.5.0"
   },
   "devDependencies": {

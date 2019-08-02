@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const mkdirp = require('mkdirp');
 
 function buildManifest(compiler, compilation) {
   let context = compiler.options.context;
@@ -40,13 +41,7 @@ class ReactLoadablePlugin {
       const manifest = buildManifest(compiler, compilation);
       var json = JSON.stringify(manifest, null, 2);
       const outputDirectory = path.dirname(this.filename);
-      try {
-        fs.mkdirSync(outputDirectory);
-      } catch (err) {
-        if (err.code !== 'EEXIST') {
-          throw err;
-        }
-      }
+      mkdirp.sync(outputDirectory);
       fs.writeFileSync(this.filename, json);
       callback();
     });
