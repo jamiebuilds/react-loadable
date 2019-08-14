@@ -165,7 +165,7 @@ class Foo extends React.Component {
 Right now we're depending on `Bar` being imported synchronously via `import`,
 but we don't need it until we go to render it. So why don't we just defer that?
 
-Using a **dynamic import** ([a tc39 proposal currently at Stage 3](https://github.com/tc39/proposal-dynamic-import))
+Using a **dynamic import** ([a tc39 proposal currently at Stage 4](https://github.com/tc39/proposal-dynamic-import))
 we can modify our component to load `Bar` asynchronously.
 
 ```js
