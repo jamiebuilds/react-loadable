@@ -49,6 +49,7 @@ export default class App extends React.Component {
 - [ClearTax](https://cleartax.in)
 - [Cloudflare](https://www.cloudflare.com)
 - [Chibaki](https://chibaki.co)
+- [Compass](https://compass.com)
 - [Curio](https://www.curio.org)
 - [Delivery.com](https://www.delivery.com)
 - [Doctor.com](https://www.doctor.com/)
