@@ -1233,3 +1233,19 @@ res.send(`
   </html>
 `);
 ```
+
+### Why am I getting `TypeError: promise.then is not a function`
+The `import` function is not the same as `import * from 'package'` 
+Your `loader` function needs to return a Promise, not a component. 
+__DO NOT DO THIS__
+```js
+import React from 'react';
+import Loadable from 'react-loadable';
+import App from './App';
+import Loading from './Loading';
+
+const LoadableApp = Loadable({
+    loader: () => <App/>, // this should be () => import('./App')
+    loading: Loading,
+});
+```
