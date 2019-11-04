@@ -1,5 +1,5 @@
 [ignore]
-<PROJECT_ROOT>/node_modules/chalk/.*
+.*/node_modules/chalk/.*
 
 [include]
 

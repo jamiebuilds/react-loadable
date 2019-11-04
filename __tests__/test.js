@@ -1,6 +1,5 @@
 'use strict';
 
-const path = require('path');
 const React = require('react');
 const renderer = require('react-test-renderer');
 const Loadable = require('../src');
@@ -34,7 +33,7 @@ function MyComponent(props) {
 afterEach(async () => {
   try {
     await Loadable.preloadAll();
-  } catch (err) {}
+  } catch (err) { }
 });
 
 test('loading success', async () => {
@@ -140,7 +139,7 @@ test('render', async () => {
     loader: createLoader(400, () => ({ MyComponent })),
     loading: MyLoadingComponent,
     render(loaded, props) {
-      return <loaded.MyComponent {...props}/>;
+      return <loaded.MyComponent {...props} />;
     }
   });
   let component = renderer.create(<LoadableMyComponent prop="baz" />);
@@ -161,8 +160,8 @@ test('loadable map success', async () => {
     render(loaded, props) {
       return (
         <div>
-          <loaded.a.MyComponent {...props}/>
-          <loaded.b.MyComponent {...props}/>
+          <loaded.a.MyComponent {...props} />
+          <loaded.b.MyComponent {...props} />
         </div>
       );
     }
@@ -186,8 +185,8 @@ test('loadable map error', async () => {
     render(loaded, props) {
       return (
         <div>
-          <loaded.a.MyComponent {...props}/>
-          <loaded.b.MyComponent {...props}/>
+          <loaded.a.MyComponent {...props} />
+          <loaded.b.MyComponent {...props} />
         </div>
       );
     }
@@ -272,9 +271,9 @@ describe('preloadReady', () => {
       delay: 0,
       timeout: 200,
     });
-  
+
     let loadingComponent = renderer.create(<LoadableMyComponent prop="foo" />);
-  
+
     expect(loadingComponent.toJSON()).toMatchSnapshot(); // loading
   });
 });
