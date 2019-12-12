@@ -66,3 +66,4 @@ function getBundles(manifest, moduleIds) {
 
 exports.ReactLoadablePlugin = ReactLoadablePlugin;
 exports.getBundles = getBundles;
+exports.buildManifest = buildManifest;
