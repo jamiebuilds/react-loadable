@@ -158,7 +158,7 @@ function createLoadableComponent(loadFn, options) {
       return init();
     }
 
-    componentWillMount() {
+    componentDidMount() {
       this._mounted = true;
       this._loadModule();
     }
@@ -213,7 +213,7 @@ function createLoadableComponent(loadFn, options) {
         });
     }
 
-    componentWillUnmount() {
+    componentDidUnmount() {
       this._mounted = false;
       this._clearTimeouts();
     }
