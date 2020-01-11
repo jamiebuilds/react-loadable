@@ -213,7 +213,7 @@ function createLoadableComponent(loadFn, options) {
         });
     }
 
-    componentDidUnmount() {
+    componentWillUnmount() {
       this._mounted = false;
       this._clearTimeouts();
     }
