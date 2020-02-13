@@ -5,7 +5,10 @@
   "main": "lib/index.js",
   "author": "James Kyle <me@thejameskyle.com>",
   "license": "MIT",
-  "repository": "thejameskyle/react-loadable",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamiebuilds/react-loadable"
+  },
   "files": [
     "babel.js",
     "webpack.js",
