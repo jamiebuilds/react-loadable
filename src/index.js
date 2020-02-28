@@ -207,9 +207,11 @@ function createLoadableComponent(loadFn, options) {
       res.promise
         .then(() => {
           update();
+          return null;
         })
         .catch(err => {
           update();
+          return null;
         });
     }
 
