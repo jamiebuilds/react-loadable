@@ -88,6 +88,8 @@ export default class App extends React.Component {
 
 - [`react-loadable-visibility`](https://github.com/stratiformltd/react-loadable-visibility) - Building on top of and keeping the same API as `react-loadable`, this library enables you to load content that is visible on the screen.
 
+- [`react-loadable-ssr-addon`](https://github.com/themgoncalves/react-loadable-ssr-addon) - Server Side Render add-on for `react-loadable`. Discover & load automatically dynamically all files dependencies, e.g. splitted chunks, css, etc.
+
 <h2>
   <hr>
   <hr>
