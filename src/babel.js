@@ -37,8 +37,10 @@ export default function({ types: t, template }) {
           let propertiesMap = {};
 
           properties.forEach(property => {
-            let key = property.get('key');
-            propertiesMap[key.node.name] = property;
+            if (property.type !== 'SpreadProperty') {
+                let key = property.get('key');
+                propertiesMap[key.node.name] = property;
+            }
           });
 
           if (propertiesMap.webpack) {
