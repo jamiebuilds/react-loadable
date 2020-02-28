@@ -39,10 +39,12 @@ export default class App extends React.Component {
 ## Users
 
 - [AdHawk / Flooring Stores](https://www.flooringstores.com)
+- [Akutbolig.dk](https://www.akutbolig.dk)
 - [Analog.Cafe](https://www.analog.cafe)
 - [Ambrosus](https://ambrosus.com)
 - [Appbase.io](https://github.com/appbaseio/reactivesearch)
 - [Atlassian](https://www.atlassian.com/)
+- [BBC News](https://github.com/BBC-News/simorgh)
 - [Blytzpay](https://www.blytzpay.com)
 - [ClearTax](https://cleartax.in)
 - [Cloudflare](https://www.cloudflare.com)
@@ -71,6 +73,7 @@ export default class App extends React.Component {
 - [Tinder](https://tinder.com/)
 - [Unsplash](https://unsplash.com/)
 - [Wave](https://waveapps.com/)
+- [WUZZUF](https://wuzzuf.net/)
 - [Wxb](https://wxb.com/wxpush)
 
 > _If your company or project is using React Loadable, please open a PR and add
