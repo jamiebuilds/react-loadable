@@ -159,8 +159,11 @@ function createLoadableComponent(loadFn, options) {
     }
 
     componentWillMount() {
-      this._mounted = true;
       this._loadModule();
+    }
+
+    componentDidMount() {
+      this._mounted = true;
     }
 
     _loadModule() {
@@ -174,28 +177,32 @@ function createLoadableComponent(loadFn, options) {
         return;
       }
 
-      if (typeof opts.delay === "number") {
+      let setStateWithMountCheck = (newState) => {
+        if (!this._mounted) {
+          return;
+        }
+
+        this.setState(newState);
+      }
+
+      if (typeof opts.delay === 'number') {
         if (opts.delay === 0) {
           this.setState({ pastDelay: true });
         } else {
           this._delay = setTimeout(() => {
-            this.setState({ pastDelay: true });
+            setStateWithMountCheck({ pastDelay: true });
           }, opts.delay);
         }
       }
 
       if (typeof opts.timeout === "number") {
         this._timeout = setTimeout(() => {
-          this.setState({ timedOut: true });
+          setStateWithMountCheck({ timedOut: true });
         }, opts.timeout);
       }
 
       let update = () => {
-        if (!this._mounted) {
-          return;
-        }
-
-        this.setState({
+        setStateWithMountCheck({
           error: res.error,
           loaded: res.loaded,
           loading: res.loading
