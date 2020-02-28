@@ -55,6 +55,7 @@ export default class App extends React.Component {
 - [Doctor.com](https://www.doctor.com/)
 - [Dollar Shave Club](https://github.com/dollarshaveclub)
 - [Dresez](https://dresez.pk/)
+- [Edcast](https://www.edcast.com/)
 - [Evidation Health](https://evidation.com/)
 - [Flyhomes](https://flyhomes.com)
 - [Gogo](https://gogoair.com)
