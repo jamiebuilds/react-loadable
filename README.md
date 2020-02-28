@@ -526,6 +526,8 @@ Just add the `react-loadable/babel` plugin to your Babel config:
 
 Now these options will automatically be provided.
 
+For typescript you can use [react-loadable-ts-transformer](https://github.com/stushurik/react-loadable-ts-transformer) which is a ts analog of react-loadable/babel plugin.
+
 #### Finding out which dynamic modules were rendered
 
 Next we need to find out which modules were actually rendered when a request
