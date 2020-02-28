@@ -642,13 +642,14 @@ res.send(`
     <body>
       <div id="app">${html}</div>
       <script src="/dist/manifest.js"></script>
+      <script src="/dist/main.js"></script>
       ${bundles.map(bundle => {
         return `<script src="/dist/${bundle.file}"></script>`
         // alternatively if you are using publicPath option in webpack config
         // you can use the publicPath value from bundle, e.g:
         // return `<script src="${bundle.publicPath}"></script>`
       }).join('\n')}
-      <script src="/dist/main.js"></script>
+      <script>window.main();</script>
     </body>
   </html>
 `);
@@ -669,9 +670,11 @@ import ReactDOM from 'react-dom';
 import Loadable from 'react-loadable';
 import App from './components/App';
 
-Loadable.preloadReady().then(() => {
-  ReactDOM.hydrate(<App/>, document.getElementById('app'));
-});
+window.main = () => {
+  Loadable.preloadReady().then(() => {
+    ReactDOM.hydrate(<App/>, document.getElementById('app'));
+  });
+};
 
 ```
 
