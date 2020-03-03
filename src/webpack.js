@@ -34,7 +34,7 @@ class ReactLoadablePlugin {
   }
 
   apply(compiler) {
-    compiler.plugin('emit', (compilation, callback) => {
+    const emit = (compilation, callback) => {
       const manifest = buildManifest(compiler, compilation);
       var json = JSON.stringify(manifest, null, 2);
       compilation.assets[this.filename] = {      
@@ -46,7 +46,13 @@ class ReactLoadablePlugin {
         }
       }
       callback();
-    });
+    };
+    if (compiler.hooks) {
+      const plugin = { name: 'ReactLoadablePlugin' };
+      compiler.hooks.emit.tapAsync(plugin, emit);
+    } else {
+      compiler.plugin('emit', emit);
+    }
   }
 }
 
