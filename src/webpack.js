@@ -11,16 +11,17 @@ function buildManifest(compiler, compilation) {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
         let publicPath = url.resolve(compilation.outputOptions.publicPath || '', file);
-        
+
         let currentModule = module;
         if (module.constructor.name === 'ConcatenatedModule') {
           currentModule = module.rootModule;
         }
-        if (!manifest[currentModule.rawRequest]) {
-          manifest[currentModule.rawRequest] = [];
+        if (currentModule.rawRequest){
+          if (!manifest[currentModule.rawRequest]) {
+            manifest[currentModule.rawRequest] = [];
+          }
+          manifest[currentModule.rawRequest].push({ id, name, file, publicPath });
         }
-
-        manifest[currentModule.rawRequest].push({ id, name, file, publicPath });
       });
     });
   });
