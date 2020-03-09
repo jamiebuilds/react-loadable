@@ -201,6 +201,23 @@ test('loadable map error', async () => {
   expect(component.toJSON()).toMatchSnapshot(); // success
 });
 
+test('display name', async () => {
+  let LoadableMyComponent = Loadable({
+    displayName: 'ComponentWith200Delay',
+    loader: createLoader(200, () => MyComponent),
+    loading: MyLoadingComponent
+  });
+
+  expect(LoadableMyComponent.displayName).toEqual('ComponentWith200Delay');
+
+  LoadableMyComponent = Loadable({
+    loader: createLoader(200, () => MyComponent),
+    loading: MyLoadingComponent
+  });
+
+  expect(LoadableMyComponent.displayName).toEqual('LoadableComponent');
+});
+
 describe('preloadReady', () => {
   beforeEach(() => {
     global.__webpack_modules__ = { 1: true, 2: true };
@@ -272,9 +289,9 @@ describe('preloadReady', () => {
       delay: 0,
       timeout: 200,
     });
-  
+
     let loadingComponent = renderer.create(<LoadableMyComponent prop="foo" />);
-  
+
     expect(loadingComponent.toJSON()).toMatchSnapshot(); // loading
   });
 });
