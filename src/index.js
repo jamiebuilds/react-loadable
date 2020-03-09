@@ -134,7 +134,7 @@ function createLoadableComponent(loadFn, options) {
     });
   }
 
-  return class LoadableComponent extends React.Component {
+  class LoadableComponent extends React.Component {
     constructor(props) {
       super(props);
       init();
@@ -254,6 +254,10 @@ function createLoadableComponent(loadFn, options) {
       }
     }
   };
+
+  LoadableComponent.displayName = opts.displayName || 'LoadableComponent';
+
+  return LoadableComponent;
 }
 
 function Loadable(opts) {

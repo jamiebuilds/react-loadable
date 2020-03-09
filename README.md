@@ -779,6 +779,17 @@ Loadable({
 });
 ```
 
+#### `opts.displayName`
+
+Display name for the returned component. Defaults to `LoadableComponent`.
+
+```js
+Loadable({
+  displayName: 'MyLoadableComponent',
+  loader: () => import('./Bar'),
+});
+```
+
 #### `opts.delay`
 
 Time to wait (in milliseconds) before passing
