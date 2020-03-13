@@ -90,7 +90,7 @@ function loadMap(obj) {
 }
 
 function resolve(obj) {
-  return obj && obj.__esModule ? obj.default : obj;
+  return obj && obj.default ? obj.default : obj;
 }
 
 function render(loaded, props) {
