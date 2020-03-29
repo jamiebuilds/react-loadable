@@ -158,12 +158,9 @@ function createLoadableComponent(loadFn, options) {
       return init();
     }
 
-    componentWillMount() {
-      this._loadModule();
-    }
-
     componentDidMount() {
       this._mounted = true;
+      this._loadModule();
     }
 
     _loadModule() {
