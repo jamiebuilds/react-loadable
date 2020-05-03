@@ -294,7 +294,7 @@ function Loading(props) {
 }
 ```
 
-This delay defaults to `200ms` but you can also customize the
+This delay defaults to `300ms` but you can also customize the
 [delay](#optsdelay) in `Loadable`.
 
 ```js
