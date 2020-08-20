@@ -59,6 +59,7 @@ export default class App extends React.Component {
 - [Evidation Health](https://evidation.com/)
 - [Flexport](https://flexport.com/)
 - [Flyhomes](https://flyhomes.com)
+- [GermanTechJobs.de](https://germantechjobs.de/)
 - [Gogo](https://gogoair.com)
 - [Gofore](https://gofore.com/en/home/)
 - [Graana](https://www.graana.com/)
