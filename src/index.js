@@ -168,8 +168,9 @@ function createLoadableComponent(loadFn, options) {
 
     _loadModule() {
       if (this.context.loadable && Array.isArray(opts.modules)) {
-        opts.modules.forEach(moduleName => {
-          this.context.loadable.report(moduleName);
+        var ids = opts.webpack && opts.webpack();
+        opts.modules.forEach((moduleName, key) => {
+          this.context.loadable.report(moduleName, ids && ids[key]);
         });
       }
 
