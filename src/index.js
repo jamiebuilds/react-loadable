@@ -245,7 +245,8 @@ function createLoadableComponent(loadFn, options) {
           pastDelay: this.state.pastDelay,
           timedOut: this.state.timedOut,
           error: this.state.error,
-          retry: this.retry
+          retry: this.retry,
+          props: this.props
         });
       } else if (this.state.loaded) {
         return opts.render(this.state.loaded, this.props);
