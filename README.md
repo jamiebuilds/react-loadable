@@ -80,6 +80,7 @@ export default class App extends React.Component {
 - [Tinder](https://tinder.com/)
 - [Unsplash](https://unsplash.com/)
 - [Wave](https://waveapps.com/)
+- [Wave Digital](https://wavedigital.com.au/)
 - [WUZZUF](https://wuzzuf.net/)
 - [Wxb](https://wxb.com/wxpush)
 
