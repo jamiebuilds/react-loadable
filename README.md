@@ -46,6 +46,7 @@ export default class App extends React.Component {
 - [Atlassian](https://www.atlassian.com/)
 - [BBC News](https://github.com/BBC-News/simorgh)
 - [Blytzpay](https://www.blytzpay.com)
+- [Boozebud](https://www.boozebud.com)
 - [ClearTax](https://cleartax.in)
 - [Cloudflare](https://www.cloudflare.com)
 - [Chibaki](https://chibaki.co)
