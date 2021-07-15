@@ -3,7 +3,7 @@ import path from 'path';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import Loadable from 'react-loadable';
-import { getBundles } from 'react-loadable-webpack'
+import { getBundles } from 'react-loadable/webpack'
 import App from './components/App';
 
 const stats = require('./dist/react-loadable.json');
@@ -36,10 +36,10 @@ app.get('/', (req, res) => {
       </head>
       <body>
         <div id="app">${html}</div>
-        <script src="/dist/main.js"></script>
         ${scripts.map(script => {
           return `<script src="/dist/${script.file}"></script>`
         }).join('\n')}
+        <script src="/dist/main.js"></script>
         <script>window.main();</script>
       </body>
     </html>

@@ -2,6 +2,7 @@ const path = require('path');
 const { ReactLoadablePlugin } = require('./webpack');
 
 module.exports = {
+  mode: "development",
   entry: {
     main: './example/client',
   },
@@ -25,9 +26,6 @@ module.exports = {
               '@babel/preset-react',
             ],
             plugins: [
-              'syntax-dynamic-import',
-              '@babel/plugin-proposal-class-properties',
-              '@babel/plugin-transform-object-assign',
               require.resolve('./babel'),
             ],
           }
@@ -36,14 +34,9 @@ module.exports = {
     ],
   },
   devtool: 'inline-source-map',
-  resolve: {
-    alias: {
-      'react-loadable': path.resolve(__dirname, 'src'),
-    },
-  },
   plugins: [
     new ReactLoadablePlugin({
-      filename:  path.resolve(__dirname, 'example', 'dist', 'react-loadable.json'),
+      filename: 'react-loadable.json',
     }),
   ]
 };
