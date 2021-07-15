@@ -4,17 +4,6 @@
     "@babel/preset-react"
   ],
   "plugins": [
-    "dynamic-import-node",
-    "@babel/plugin-proposal-class-properties",
-    "../babel",
-    [
-      "module-resolver",
-      {
-        "alias": {
-          "react-loadable": "./src/index.js",
-          "react-loadable-webpack": "./src/webpack.js"
-        }
-      }
-    ]
+    "../babel"
   ]
 }

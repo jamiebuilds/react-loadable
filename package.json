@@ -15,32 +15,33 @@
     "test": "jest --coverage",
     "build": "babel src -d lib",
     "start": "yarn build && webpack && babel-node example/server.js",
-    "prepare": "yarn build"
+    "prepare": "yarn build && link-module-alias"
   },
   "dependencies": {
     "prop-types": "^15.6.2"
+  },
+  "_moduleAliases": {
+    "react-loadable": "."
   },
   "devDependencies": {
     "@babel/cli": "^7.1.2",
     "@babel/core": "^7.1.2",
     "@babel/node": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-transform-async-to-generator": "^7.1.0",
-    "@babel/plugin-transform-object-assign": "^7.0.0",
+    "@babel/plugin-transform-object-assign": "^7.14.5",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
     "babel-loader": "^8.0.4",
-    "babel-plugin-dynamic-import-node": "^2.2.0",
-    "babel-plugin-module-resolver": "^3.1.1",
     "express": "^4.16.4",
     "flow-bin": "^0.83.0",
     "jest": "^23.6.0",
+    "link-module-alias": "1.x",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-test-renderer": "^16.5.2",
-    "webpack": "^4.20.2"
+    "webpack": "^4.20.2",
+    "webpack-cli": "^4.7.2"
   },
   "peerDependencies": {
     "react": "*"
