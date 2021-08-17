@@ -31,16 +31,19 @@
     "@babel/preset-react": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "^23.6.0",
-    "babel-loader": "^8.0.4",
-    "babel-plugin-dynamic-import-node": "^2.2.0",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-dynamic-import-node": "^2.3.3",
     "babel-plugin-module-resolver": "^3.1.1",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "express": "^4.16.4",
     "flow-bin": "^0.83.0",
     "jest": "^23.6.0",
+    "path-browserify": "^1.0.1",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-test-renderer": "^16.5.2",
-    "webpack": "^4.20.2"
+    "webpack": "5.50.0",
+    "webpack-cli": "4.8.0"
   },
   "peerDependencies": {
     "react": "*"
