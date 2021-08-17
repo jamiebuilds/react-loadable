@@ -7,7 +7,7 @@ function buildManifest(compiler, compilation) {
 
   compilation.chunks.forEach(chunk => {
     chunk.files.forEach(file => {
-      chunk.forEachModule(module => {
+      for(const module of chunk.modulesIterable) {
         let id = module.id;
         let name = typeof module.libIdent === 'function' ? module.libIdent({ context }) : null;
         let publicPath = url.resolve(compilation.outputOptions.publicPath || '', file);
@@ -21,7 +21,7 @@ function buildManifest(compiler, compilation) {
         }
 
         manifest[currentModule.rawRequest].push({ id, name, file, publicPath });
-      });
+      }
     });
   });
 
@@ -34,7 +34,7 @@ class ReactLoadablePlugin {
   }
 
   apply(compiler) {
-    compiler.plugin('emit', (compilation, callback) => {
+    compiler.hooks.emit.tap('emit', (compilation, callback) => {
       const manifest = buildManifest(compiler, compilation);
       var json = JSON.stringify(manifest, null, 2);
       compilation.assets[this.filename] = {      
