@@ -3,6 +3,7 @@ const React = require("react");
 const PropTypes = require("prop-types");
 
 const ALL_INITIALIZERS = [];
+const SSR_INITIALIZERS = [];
 const READY_INITIALIZERS = [];
 
 function isWebpackReady(getModuleIds) {
@@ -110,7 +111,8 @@ function createLoadableComponent(loadFn, options) {
       timeout: null,
       render: render,
       webpack: null,
-      modules: null
+      modules: null,
+      ssr: true
     },
     options
   );
@@ -125,6 +127,10 @@ function createLoadableComponent(loadFn, options) {
   }
 
   ALL_INITIALIZERS.push(init);
+  
+  if (opts.ssr) {
+    SSR_INITIALIZERS.push(init);
+  }
 
   if (typeof opts.webpack === "function") {
     READY_INITIALIZERS.push(() => {
@@ -311,9 +317,9 @@ function flushInitializers(initializers) {
   });
 }
 
-Loadable.preloadAll = () => {
+Loadable.preloadAll = (ssrOnly = false) => {
   return new Promise((resolve, reject) => {
-    flushInitializers(ALL_INITIALIZERS).then(resolve, reject);
+    flushInitializers(ssrOnly ? SSR_INITIALIZERS : ALL_INITIALIZERS).then(resolve, reject);
   });
 };
 
