@@ -158,7 +158,7 @@ function createLoadableComponent(loadFn, options) {
       return init();
     }
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
       this._loadModule();
     }
 
