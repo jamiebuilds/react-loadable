@@ -1,5 +1,8 @@
 {
-  "name": "react-loadable",
+  "name": "@yougroupteam/react-loadable",
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "5.5.0",
   "description": "A higher order component for loading components with promises",
   "main": "lib/index.js",

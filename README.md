@@ -2,6 +2,12 @@
 
 > A higher order component for loading components with dynamic imports.
 
+**IMPORTANT**: this is a minimalistic fork to solve the `componentWillMount` warning. 
+
+We don't plan to maintain this problem, just get rid of the warning.
+
+----
+
 ## Install
 
 ```sh
