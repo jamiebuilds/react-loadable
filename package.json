@@ -17,8 +17,8 @@
   "scripts": {
     "test": "jest --coverage",
     "build": "babel src -d lib",
-    "start": "yarn build && webpack && babel-node example/server.js",
-    "prepare": "yarn build"
+    "start": "npm run build && webpack && babel-node example/server.js",
+    "prepare": "npm run build"
   },
   "dependencies": {
     "prop-types": "^15.6.2"
