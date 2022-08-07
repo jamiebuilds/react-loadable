@@ -90,7 +90,11 @@ function loadMap(obj) {
 }
 
 function resolve(obj) {
-  return obj && obj.__esModule ? obj.default : obj;
+  const symbolKey = Object.getOwnPropertySymbols(obj).find(key => key.toString() === 'Symbol(Symbol.toStringTag)')
+  if(obj.__esModule || obj[symbolKey]==='Module'){
+    return obj.default
+  }
+  else return obj
 }
 
 function render(loaded, props) {
